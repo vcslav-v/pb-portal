@@ -2,6 +2,7 @@ import os
 
 import requests
 from pb_portal.connectors.tag_board import schemas
+from loguru import logger
 
 NETLOC = os.environ.get('TAG_BOARD_NETLOC')
 TOKEN = os.environ.get('TAG_BOARD_TOKEN')
@@ -10,6 +11,7 @@ TOKEN = os.environ.get('TAG_BOARD_TOKEN')
 def get_items_by_title(title) -> schemas.SearchResult:
     resp = requests.get(f'https://{NETLOC}/api/items-by-title/{title}?token={TOKEN}')
     if resp.ok:
+        logger.debug(resp.content)
         return schemas.SearchResult.parse_raw(resp.content)
     return schemas.SearchResult(
         items=[],
