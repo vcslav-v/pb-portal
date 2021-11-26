@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "pb_portal"
+version = "0.1.0"
+description = ""
+authors = ["vaclav-v"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Flask = "^2.0.2"
+Flask-HTTPAuth = "^4.5.0"
+loguru = "^0.5.3"
+requests = "^2.26.0"
+pydantic = "^1.8.2"
+
+[tool.poetry.dev-dependencies]
+flake8 = "^4.0.1"
+mypy = "^0.910"
+types-requests = "^2.26.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
