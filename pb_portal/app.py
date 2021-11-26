@@ -36,14 +36,14 @@ def index():
 @app.route('/tag-board', methods=['GET', 'POST'])
 @auth.login_required
 def tag_board():
+    search_result = connectors.tag_board.schemas.SearchResult(
+        items=[],
+        tags_stat=[]
+    )
     if request.method == 'POST':
         btn = request.form.get('btn')
         search_resp = request.form.get('search_resp')
         xlsx_files = request.files.getlist('xlsx')
-        search_result = connectors.tag_board.schemas.SearchResult(
-            items=[],
-            tags_stat=[]
-        )
         if btn == 'search_by_title' and search_resp:
             search_result = connectors.tag_board.get_items_by_title(search_resp)
         elif btn == 'search_by_tag' and search_resp:
