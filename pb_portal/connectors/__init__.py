@@ -1,6 +1,6 @@
-from . import tag_board, tinify
+from . import tag_board, graphic
 
 __all__ = [
     'tag_board',
-    'tinify'
+    'graphic'
 ]

@@ -67,7 +67,7 @@ def graphics_tools():
 @app.route('/tinify', methods=['POST'])
 def tinify():
     try:
-        zip_file = connectors.tinify.get_tiny_zip(
+        zip_file = connectors.graphic.get_tiny_zip(
             request.files.getlist('forTiny'),
             request.form.get('resize_width')
         )
@@ -75,3 +75,16 @@ def tinify():
         logger.error(e.args)
         return
     return send_file(zip_file, mimetype='application/x-zip-compressed')
+
+
+@logger.catch
+@app.route('/longy', methods=['POST'])
+def longy():
+    try:
+        long_jpg = connectors.graphic.get_long_jpg(
+            request.files.getlist('forLong'),
+        )
+    except Exception as e:
+        logger.error(e.args)
+        return
+    return send_file(long_jpg, mimetype='image/jpeg')
