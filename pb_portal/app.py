@@ -1,12 +1,10 @@
 import os
 
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, url_for, send_file
 from flask_httpauth import HTTPBasicAuth
 from loguru import logger
 from werkzeug.security import check_password_hash, generate_password_hash
-
 from pb_portal import connectors
-
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
@@ -55,3 +53,25 @@ def tag_board():
         'tag_board.html',
         search_result=search_result,
     )
+
+
+@logger.catch
+@app.route('/graphics-tools', methods=['GET', 'POST'])
+def graphics_tools():
+    return render_template(
+        'graphics_tools.html',
+    )
+
+
+@logger.catch
+@app.route('/tinify', methods=['POST'])
+def tinify():
+    try:
+        zip_file = connectors.tinify.get_tiny_zip(
+            request.files.getlist('forTiny'),
+            request.form.get('resize_width')
+        )
+    except Exception as e:
+        logger.error(e.args)
+        return
+    return send_file(zip_file, mimetype='application/x-zip-compressed')
