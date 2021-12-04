@@ -1,11 +1,15 @@
 import os
 
-from flask import Flask, redirect, render_template, request, url_for, send_file, flash
+from flask import Flask, redirect, render_template, request, url_for, send_file, flash, jsonify
 from flask_httpauth import HTTPBasicAuth
 from loguru import logger
 from werkzeug.security import check_password_hash, generate_password_hash
-from pb_portal import connectors
+from pb_portal import connectors, tools
 from urllib.parse import urlparse
+import json
+from datetime import datetime
+
+from pb_portal.connectors.finam import schemas
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
@@ -16,6 +20,8 @@ users = {
         os.environ.get('FLASK_PASS') or 'pass'
     ),
 }
+
+CATEGORIES = connectors.finam.get_categories()
 
 
 def is_dribbble_link(uri):
@@ -37,6 +43,82 @@ def verify_password(username, password):
 @auth.login_required
 def index():
     return redirect(url_for('tag_board'))
+
+
+@logger.catch
+@app.route('/money', methods=['GET'])
+@auth.login_required
+def money():
+    сurrencies = connectors.finam.get_сurrencies()
+    return render_template(
+        'money.html',
+        сurrencies=сurrencies,
+        categories=CATEGORIES,
+    )
+
+
+@logger.catch
+@app.route('/post-transaction', methods=['POST'])
+@auth.login_required
+def post_transaction():
+    req_cats = []
+    for key, value in request.form.to_dict().items():
+        if key[:4] == 'cat-' and value != 'temp':
+            req_cats.append(int(value))
+    try:
+        value = int(float(request.form.get('sum').replace(',', '.')) * 100)
+    except ValueError:
+        flash('Amount of money is wrong')
+    if not req_cats:
+        flash('Category is wrong')
+    transaction = connectors.finam.schemas.Transaction(
+        date=datetime.strptime(request.form.get('date'), '%d-%m-%Y').date(),
+        value=value,
+        comment=request.form.get('comment'),
+        currency_id=int(request.form.get('сurrency')),
+        category_id=tools.get_youngest_child(req_cats, CATEGORIES),
+    )
+    if request.form.get('trans_id'):
+        transaction.id = request.form.get('trans_id')
+    connectors.finam.post_transaction(transaction)
+    return jsonify({'ok': 200})
+
+
+@logger.catch
+@app.route('/rm-transaction', methods=['POST'])
+def rm_transaction():
+    connectors.finam.rm_transaction(request.form.get('trans_id'))
+    return jsonify({'ok': 200})
+
+
+@logger.catch
+@app.route('/get-transactions', methods=['POST'])
+@auth.login_required
+def get_transactions():
+    data = schemas.GetTransactionPage(
+        from_date=datetime.strptime(request.form.get('from_date'), '%d-%m-%Y').date()
+    )
+    if request.form.get('page'):
+        data.page = int(request.form.get('page'))
+    transactions = connectors.finam.get_page_transactions(data)
+    return transactions.json()
+
+
+@logger.catch
+@app.route('/get-transaction', methods=['POST'])
+@auth.login_required
+def get_transaction():
+    trans_id = request.form.get('trans_id')
+    transaction = connectors.finam.get_page_transaction(trans_id)
+    return transaction.json()
+
+
+@logger.catch
+@app.route('/get-short-stat', methods=['POST'])
+@auth.login_required
+def get_short_stat():
+    transaction = connectors.finam.get_get_short_stat()
+    return transaction.json()
 
 
 @logger.catch
@@ -149,3 +231,10 @@ def longy():
         logger.error(e.args)
         return
     return send_file(long_jpg, mimetype='image/jpeg')
+
+
+@logger.catch
+@app.route('/get_categories', methods=['POST'])
+def get_categories():
+    flat_cat = tools.get_flat_cat(CATEGORIES)
+    return json.dumps(flat_cat)

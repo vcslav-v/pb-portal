@@ -1,0 +1,458 @@
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-datepicker3.min.css') }}">
+{% endblock %}
+{% block app_content %}
+<div class="container">
+    <div class="row mt-4">
+        <h1>Transactions</h1>
+    </div>
+    <div class="row d-flex justify-content-start mt-4"> 
+        <div class="col-6">
+            <form id="post_transaction" action="#" method="post" enctype="multipart/form-data"></form>
+                <div class="row">
+                    <div class="col-3" id="sandbox-container">
+                        <div class="input-group date">
+                            <input type="text" class="form-control" name="date"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="input-group">
+                            <input type="text" aria-label="Sum" id="sum" name="sum" placeholder="Value" class="form-control  w-50">
+                            <select class="form-select" id="currency" name="сurrency">
+                                {% for сurrency in сurrencies.items %}
+                                <option value="{{ сurrency.id }}">{{ сurrency.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <select class="form-select" id="base_categories" name="cat-0">
+                            <option selected value="temp">...</option>
+                            {% for base_category in categories.children %}
+                                <option value="{{ base_category.id }}">{{ base_category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-4 visually-hidden" id="cattegory_row">
+                    <div class="col-12">
+                        <div class="input-group" id="categories">
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <input type="text" aria-label="Comment" placeholder="Comment" class="form-control" name="comment" id="comment">
+                    </div>
+                </div>
+                <div class="row my-4">
+                    <div class="col-12">
+                        <button class="btn btn-outline-success w-100" type="submit">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-4 offset-md-1">
+            <table class="table">
+                <thead>
+                    <tr>
+                      <th scope="col"></th>
+                      <th scope="col" name="this_month"></th>
+                      <th scope="col" name="past_month"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Income</th>
+                      <td name="this_month_income"></td>
+                      <td name="past_month_income"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Expense</th>
+                        <td name="this_month_expense"></td>
+                        <td name="past_month_expense"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Profit</th>
+                        <td name="this_month_profit"></td>
+                        <td name="past_month_profit"></td>
+                    </tr>
+                  </tbody>
+            </table>
+        </div>
+        <div class="col-1"></div>
+    </div>
+</div>
+<div class="container">
+    <div class="row mt-5" id="from_date">
+        <div class="col-3" id="sandbox-container">
+            <div class="input-group date">
+                <span class="input-group-text" id="basic-addon1">from</span>
+                <input type="text" class="form-control" name="from_date" aria-label="from_date"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Value</th>
+                    <th scope="col">Comment</th>
+                    <th scope="col">Category</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody id="transaction_rows">
+                </tbody>
+              </table>
+        </div>
+        <div class="col-12 d-flex justify-content-center">
+            <div class="spinner-grow visually-hidden" role="status" id="next_page">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+        </div>
+    </div>
+</div>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+  <div class="offcanvas-header">
+    <button type="button" class="btn btn-danger" id="rm_trans_btn" name="trans_id">Del</button>
+    <h5 id="offcanvasRightLabel">Transaction #<span id="edit_trans_id"></span></h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close" id='btn_close_offcnv'></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="continer">
+        <form id="edit_transaction" action="#" method="post" enctype="multipart/form-data">
+            <input type="text" class="form-control d-none" name="trans_id" id="trans_id_offcnv">
+            <div class="row">
+                <div class="col-12" id="sandbox-container">
+                    <div class="input-group date offcnv">
+                        <input type="text" class="form-control" name="date" ><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="input-group">
+                        <input type="text" aria-label="Sum" id="sum_offcnv" name="sum" placeholder="Value" class="form-control  w-50">
+                        <select class="form-select" id="currency_offcnv" name="сurrency">
+                            {% for сurrency in сurrencies.items %}
+                            <option value="{{ сurrency.id }}">{{ сurrency.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <input type="text" aria-label="Comment" placeholder="Comment" class="form-control" name="comment" id="comment_offcnv">
+                    <h6 class="mt-5">Categories:</h6>
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col-12" id="ofcnv_categories">
+                    <select class="form-select" id="base_categories" name="cat-offcnv-0">
+                        <option selected value="temp">...</option>
+                        {% for base_category in categories.children %}
+                            <option value="{{ base_category.id }}">{{ base_category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-info w-100">Edit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+  </div>
+</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.en.min.js') }}"></script>
+<script>
+    $('#sandbox-container .input-group.date').datepicker({
+        format: "dd-mm-yyyy",
+        weekStart: 1,
+        todayBtn: "linked",
+        autoclose: true,
+        todayHighlight: true
+    });
+    $('#sandbox-container .input-group.date').datepicker('update', new Date());
+</script>
+<script>
+    var cat_childrens;
+    var i = 1;
+    $.ajax({
+            type: 'POST',
+            url: "{{ url_for('get_categories') }}",
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(response) {
+                cat_childrens = response;
+                console.log(response);
+            },
+            error: function(error) {
+                console.log(error);
+            },
+        })
+    var manage_select = function(element, cat_childrens, i){
+        $(element).find('option[value=temp]').remove()
+        $(element).nextAll().remove();
+        sub_cats = cat_childrens[Number($(element).val())]
+        if (sub_cats.length == 0) {
+            return
+        }
+        $(element).after('<select class="form-select" name="cat-'+i+'"></select>');
+        new_elem = $(element).parent().find('select:last-child')
+        new_elem.append('<option value="temp">...</option>')
+        for (let value of sub_cats) {
+            var option = '<option value="'+value[0]+'">'+value[1]+'</option>'
+            new_elem.append(option);
+        }
+    }
+    $('#categories').change( function(event){
+        let target = event.target;
+        manage_select(target, cat_childrens, i);
+        i++;
+    })
+    $('#base_categories').change(function(){
+        $('#base_categories option[value=temp]').remove();
+        $('#cattegory_row').removeClass('visually-hidden');
+        $('#categories').empty()
+        $('#categories').append('<select class="form-select" name="cat-'+i+'"></select>')
+        $('select[name=cat-'+i+']').append('<option value="temp">...</option>');
+        for (let value of cat_childrens[Number($('#base_categories').val())]) {
+            var option = '<option value="'+value[0]+'">'+value[1]+'</option>'
+            $('select[name=cat-'+i+']').append(option);
+        }
+        i++;
+
+    })
+
+    prepareEditForm = function(trans_id) {
+        var formData = new FormData();
+        formData.append('trans_id', trans_id)
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('get_transaction') }}",
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(data) {
+                $('#edit_trans_id').text(data.id)
+                $('#rm_trans_btn').val(data.id)
+                $('#trans_id_offcnv').val(data.id)
+                $('#sandbox-container .input-group.date.offcnv').datepicker('update', new Date(data.date));
+                var value = data.value / 100;
+                $('#sum_offcnv').val(value.toFixed(2));
+                $('#currency_offcnv').val(data.currency_id)
+                $('#comment_offcnv').val(data.comment)
+                $('select[name=cat-offcnv-0]').val(data.category_id_path[0])
+                manage_edit_select('select[name=cat-offcnv-0]', cat_childrens, i)
+                for(cat_id of data.category_id_path.slice(1)) {
+                    slc = 'select[name=cat-offcnv-'+i+']'
+                    $(slc).val(cat_id)
+                    i++;
+                    manage_edit_select(slc, cat_childrens, i)
+                }
+                i++;
+            },
+            error: function(error) {
+                console.log(error);
+            },      
+        });
+
+    }
+    manage_edit_select = function(element, cat_childrens, i) {
+        $(element).find('option[value=temp]').remove()
+        $(element).nextAll().remove();
+        sub_cats = cat_childrens[Number($(element).val())]
+        if (sub_cats.length == 0) {
+            return
+        }
+        $(element).after('<select class="form-select my-2" name="cat-offcnv-'+i+'"></select>');
+        new_elem = $(element).parent().find('select:last-child')
+        new_elem.append('<option value="temp">...</option>')
+        for (let value of sub_cats) {
+            var option = '<option value="'+value[0]+'">'+value[1]+'</option>'
+            new_elem.append(option);
+        }
+    }
+    $('#ofcnv_categories').change( function(event){
+        let target = event.target;
+        manage_edit_select(target, cat_childrens, i);
+        i++;
+    })
+</script>
+<script>
+    var trasactionForm = document.getElementById('post_transaction');
+    trasactionForm.onsubmit = function(event) {
+        event.preventDefault();
+        var formData = new FormData(trasactionForm);
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('post_transaction') }}",
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(data) {
+                $('#sum').val('')
+                $('#comment').val('')
+                refresh_transactions()
+            },
+            error: function(error) {
+                console.log(error);
+            },
+                
+        });
+    };
+</script>
+<script>
+    var editTrasactionForm = document.getElementById('edit_transaction');
+    editTrasactionForm.onsubmit = function(event) {
+        event.preventDefault();
+        var formData = new FormData(editTrasactionForm);
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('post_transaction') }}",
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(data) {
+                $('#btn_close_offcnv').click()
+                refresh_transactions()
+            },
+            error: function(error) {
+                console.log(error);
+            },
+                
+        });
+    };
+</script>
+<script>
+    $('#rm_trans_btn').on('click', function(event) {
+        event.preventDefault();
+        var formData = new FormData();
+        formData.append('trans_id', $('#rm_trans_btn').val())
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('rm_transaction') }}",
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(data) {
+                $('#btn_close_offcnv').click()
+                refresh_transactions()
+            },
+            error: function(error) {
+                console.log(error);
+            },
+                
+        });
+    });
+</script>
+<script>
+    var page = 1;
+    refresh_transactions = function(page){
+        var formData = new FormData();
+        formData.append('from_date', $('input[name=from_date]').val())
+        if(page) {
+            formData.append('page', page);
+        } else {
+            $('#transaction_rows').empty();
+            page = 1;
+        }
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('get_transactions') }}",
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(response) {
+                var transactions = response;
+                for(row_transaction of transactions.rows){
+                    var tr_class = '';
+                    if (row_transaction.base_category == 'Income') {
+                        tr_class = 'table-success';
+                    } else if (row_transaction.base_category == 'Expense') {
+                        tr_class = 'table-danger';
+                    }
+                    $('#transaction_rows').append('<tr class="'+tr_class+'"><td scope="row">'+row_transaction.date+'</td><td>'+row_transaction.value+'</td><td>'+row_transaction.comment+'</td><td>'+row_transaction.category+'</td><td class="d-flex justify-content-center"><button type="button" class="btn btn-info btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="edit_button" onclick="prepareEditForm('+row_transaction.id+')">Edit</button></td>')                            
+                }
+            },
+            error: function(error) {
+                console.log(error);
+            },
+        })
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('get_short_stat') }}",
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(response) {
+                var short_stat = response;
+                $('th[name=this_month]').empty()
+                $('th[name=this_month]').append(short_stat.now_month.name)
+                $('th[name=past_month]').empty()
+                $('th[name=past_month]').append(short_stat.past_month.name + ' (to day)')
+                $('td[name=this_month_income]').empty()
+                $('td[name=this_month_income]').append('$'+short_stat.now_month.income)
+                $('td[name=past_month_income]').empty()
+                $('td[name=past_month_income]').append('$'+short_stat.past_month.income)
+                $('td[name=this_month_expense]').empty()
+                $('td[name=this_month_expense]').append('$'+short_stat.now_month.expense)
+                $('td[name=past_month_expense]').empty()
+                $('td[name=past_month_expense]').append('$'+short_stat.past_month.expense)
+                $('td[name=this_month_profit]').empty()
+                $('td[name=this_month_profit]').append('$'+short_stat.now_month.profit)
+                $('td[name=past_month_profit]').empty()
+                $('td[name=past_month_profit]').append('$'+short_stat.past_month.profit)
+            },
+            error: function(error) {
+                console.log(error);
+            },
+        })
+    }
+    refresh_transactions();
+    $('#from_date').change(function(){
+        refresh_transactions();
+    });
+    $(window).scroll(function() {
+        var scroll = $(window).scrollTop() + $(window).height();
+        var offset = $('#next_page').offset().top;
+        if (scroll > offset) {
+            $('#next_page').removeClass('visually-hidden')
+            page++;
+            refresh_transactions(page);
+            $('#next_page').addClass('visually-hidden')
+        }
+    });
+</script>
+{% endblock %}
