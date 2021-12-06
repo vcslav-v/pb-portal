@@ -9,7 +9,7 @@
     </div>
     <div class="row d-flex justify-content-start mt-4"> 
         <div class="col-6">
-            <form id="post_transaction" action="#" method="post" enctype="multipart/form-data"></form>
+            <form id="post_transaction" action="#" method="post" enctype="multipart/form-data">
                 <div class="row">
                     <div class="col-3" id="sandbox-container">
                         <div class="input-group date">
@@ -190,7 +190,7 @@
     var i = 1;
     $.ajax({
             type: 'POST',
-            url: "{{ url_for('get_categories') }}",
+            url: "{{ url_for('money.get_categories') }}",
             dataType: 'json',
             contentType: false,
             cache: false,
@@ -243,7 +243,7 @@
         formData.append('trans_id', trans_id)
         $.ajax({
             type: 'POST',
-            url: "{{ url_for('get_transaction') }}",
+            url: "{{ url_for('money.get_transaction') }}",
             data: formData,
             dataType: 'json',
             contentType: false,
@@ -303,7 +303,7 @@
         var formData = new FormData(trasactionForm);
         $.ajax({
             type: 'POST',
-            url: "{{ url_for('post_transaction') }}",
+            url: "{{ url_for('money.post_transaction') }}",
             data: formData,
             dataType: 'json',
             contentType: false,
@@ -329,7 +329,7 @@
         var formData = new FormData(editTrasactionForm);
         $.ajax({
             type: 'POST',
-            url: "{{ url_for('post_transaction') }}",
+            url: "{{ url_for('money.post_transaction') }}",
             data: formData,
             dataType: 'json',
             contentType: false,
@@ -354,7 +354,7 @@
         formData.append('trans_id', $('#rm_trans_btn').val())
         $.ajax({
             type: 'POST',
-            url: "{{ url_for('rm_transaction') }}",
+            url: "{{ url_for('money.rm_transaction') }}",
             data: formData,
             dataType: 'json',
             contentType: false,
@@ -385,7 +385,7 @@
         }
         $.ajax({
             type: 'POST',
-            url: "{{ url_for('get_transactions') }}",
+            url: "{{ url_for('money.get_transactions') }}",
             data: formData,
             dataType: 'json',
             contentType: false,
@@ -410,7 +410,7 @@
         })
         $.ajax({
             type: 'POST',
-            url: "{{ url_for('get_short_stat') }}",
+            url: "{{ url_for('money.get_short_stat') }}",
             dataType: 'json',
             contentType: false,
             cache: false,

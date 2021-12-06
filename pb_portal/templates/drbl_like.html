@@ -6,7 +6,7 @@
             <div class="mt-4">
                 <h1>Dribbble like control</h1>
             </div>
-                <form method="post" action="{{ url_for('like_dribbble') }}" enctype="multipart/form-data">
+                <form method="post" action="{{ url_for('drbl_like.like_dribbble') }}" enctype="multipart/form-data">
                     <div class="row g-3 my-3">
                         <div class="col-sm-9">
                           <input type="text" class="form-control" placeholder="Link" aria-label="Link" name="add_link">
@@ -36,7 +36,7 @@
                             <td><a href="{{ task.link }}">{{ task.link }}</a></td>
                             <td>{{ task.done_like }} / {{ task.targ_like }}</td>
                             <td>
-                                <form method="post" action="{{ url_for('like_dribbble') }}" enctype="multipart/form-data">
+                                <form method="post" action="{{ url_for('drbl_like.like_dribbble') }}" enctype="multipart/form-data">
                                     <div class="input-group my-1 input-group-sm">
                                         <input type="text" class="form-control" placeholder="Quantity" aria-describedby="button-addon2" name="add:{{ task.id }}">
                                         <button class="btn btn-outline-primary btn-sm" type="submit" id="button-addon2">Add</button>
@@ -57,7 +57,7 @@
                 <li class="list-group-item">Target accounts - {{ pagedata.target_accounts }}</li>
                 <li class="list-group-item">In work now - {{ pagedata.in_work_accs }}</li>
                 <li class="list-group-item">
-                    <form method="post" action="{{ url_for('like_dribbble') }}" enctype="multipart/form-data">
+                    <form method="post" action="{{ url_for('drbl_like.like_dribbble) }}" enctype="multipart/form-data">
                         <div class="input-group mb-3 input-group-sm">
                             <input type="text" class="form-control" placeholder="New target" aria-describedby="button-addon2" name="acc_target">
                             <button class="btn btn-outline-primary btn-sm" type="submit" id="button-addon2">Set</button>

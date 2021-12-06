@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block app_content %}
 <div class="container">
-    <form method="post" action="{{ url_for('tag_board') }}" enctype="multipart/form-data">
+    <form method="post" action="{{ url_for('tag_board.tag_board') }}" enctype="multipart/form-data">
         <div class="row m-4">
             <div class="col-4">
                 <h1>Stock's tag helper</h1>
@@ -19,7 +19,7 @@
     
     </div>
 
-    <form method="post" action="{{ url_for('tag_board') }}" enctype="multipart/form-data">
+    <form method="post" action="{{ url_for('tag_board.tag_board') }}" enctype="multipart/form-data">
         <div class="row justify-content-md-center">
             <div class="col col-lg-6">
                 <div class="input-group m-3">

@@ -57,7 +57,7 @@
         var formData = new FormData(myForm);
         $.ajax({
                 type: 'POST',
-                url: "{{ url_for('tinify') }}",
+                url: "{{ url_for('graphics_tools.tinify') }}",
                 data: formData,
                 dataType: 'binary',
                 xhrFields: {
@@ -90,7 +90,7 @@
         var formData = new FormData(longForm);
         $.ajax({
                 type: 'POST',
-                url: "{{ url_for('longy') }}",
+                url: "{{ url_for('graphics_tools.longy') }}",
                 data: formData,
                 dataType: 'binary',
                 xhrFields: {
