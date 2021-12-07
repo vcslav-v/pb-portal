@@ -18,6 +18,9 @@ users = {
 }
 
 CATEGORIES = connectors.finam.get_categories()
+ACCOUNTS = next(filter(lambda x: x.name == 'Balance', CATEGORIES.children))
+INCOME = next(filter(lambda x: x.name == 'Income', CATEGORIES.children))
+EXPENSE = next(filter(lambda x: x.name == 'Expense', CATEGORIES.children))
 
 
 @auth.verify_password
@@ -36,6 +39,9 @@ def money():
         'money.html',
         сurrencies=сurrencies,
         categories=CATEGORIES,
+        accounts_cat=ACCOUNTS,
+        income_cat=INCOME,
+        expence_cat=EXPENSE,
     )
 
 
@@ -63,6 +69,19 @@ def post_transaction():
     if request.form.get('trans_id'):
         transaction.id = request.form.get('trans_id')
     connectors.finam.post_transaction(transaction)
+    from_cattegory_id = request.form.get('from_money')
+    if from_cattegory_id:
+        debt_k = ((len(ACCOUNTS.children) - 1) / len(ACCOUNTS.children))
+        debt_value = int(float(request.form.get('sum').replace(',', '.')) * debt_k * 100)
+        balance_transaction = connectors.finam.schemas.Transaction(
+            date=datetime.strptime(request.form.get('date'), '%d-%m-%Y').date(),
+            value=debt_value,
+            comment='',
+            currency_id=int(request.form.get('сurrency')),
+            category_id=int(from_cattegory_id),
+        )
+        connectors.finam.post_transaction(balance_transaction)
+
     return jsonify({'ok': 200})
 
 
@@ -96,6 +115,13 @@ def get_transaction():
 
 
 @logger.catch
+@app_route.route('/get_categories', methods=['POST'])
+def get_categories():
+    flat_cat = tools.get_flat_cat(CATEGORIES)
+    return jsonify(flat_cat)
+
+
+@logger.catch
 @app_route.route('/get-short-stat', methods=['POST'])
 @auth.login_required
 def get_short_stat():
@@ -104,7 +130,7 @@ def get_short_stat():
 
 
 @logger.catch
-@app_route.route('/get_categories', methods=['POST'])
-def get_categories():
-    flat_cat = tools.get_flat_cat(CATEGORIES)
-    return jsonify(flat_cat)
+@app_route.route('/get_balance', methods=['POST'])
+def get_balance():
+    debt = connectors.finam.get_balance()
+    return debt.json()

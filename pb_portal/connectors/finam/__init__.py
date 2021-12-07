@@ -1,7 +1,7 @@
 from . import schemas
-from .main import (get_categories, get_get_short_stat, get_page_transaction,
-                   get_page_transactions, get_сurrencies, post_transaction,
-                   rm_transaction)
+from .main import (get_balance, get_categories, get_get_short_stat,
+                   get_page_transaction, get_page_transactions, get_сurrencies,
+                   post_transaction, rm_transaction)
 
 __all__ = [
     'schemas',
@@ -12,4 +12,5 @@ __all__ = [
     'get_page_transaction',
     'rm_transaction',
     'get_get_short_stat',
+    'get_balance',
 ]

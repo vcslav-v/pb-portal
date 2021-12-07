@@ -68,3 +68,12 @@ def get_get_short_stat() -> schemas.ShortStat:
         if resp.ok:
             logger.debug(resp.content)
         return schemas.ShortStat.parse_raw(resp.content)
+
+
+def get_balance() -> schemas.Debts:
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        resp = session.get(f'https://{NETLOC}/api/debt')
+        if resp.ok:
+            logger.debug(resp.content)
+        return schemas.Debts.parse_raw(resp.content)

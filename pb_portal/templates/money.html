@@ -4,13 +4,13 @@
 {% endblock %}
 {% block app_content %}
 <div class="container">
-    <div class="row mt-4">
-        <h1>Transactions</h1>
-    </div>
     <div class="row d-flex justify-content-start mt-4"> 
         <div class="col-6">
+            <div class="row mt-4">
+                <h1>Transactions</h1>
+            </div>
             <form id="post_transaction" action="#" method="post" enctype="multipart/form-data">
-                <div class="row">
+                <div class="row mt-4">
                     <div class="col-3" id="sandbox-container">
                         <div class="input-group date">
                             <input type="text" class="form-control" name="date"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
@@ -42,8 +42,20 @@
                     </div>
                 </div>
                 <div class="row mt-4">
-                    <div class="col-12">
+                    <div class="col-9">
                         <input type="text" aria-label="Comment" placeholder="Comment" class="form-control" name="comment" id="comment">
+                    </div>
+                    <div class="col-3">
+                        <select class="form-select" id="from_money" name="from_money">
+                            <option selected value="">Common</option>
+                            {% for base_category in categories.children %}
+                                {% if base_category.name == 'Balance' %}
+                                    {% for balance in base_category.children %}
+                                        <option value="{{ balance.id }}">{{ balance.name }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <div class="row my-4">
@@ -54,32 +66,56 @@
             </form>
         </div>
         <div class="col-4 offset-md-1">
-            <table class="table">
-                <thead>
-                    <tr>
-                      <th scope="col"></th>
-                      <th scope="col" name="this_month"></th>
-                      <th scope="col" name="past_month"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">Income</th>
-                      <td name="this_month_income"></td>
-                      <td name="past_month_income"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Expense</th>
-                        <td name="this_month_expense"></td>
-                        <td name="past_month_expense"></td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Profit</th>
-                        <td name="this_month_profit"></td>
-                        <td name="past_month_profit"></td>
-                    </tr>
-                  </tbody>
-            </table>
+            <div class="row">
+                <table class="table">
+                    <thead>
+                        <tr>
+                          <th scope="col"></th>
+                          <th scope="col" name="this_month"></th>
+                          <th scope="col" name="past_month"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">Income</th>
+                          <td name="this_month_income"></td>
+                          <td name="past_month_income"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Expense</th>
+                            <td name="this_month_expense"></td>
+                            <td name="past_month_expense"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Profit</th>
+                            <td name="this_month_profit"></td>
+                            <td name="past_month_profit"></td>
+                        </tr>
+                      </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col"></th>
+                            {% for сurrency in сurrencies.items %}
+                                <th scope="col">{{ сurrency.name }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for child in accounts_cat.children %}
+                        <tr>
+                            <th scope="row">{{ child.name[5:] }}</th>
+                            {% for сurrency in сurrencies.items %}
+                                <td name="debt_{{ child.name[5:] }}_{{ сurrency.name }}">0</th>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div class="col-1"></div>
     </div>
@@ -234,8 +270,21 @@
             var option = '<option value="'+value[0]+'">'+value[1]+'</option>'
             $('select[name=cat-'+i+']').append(option);
         }
-        i++;
+        if ($('#base_categories').val() == {{ accounts_cat.id }}) {
+            $('#from_money option:first').prop('selected', true);
+            $('#from_money').prop('disabled', true)
+        }
 
+        if ($('#base_categories').val() == {{ income_cat.id }}) {
+            $('#from_money option:first').prop('selected', true);
+            $('#from_money').prop('disabled', true)
+        }
+
+        if ($('#base_categories').val() == {{ expence_cat.id }}) {
+            $('#from_money option:first').prop('selected', true);
+            $('#from_money').prop('disabled', false)
+        }
+        i++;
     })
 
     prepareEditForm = function(trans_id) {
@@ -402,6 +451,27 @@
                         tr_class = 'table-danger';
                     }
                     $('#transaction_rows').append('<tr class="'+tr_class+'"><td scope="row">'+row_transaction.date+'</td><td>'+row_transaction.value+'</td><td>'+row_transaction.comment+'</td><td>'+row_transaction.category+'</td><td class="d-flex justify-content-center"><button type="button" class="btn btn-info btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="edit_button" onclick="prepareEditForm('+row_transaction.id+')">Edit</button></td>')                            
+                }
+            },
+            error: function(error) {
+                console.log(error);
+            },
+        })
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('money.get_balance') }}",
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(response) {
+                for(acc of response.accs){
+                    for(debt of acc.debt){
+                        $('td[name=debt_'+acc.name.slice(5)+'_'+debt.name+']').empty()
+                        $('td[name=debt_'+acc.name.slice(5)+'_'+debt.name+']').append(Number(debt.value)/100 * -1)
+                    }
                 }
             },
             error: function(error) {
