@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 from flask import Blueprint, flash, jsonify, render_template, request
 from flask_httpauth import HTTPBasicAuth
@@ -125,8 +125,17 @@ def get_categories():
 @app_route.route('/get-short-stat', methods=['POST'])
 @auth.login_required
 def get_short_stat():
-    transaction = connectors.finam.get_get_short_stat()
-    return transaction.json()
+    first_col_dates = connectors.finam.schemas.ShortStat(
+        frm=date.fromisoformat(request.form.get('first_stat').split('/')[0]),
+        to=date.fromisoformat(request.form.get('first_stat').split('/')[1]),
+    )
+    first_col = connectors.finam.get_get_short_stat(first_col_dates)
+    sec_col_dates = connectors.finam.schemas.ShortStat(
+        frm=date.fromisoformat(request.form.get('sec_stat').split('/')[0]),
+        to=date.fromisoformat(request.form.get('sec_stat').split('/')[1]),
+    )
+    sec_col = connectors.finam.get_get_short_stat(sec_col_dates)
+    return jsonify({'first_col': first_col.dict(), 'sec_col': sec_col.dict()})
 
 
 @logger.catch
@@ -134,3 +143,43 @@ def get_short_stat():
 def get_balance():
     debt = connectors.finam.get_balance()
     return debt.json()
+
+
+@logger.catch
+@app_route.route('/get_stats_selector', methods=['POST'])
+def get_stats_selector():
+    cur_date = datetime.now().date()
+    start_cur_month = date(cur_date.year, cur_date.month, 1)
+    last_month_end = start_cur_month - timedelta(days=1)
+    start_last_month = date(last_month_end.year, last_month_end.month, 1)
+    stat_date = {
+        'cur_month': {
+            'name': cur_date.strftime("%B"),
+            'value': f'{start_cur_month.isoformat()}/{cur_date.isoformat()}'
+        },
+        'last_month': {
+            'name': last_month_end.strftime("%B"),
+            'value': f'{start_last_month.isoformat()}/{last_month_end.isoformat()}'
+        },
+    }
+    for q_num, mnth in enumerate(range(1, 12, 3), start=1):
+        q_start = date(cur_date.year, mnth, 1)
+        if q_start > cur_date:
+            break
+        if mnth + 4 < 12:
+            q_end = date(cur_date.year, mnth + 3, 1) - timedelta(days=1)
+        else:
+            q_end = date(cur_date.year + 1, 1, 1) - timedelta(days=1)
+        stat_date[f'Q{q_num}'] = {
+            'name': f'Q{q_num}-{q_start.year}',
+            'value': f'{q_start.isoformat()}/{q_end.isoformat()}'
+        }
+    year_names = {0: 'cur_year', 1: 'last_year', 2: 'last_last_year'}
+    for num_past_year in range(3):
+        start_year = date(cur_date.year - num_past_year, 1, 1)
+        end_year = date(cur_date.year - num_past_year, 12, 31)
+        stat_date[year_names[num_past_year]] = {
+            'name': str(start_year.year),
+            'value': f'{start_year.isoformat()}/{end_year.isoformat()}'
+        }
+    return jsonify(stat_date)

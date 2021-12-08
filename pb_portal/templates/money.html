@@ -71,25 +71,31 @@
                     <thead>
                         <tr>
                           <th scope="col"></th>
-                          <th scope="col" name="this_month"></th>
-                          <th scope="col" name="past_month"></th>
+                          <th scope="col">
+                            <select class="form-select form-select-sm" aria-label=".form-select-sm example" name="first_stat">
+                              </select>
+                          </th>
+                          <th scope="col">
+                            <select class="form-select form-select-sm" aria-label=".form-select-sm example" name="sec_stat">
+                              </select>
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr>
                           <th scope="row">Income</th>
-                          <td name="this_month_income"></td>
-                          <td name="past_month_income"></td>
+                          <td name="first_stat_income"></td>
+                          <td name="sec_stat_income"></td>
                         </tr>
                         <tr>
                             <th scope="row">Expense</th>
-                            <td name="this_month_expense"></td>
-                            <td name="past_month_expense"></td>
+                            <td name="first_stat_expense"></td>
+                            <td name="sec_stat_expense"></td>
                         </tr>
                         <tr>
                             <th scope="row">Profit</th>
-                            <td name="this_month_profit"></td>
-                            <td name="past_month_profit"></td>
+                            <td name="first_stat_profit"></td>
+                            <td name="sec_stat_profit"></td>
                         </tr>
                       </tbody>
                 </table>
@@ -220,6 +226,91 @@
         todayHighlight: true
     });
     $('#sandbox-container .input-group.date').datepicker('update', new Date());
+</script>
+<script>
+    var stat_refresh = function () {
+        var formData = new FormData();
+        formData.append('first_stat', $('select[name=first_stat]').val())
+        formData.append('sec_stat', $('select[name=sec_stat]').val())
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('money.get_short_stat') }}",
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(response) {
+                $('td[name=first_stat_income]').empty()
+                $('td[name=first_stat_income]').append('$' + response.first_col.income / 100)
+                $('td[name=first_stat_expense]').empty()
+                $('td[name=first_stat_expense]').append('$' + response.first_col.expense / 100)
+                $('td[name=first_stat_profit]').empty()
+                $('td[name=first_stat_profit]').append('$' + response.first_col.profit / 100)
+                $('td[name=sec_stat_income]').empty()
+                $('td[name=sec_stat_income]').append('$' + response.sec_col.income / 100)
+                $('td[name=sec_stat_expense]').empty()
+                $('td[name=sec_stat_expense]').append('$' + response.sec_col.expense / 100)
+                $('td[name=sec_stat_profit]').empty()
+                $('td[name=sec_stat_profit]').append('$' + response.sec_col.profit / 100)
+                console.log(response);
+            },
+            error: function(error) {
+                console.log(error);
+            },
+        })
+    }
+</script>
+<script>
+    $.ajax({
+            type: 'POST',
+            url: "{{ url_for('money.get_stats_selector') }}",
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(response) {
+                var stat_selects = response;
+                var stat_cols = [$('select[name=first_stat]'), $('select[name=sec_stat]')];
+                for(stat_col of stat_cols){
+                    stat_col.empty()
+                }
+                $('select[name=first_stat]').append('<option selected value="'+stat_selects.cur_month.value+'">'+stat_selects.cur_month.name+'</option>')
+                $('select[name=first_stat]').append('<option value="'+stat_selects.last_month.value+'">'+stat_selects.last_month.name+'</option>')
+                $('select[name=sec_stat]').append('<option value="'+stat_selects.cur_month.value+'">'+stat_selects.cur_month.name+'</option>')
+                $('select[name=sec_stat]').append('<option selected value="'+stat_selects.last_month.value+'">'+stat_selects.last_month.name+'</option>')
+                for(stat_col of stat_cols){
+                    if(stat_selects.Q1 != undefined){
+                        stat_col.append('<option value="'+stat_selects.Q1.value+'">'+stat_selects.Q1.name+'</option>')
+                    }
+                    if(stat_selects.Q2 != undefined){
+                        stat_col.append('<option value="'+stat_selects.Q2.value+'">'+stat_selects.Q2.name+'</option>')
+                    }
+                    if(stat_selects.Q3 != undefined){
+                        stat_col.append('<option value="'+stat_selects.Q3.value+'">'+stat_selects.Q3.name+'</option>')
+                    }
+                    if(stat_selects.Q4 != undefined){
+                        stat_col.append('<option value="'+stat_selects.Q4.value+'">'+stat_selects.Q4.name+'</option>')
+                    }
+                    stat_col.append('<option value="'+stat_selects.cur_year.value+'">'+stat_selects.cur_year.name+'</option>')
+                    stat_col.append('<option value="'+stat_selects.last_year.value+'">'+stat_selects.last_year.name+'</option>')
+                    stat_col.append('<option value="'+stat_selects.last_last_year.value+'">'+stat_selects.last_last_year.name+'</option>')
+                }
+            stat_refresh()
+            },
+            error: function(error) {
+                console.log(error);
+            },
+        })
+    $('select[name=sec_stat]').change(function (params) {
+        stat_refresh();
+    });
+    $('select[name=first_stat]').change(function (params) {
+        stat_refresh();
+    });
+    
 </script>
 <script>
     var cat_childrens;
@@ -363,6 +454,7 @@
                 $('#sum').val('')
                 $('#comment').val('')
                 refresh_transactions()
+                stat_refresh()
             },
             error: function(error) {
                 console.log(error);
@@ -388,6 +480,7 @@
             success: function(data) {
                 $('#btn_close_offcnv').click()
                 refresh_transactions()
+                stat_refresh()
             },
             error: function(error) {
                 console.log(error);
@@ -473,37 +566,6 @@
                         $('td[name=debt_'+acc.name.slice(5)+'_'+debt.name+']').append(Number(debt.value)/100 * -1)
                     }
                 }
-            },
-            error: function(error) {
-                console.log(error);
-            },
-        })
-        $.ajax({
-            type: 'POST',
-            url: "{{ url_for('money.get_short_stat') }}",
-            dataType: 'json',
-            contentType: false,
-            cache: false,
-            mimeType: "multipart/form-data",
-            processData: false,
-            success: function(response) {
-                var short_stat = response;
-                $('th[name=this_month]').empty()
-                $('th[name=this_month]').append(short_stat.now_month.name)
-                $('th[name=past_month]').empty()
-                $('th[name=past_month]').append(short_stat.past_month.name + ' (to day)')
-                $('td[name=this_month_income]').empty()
-                $('td[name=this_month_income]').append('$'+short_stat.now_month.income)
-                $('td[name=past_month_income]').empty()
-                $('td[name=past_month_income]').append('$'+short_stat.past_month.income)
-                $('td[name=this_month_expense]').empty()
-                $('td[name=this_month_expense]').append('$'+short_stat.now_month.expense)
-                $('td[name=past_month_expense]').empty()
-                $('td[name=past_month_expense]').append('$'+short_stat.past_month.expense)
-                $('td[name=this_month_profit]').empty()
-                $('td[name=this_month_profit]').append('$'+short_stat.now_month.profit)
-                $('td[name=past_month_profit]').empty()
-                $('td[name=past_month_profit]').append('$'+short_stat.past_month.profit)
             },
             error: function(error) {
                 console.log(error);
