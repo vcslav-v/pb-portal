@@ -61,10 +61,10 @@ def get_page_transaction(trans_id) -> schemas.Transaction:
         return schemas.Transaction.parse_raw(resp.content)
 
 
-def get_get_short_stat() -> schemas.ShortStat:
+def get_get_short_stat(fr_to: schemas.ShortStat) -> schemas.ShortStat:
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        resp = session.get(f'https://{NETLOC}/api/short-stat')
+        resp = session.get(f'https://{NETLOC}/api/short-stat', data=fr_to.json())
         if resp.ok:
             logger.debug(resp.content)
         return schemas.ShortStat.parse_raw(resp.content)
