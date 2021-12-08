@@ -76,7 +76,7 @@ def post_transaction():
         balance_transaction = connectors.finam.schemas.Transaction(
             date=datetime.strptime(request.form.get('date'), '%d-%m-%Y').date(),
             value=debt_value,
-            comment='',
+            comment=request.form.get('comment'),
             currency_id=int(request.form.get('сurrency')),
             category_id=int(from_cattegory_id),
         )
