@@ -48,7 +48,8 @@ def get_long_jpg(files_data):
 
 
 @logger.catch
-def get_gif(seq_prefix: str, frame_duration: int, files_data):
+def get_gif(seq_prefix: str, frames_per_sec: int, files_data):
+    frame_duration = 1000 // frames_per_sec
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
         files = []

@@ -46,7 +46,7 @@ def gify():
     try:
         result_gif = connectors.graphic.get_gif(
             request.form.get('seq_prefix') or '',
-            int(request.form.get('frame_duration')) if request.form.get('frame_duration') else None,
+            int(request.form.get('frames_per_sec')) if request.form.get('frames_per_sec') else None,
             request.files.getlist('forGif'),
         )
     except Exception as e:
