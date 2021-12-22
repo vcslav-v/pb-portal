@@ -18,9 +18,12 @@ users = {
 }
 
 CATEGORIES = connectors.finam.get_categories()
-ACCOUNTS = next(filter(lambda x: x.name == 'Balance', CATEGORIES.children))
-INCOME = next(filter(lambda x: x.name == 'Income', CATEGORIES.children))
-EXPENSE = next(filter(lambda x: x.name == 'Expense', CATEGORIES.children))
+if CATEGORIES.children:
+    ACCOUNTS = next(filter(lambda x: x.name == 'Balance', CATEGORIES.children))
+    INCOME = next(filter(lambda x: x.name == 'Income', CATEGORIES.children))
+    EXPENSE = next(filter(lambda x: x.name == 'Expense', CATEGORIES.children))
+else:
+    ACCOUNTS, INCOME, EXPENSE = [CATEGORIES] * 3
 
 
 @auth.verify_password

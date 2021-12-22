@@ -38,3 +38,18 @@ def longy():
         logger.error(e.args)
         return
     return send_file(long_jpg, mimetype='image/jpeg')
+
+
+@logger.catch
+@app_route.route('/gify', methods=['POST'])
+def gify():
+    try:
+        result_gif = connectors.graphic.get_gif(
+            request.form.get('seq_prefix') or '',
+            int(request.form.get('frame_duration')) if request.form.get('frame_duration') else None,
+            request.files.getlist('forGif'),
+        )
+    except Exception as e:
+        logger.error(e.args)
+        return
+    return send_file(result_gif, mimetype='image/gif')

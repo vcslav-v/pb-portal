@@ -8,7 +8,7 @@
     </div>
     <form id="uploadTiny" action="#" method="post" enctype="multipart/form-data">
     <div class="row m-4">
-        <div class="col-6">
+        <div class="col-8">
             <div class="input-group">
                     <input class="form-control w-25" type="file" name="forTiny" id="forTiny" multiple>
                     <input type="text" class="form-control" placeholder="Width" name="resize_width">
@@ -29,7 +29,7 @@
     </div>
     <form id="uploadLong" action="#" method="post" enctype="multipart/form-data">
         <div class="row m-4">
-            <div class="col-6">
+            <div class="col-8">
                 <div class="input-group">
                         <input class="form-control" type="file" name="forLong" id="forLong" multiple>
                         <button class="btn btn-outline-secondary" type="submit" id="longUpload" name="btn" value="longUpload">Upload</button>
@@ -40,7 +40,29 @@
                 </div>
             </div>
         </div>
-        </form>
+    </form>
+    <div class="row m-4 "></div>
+    <div class="row m-4 ">
+        <div class="col-4">
+            <h3>Make gif</h3>
+        </div>
+    </div>
+    <form id="uploadForGif" action="#" method="post" enctype="multipart/form-data">
+        <div class="row m-4">
+            <div class="col-8">
+                <div class="input-group">
+                        <input class="form-control" type="file" name="forGif" id="forGif" multiple>
+                        <input type="text" class="form-control" placeholder="Prefix" name="seq_prefix">
+                        <input type="text" class="form-control" placeholder="Frame duration in milisec" name="frame_duration">
+                        <button class="btn btn-outline-secondary" type="submit" id="gifUpload" name="btn" value="gifUpload">Upload</button>
+                        <button class="btn btn-outline-secondary visually-hidden" type="button" id="gifLoading">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Loading...
+                        </button>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 {% endblock %}
 {% block script %}
@@ -49,6 +71,8 @@
     var myFile = document.getElementById('forTiny');
     var longForm = document.getElementById('uploadLong');
     var longFile = document.getElementById('forLong');
+    var gifForm = document.getElementById('uploadForGif');
+    var gifFile = document.getElementById('forGif');
     myForm.onsubmit = function(event) {
         event.preventDefault();
         $('#tinyUpload').addClass('visually-hidden')
@@ -107,6 +131,39 @@
                     var link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);
                     link.download = 'long.jpg';
+                    link.click();
+                },
+                error: function(error) {
+                    console.log(error);
+                },
+                
+            });
+    };
+    gifForm.onsubmit = function(event) {
+        event.preventDefault();
+        $('#gifUpload').addClass('visually-hidden')
+        $('#gifLoading').removeClass('visually-hidden')
+        var files = gifFile.files;
+        var formData = new FormData(gifForm);
+        $.ajax({
+                type: 'POST',
+                url: "{{ url_for('graphics_tools.gify') }}",
+                data: formData,
+                dataType: 'binary',
+                xhrFields: {
+                    'responseType': 'blob'
+                },
+                contentType: false,
+                cache: false,
+                mimeType: "multipart/form-data",
+                processData: false,
+                success: function(data, status, xhr) {
+                    $('#gifLoading').addClass('visually-hidden')
+                    $('#gifUpload').removeClass('visually-hidden')
+                    var blob = new Blob([data], {type: xhr.getResponseHeader('Content-Type')});
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'result.gif';
                     link.click();
                 },
                 error: function(error) {
