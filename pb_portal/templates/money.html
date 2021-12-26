@@ -178,10 +178,12 @@
               </table>
         </div>
         <div class="col-12 d-flex justify-content-center">
-            <div class="spinner-grow visually-hidden" role="status" id="next_page">
+            <div class="spinner-grow visually-hidden" role="status" id="next_page_point">
                 <span class="visually-hidden">Loading...</span>
               </div>
         </div>
+        <div class="col-12">
+            <button type="button" class="btn btn-outline-secondary w-100" id="next_page">More</button>
     </div>
 </div>
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
@@ -541,12 +543,28 @@
     });
 </script>
 <script>
-    var page = 1;
-    refresh_transactions = function(page){
-        var formData = new FormData();
+    filter_transactions = function(){
         var show_income = $('#show_income').is(':checked')
         var show_expense = $('#show_expense').is(':checked')
         var show_balance = $('#show_balance').is(':checked')
+        for (trans_row of $('#transaction_rows tr')){
+            if (trans_row.getAttribute('name') == 'Income' & show_income) {
+                $(trans_row).removeClass('visually-hidden')
+            } else if (trans_row.getAttribute('name') == 'Expense' & show_expense) {
+                $(trans_row).removeClass('visually-hidden')
+            } else if (trans_row.getAttribute('name') == 'Balance' & show_balance) {
+                $(trans_row).removeClass('visually-hidden')
+            } else {
+                $(trans_row).addClass('visually-hidden')
+            }
+        }
+    }
+</script>
+<script>
+    var page = 1;
+    refresh_transactions = function(page){
+        var formData = new FormData();
+
         formData.append('from_date', $('input[name=from_date]').val())
         if(page) {
             formData.append('page', page);
@@ -567,16 +585,15 @@
                 var transactions = response;
                 for(row_transaction of transactions.rows){
                     var tr_class = '';
-                    if (row_transaction.base_category == 'Income' & show_income) {
+                    if (row_transaction.base_category == 'Income') {
                         tr_class = 'table-success';
-                        $('#transaction_rows').append('<tr class="'+tr_class+'"><td scope="row">'+row_transaction.date+'</td><td>'+row_transaction.value+'</td><td>'+row_transaction.comment+'</td><td>'+row_transaction.category+'</td><td class="d-flex justify-content-center"><button type="button" class="btn btn-info btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="edit_button" onclick="prepareEditForm('+row_transaction.id+')">Edit</button></td>');
-                    } else if (row_transaction.base_category == 'Expense' & show_expense) {
+                    } else if (row_transaction.base_category == 'Expense') {
                         tr_class = 'table-danger';
-                        $('#transaction_rows').append('<tr class="'+tr_class+'"><td scope="row">'+row_transaction.date+'</td><td>'+row_transaction.value+'</td><td>'+row_transaction.comment+'</td><td>'+row_transaction.category+'</td><td class="d-flex justify-content-center"><button type="button" class="btn btn-info btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="edit_button" onclick="prepareEditForm('+row_transaction.id+')">Edit</button></td>');
-                    } else if (row_transaction.base_category == 'Balance' & show_balance){
-                        $('#transaction_rows').append('<tr class="'+tr_class+'"><td scope="row">'+row_transaction.date+'</td><td>'+row_transaction.value+'</td><td>'+row_transaction.comment+'</td><td>'+row_transaction.category+'</td><td class="d-flex justify-content-center"><button type="button" class="btn btn-info btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="edit_button" onclick="prepareEditForm('+row_transaction.id+')">Edit</button></td>');
                     }
+                    $('#transaction_rows').append('<tr class="'+tr_class+'" name="'+row_transaction.base_category+'"><td scope="row">'+row_transaction.date+'</td><td>'+row_transaction.value+'</td><td>'+row_transaction.comment+'</td><td>'+row_transaction.category+'</td><td class="d-flex justify-content-center"><button type="button" class="btn btn-info btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="edit_button" onclick="prepareEditForm('+row_transaction.id+')">Edit</button></td>');
+
                 }
+                filter_transactions();
             },
             error: function(error) {
                 console.log(error);
@@ -610,17 +627,21 @@
         refresh_transactions();
     });
     $('#filter_cats').change(function(){
-        refresh_transactions();
+        filter_transactions();
     });
     $(window).scroll(function() {
         var scroll = $(window).scrollTop() + $(window).height();
-        var offset = $('#next_page').offset().top;
+        var offset = $('#next_page_point').offset().top;
         if (scroll > offset) {
-            $('#next_page').removeClass('visually-hidden')
+            $('#next_page_point').removeClass('visually-hidden')
             page++;
             refresh_transactions(page);
-            $('#next_page').addClass('visually-hidden')
+            $('#next_page_point').addClass('visually-hidden')
         }
     });
+    $('#next_page').on('click', function(){
+        page++;
+        refresh_transactions(page);
+    })
 </script>
 {% endblock %}
