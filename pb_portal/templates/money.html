@@ -127,11 +127,37 @@
     </div>
 </div>
 <div class="container">
-    <div class="row mt-5" id="from_date">
-        <div class="col-3" id="sandbox-container">
-            <div class="input-group date">
-                <span class="input-group-text" id="basic-addon1">from</span>
-                <input type="text" class="form-control" name="from_date" aria-label="from_date"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+    <div class="row mt-5 align-items-center">
+        <div class="col-3">
+            <div id="from_date">
+                <div id="sandbox-container">
+                    <div class="input-group date">
+                        <span class="input-group-text" id="basic-addon1">from</span>
+                        <input type="text" class="form-control" name="from_date" aria-label="from_date"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4 offset-md-5" id="filter_cats">
+            <div class="row">
+                <div class="col">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="show_income" checked>
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Income</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="show_expense" checked>
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Expense</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="show_balance" checked>
+                        <label class="form-check-label" for="flexSwitchCheckChecked">Balance</label>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -518,6 +544,9 @@
     var page = 1;
     refresh_transactions = function(page){
         var formData = new FormData();
+        var show_income = $('#show_income').is(':checked')
+        var show_expense = $('#show_expense').is(':checked')
+        var show_balance = $('#show_balance').is(':checked')
         formData.append('from_date', $('input[name=from_date]').val())
         if(page) {
             formData.append('page', page);
@@ -538,12 +567,15 @@
                 var transactions = response;
                 for(row_transaction of transactions.rows){
                     var tr_class = '';
-                    if (row_transaction.base_category == 'Income') {
+                    if (row_transaction.base_category == 'Income' & show_income) {
                         tr_class = 'table-success';
-                    } else if (row_transaction.base_category == 'Expense') {
+                        $('#transaction_rows').append('<tr class="'+tr_class+'"><td scope="row">'+row_transaction.date+'</td><td>'+row_transaction.value+'</td><td>'+row_transaction.comment+'</td><td>'+row_transaction.category+'</td><td class="d-flex justify-content-center"><button type="button" class="btn btn-info btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="edit_button" onclick="prepareEditForm('+row_transaction.id+')">Edit</button></td>');
+                    } else if (row_transaction.base_category == 'Expense' & show_expense) {
                         tr_class = 'table-danger';
+                        $('#transaction_rows').append('<tr class="'+tr_class+'"><td scope="row">'+row_transaction.date+'</td><td>'+row_transaction.value+'</td><td>'+row_transaction.comment+'</td><td>'+row_transaction.category+'</td><td class="d-flex justify-content-center"><button type="button" class="btn btn-info btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="edit_button" onclick="prepareEditForm('+row_transaction.id+')">Edit</button></td>');
+                    } else if (row_transaction.base_category == 'Balance' & show_balance){
+                        $('#transaction_rows').append('<tr class="'+tr_class+'"><td scope="row">'+row_transaction.date+'</td><td>'+row_transaction.value+'</td><td>'+row_transaction.comment+'</td><td>'+row_transaction.category+'</td><td class="d-flex justify-content-center"><button type="button" class="btn btn-info btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="edit_button" onclick="prepareEditForm('+row_transaction.id+')">Edit</button></td>');
                     }
-                    $('#transaction_rows').append('<tr class="'+tr_class+'"><td scope="row">'+row_transaction.date+'</td><td>'+row_transaction.value+'</td><td>'+row_transaction.comment+'</td><td>'+row_transaction.category+'</td><td class="d-flex justify-content-center"><button type="button" class="btn btn-info btn-sm" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="edit_button" onclick="prepareEditForm('+row_transaction.id+')">Edit</button></td>')                            
                 }
             },
             error: function(error) {
@@ -573,7 +605,11 @@
         })
     }
     refresh_transactions();
+    
     $('#from_date').change(function(){
+        refresh_transactions();
+    });
+    $('#filter_cats').change(function(){
         refresh_transactions();
     });
     $(window).scroll(function() {
