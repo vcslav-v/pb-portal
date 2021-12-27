@@ -561,7 +561,7 @@
     }
 </script>
 <script>
-    var page = 1;
+    var page = 0;
     refresh_transactions = function(page){
         var formData = new FormData();
 
@@ -629,16 +629,16 @@
     $('#filter_cats').change(function(){
         filter_transactions();
     });
-    $(window).scroll(function() {
-        var scroll = $(window).scrollTop() + $(window).height();
-        var offset = $('#next_page_point').offset().top;
-        if (scroll > offset) {
-            $('#next_page_point').removeClass('visually-hidden')
-            page++;
-            refresh_transactions(page);
-            $('#next_page_point').addClass('visually-hidden')
-        }
-    });
+    // $(window).scroll(function() {
+    //     var scroll = $(window).scrollTop() + $(window).height();
+    //     var offset = $('#next_page_point').offset().top;
+    //     if (scroll > offset) {
+    //         $('#next_page_point').removeClass('visually-hidden')
+    //         page++;
+    //         refresh_transactions(page);
+    //         $('#next_page_point').addClass('visually-hidden')
+    //     }
+    // });
     $('#next_page').on('click', function(){
         page++;
         refresh_transactions(page);
