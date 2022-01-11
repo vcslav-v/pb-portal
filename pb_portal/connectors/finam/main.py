@@ -77,3 +77,11 @@ def get_balance() -> schemas.Debts:
         if resp.ok:
             logger.debug(resp.content)
         return schemas.Debts.parse_raw(resp.content)
+
+
+def get_site_stat_data(year: int) -> schemas.FinSiteStat:
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        resp = session.get(f'https://{NETLOC}/api/site_stat_data?year={year}', )
+        logger.debug(resp.content)
+        return schemas.FinSiteStat.parse_raw(resp.content)

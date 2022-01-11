@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-6">
+            <h1>Finance statement, $</h1>
+        </div>
+        <div class="col-2 offset-md-4" name="yearSelect">
+            <select class="form-select" id='year'>
+                <option selected>2022</option>
+                <option value="1">2021</option>
+                <option value="2">2020</option>
+                <option value="3">2019</option>
+                <option value="3">2018</option>
+                <option value="3">2017</option>
+              </select>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-3">
+            <h2>Expenses</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div id="expenseGraph"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                  <tr name="plusFreebieExpenseTableHeader">
+                  </tr>
+                </thead>
+                <tbody name="plusFreebieExpenseTableBody">
+                </tbody>
+              </table>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-3">
+            <h2>Incomes</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div id="incomeGraph"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead>
+                  <tr name="plusFreebieIncomeTableHeader">
+                  </tr>
+                </thead>
+                <tbody name="plusFreebieIncomeTableBody">
+                </tbody>
+              </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/plotly-2.8.3.min.js') }}"></script>
+<script>
+    var expenseGraph = document.getElementById('expenseGraph');
+    var incomeGraph = document.getElementById('incomeGraph');
+    var layout = {
+        showlegend: true,
+        barmode: 'stack'
+    }
+    refresh = function (year) {
+        var formData = new FormData();
+        formData.append('year', year)
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('fin_stat.get_site_stat_data') }}",
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(response) {
+                for(fin_data of response.expense_graphs){
+                    $("tr[name='plusFreebieExpenseTableHeader']").empty();
+                    $("tr[name='plusFreebieExpenseTableHeader']").append('<th scope="col">Category/Month</th>')
+                    for(x of fin_data.x){
+                        $("tr[name='plusFreebieExpenseTableHeader']").append('<th scope="col">'+x+'</th>')
+                    }
+                    break
+                }
+                var plusFreebieExpenseTableBody = $("tbody[name='plusFreebieExpenseTableBody']")
+                plusFreebieExpenseTableBody.empty();
+                for(fin_data of response.expense_graphs){
+                    var row = '<tr>';
+                    row += '<th scope="row">'+fin_data.name+'</th>';
+                    for(y of fin_data.y){
+                        row += '<td>'+y+'</td>';
+                    }
+                    row += '</tr>';
+                    plusFreebieExpenseTableBody.append(row);
+                }
+                
+                for(fin_data of response.income_graphs){
+                    $("tr[name='plusFreebieIncomeTableHeader']").empty();
+                    $("tr[name='plusFreebieIncomeTableHeader']").append('<th scope="col">Category/Month</th>')
+                    for(x of fin_data.x){
+                        $("tr[name='plusFreebieIncomeTableHeader']").append('<th scope="col">'+x+'</th>')
+                    }
+                    break
+                }
+                var plusFreebieIncomeTableBody = $("tbody[name='plusFreebieIncomeTableBody']");
+                plusFreebieIncomeTableBody.empty();
+                for(fin_data of response.income_graphs){
+                    var row = '<tr>';
+                    row += '<th scope="row">'+fin_data.name+'</th>';
+                    for(y of fin_data.y){
+                        row += '<td>'+y+'</td>';
+                    }
+                    row += '</tr>';
+                    plusFreebieIncomeTableBody.append(row);
+                }
+                Plotly.newPlot(expenseGraph, response.expense_graphs, layout, {'displayModeBar': false});
+                Plotly.newPlot(incomeGraph, response.income_graphs, layout, {'displayModeBar': false});
+            },
+            error: function(error) {
+                console.log(error);
+            },
+        })
+    };
+    $(function(){
+        refresh($('#year option:selected').text())
+        $('#year').change(function () {
+            console.log($('#year option:selected').text())
+            refresh($('#year option:selected').text())
+        })
+        
+    });
+</script>
+{% endblock %}
