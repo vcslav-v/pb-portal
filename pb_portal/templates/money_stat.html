@@ -78,12 +78,6 @@
                         <label class="form-check-label" for="flexSwitchCheckChecked">Expense</label>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" id="show_balance" checked>
-                        <label class="form-check-label" for="flexSwitchCheckChecked">Balance</label>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -111,13 +105,10 @@
     filter_transactions = function(){
         var show_income = $('#show_income').is(':checked')
         var show_expense = $('#show_expense').is(':checked')
-        var show_balance = $('#show_balance').is(':checked')
         for (trans_row of $('#transaction_rows tr')){
             if (trans_row.getAttribute('name') == 'Income' & show_income) {
                 $(trans_row).removeClass('visually-hidden')
             } else if (trans_row.getAttribute('name') == 'Expense' & show_expense) {
-                $(trans_row).removeClass('visually-hidden')
-            } else if (trans_row.getAttribute('name') == 'Balance' & show_balance) {
                 $(trans_row).removeClass('visually-hidden')
             } else {
                 $(trans_row).addClass('visually-hidden')
