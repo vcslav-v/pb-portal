@@ -19,6 +19,16 @@
     </div>
     <div class="row mt-4">
         <div class="col-3">
+            <h2>Profit</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div id="profitGraph"></div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-3">
             <h2>Expenses</h2>
         </div>
     </div>
@@ -119,10 +129,14 @@
 <script>
     var expenseGraph = document.getElementById('expenseGraph');
     var incomeGraph = document.getElementById('incomeGraph');
+    var profitGraph = document.getElementById('profitGraph');
     var layout = {
         showlegend: true,
         barmode: 'stack'
     }
+    var profit_layout = {
+        showlegend: false
+        };
     refresh = function (year) {
         var formData = new FormData();
         formData.append('year', year)
@@ -176,6 +190,7 @@
                     row += '</tr>';
                     plusFreebieIncomeTableBody.append(row);
                 }
+                Plotly.newPlot(profitGraph, response.profit_graphs, profit_layout, {'displayModeBar': false});
                 Plotly.newPlot(expenseGraph, response.expense_graphs, layout, {'displayModeBar': false});
                 Plotly.newPlot(incomeGraph, response.income_graphs, layout, {'displayModeBar': false});
                 
