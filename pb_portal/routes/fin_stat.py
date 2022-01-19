@@ -1,7 +1,6 @@
-import json
 import os
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, url_for
 from flask_httpauth import HTTPBasicAuth
 from loguru import logger
 from pb_portal import connectors
@@ -25,41 +24,26 @@ def verify_password(username, password):
 
 
 @logger.catch
-@app_route.route('/', methods=['GET'])
+@app_route.route('/PB', methods=['GET'])
 @auth.login_required
 def fin_stat():
-    graph = {'data': [
-        {
-            'x': ['01-2020', '02-2020', '03-2020', '04-2020', '05-2020', '06-2020', '07-2020', '08-2020', '09-2020', '10-2020', '11-2020', '12-2020'],
-            'y': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-            'name': 'Plus',
-            'type': 'bar'
-        },
-        {
-            'x': ['01-2020', '02-2020', '03-2020', '04-2020', '05-2020', '06-2020', '07-2020', '08-2020', '09-2020', '10-2020', '11-2020', '12-2020'],
-            'y': [12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
-            'name': 'Freebie',
-            'type': 'bar'
-        },
-        {
-            'x': ['01-2020', '02-2020', '03-2020', '04-2020', '05-2020', '06-2020', '07-2020', '08-2020', '09-2020', '10-2020', '11-2020', '12-2020'],
-            'y': [5, 3, 2, 6, 1, 7, 8, 5, 2, 3, 2, 5],
-            'name': "Employ's bonuses",
-            'type': 'bar'
-        },
-        {
-            'x': ['01-2020', '02-2020', '03-2020', '04-2020', '05-2020', '06-2020', '07-2020', '08-2020', '09-2020', '10-2020', '11-2020', '12-2020'],
-            'y': [4, 3, 6, 9, 8, 7, 1, 5, 12, 3, 2, 11],
-            'name': 'Develop',
-            'type': 'bar'
-        }
-    ]}
-    income_graph_json = json.dumps(graph)
-    expense_graph_json = json.dumps(graph)
+    name = 'PB'
     return render_template(
         'money_stat.html',
-        income_graph_json=income_graph_json,
-        expense_graph_json=expense_graph_json,
+        name=name,
+        api_url=url_for('fin_stat.get_site_stat_data'),
+    )
+
+
+@logger.catch
+@app_route.route('/TD', methods=['GET'])
+@auth.login_required
+def fin_stat_td():
+    name = 'TD'
+    return render_template(
+        'money_stat.html',
+        name=name,
+        api_url=url_for('fin_stat.get_site_stat_data'),
     )
 
 
@@ -68,5 +52,6 @@ def fin_stat():
 @auth.login_required
 def get_site_stat_data():
     year = int(request.form.get('year'))
-    page_data = connectors.finam.get_site_stat_data(year)
+    site_name = request.form.get('site_name')
+    page_data = connectors.finam.get_site_stat_data(year, site_name)
     return page_data.json()
