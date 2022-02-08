@@ -5,7 +5,7 @@ from pb_portal import routes
 
 app = Flask(__name__)
 auth = HTTPBasicAuth()
-app.register_blueprint(routes.graphic_tools.app_route, name='graphics_tools')
+app.register_blueprint(routes.tools.app_route, name='tools')
 app.register_blueprint(routes.drbl_like.app_route, name='drbl_like')
 app.register_blueprint(routes.money.app_route, name='money')
 app.register_blueprint(routes.fin_stat.app_route, name='fin_stat')

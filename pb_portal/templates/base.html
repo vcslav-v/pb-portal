@@ -21,8 +21,14 @@
                             <li class="nav-item">
                                 <a class="nav-link" aria-current="page" href="{{ url_for('tag_board.tag_board') }}">Stock's tags</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link"  aria-current="page" href="{{ url_for('graphics_tools.graphics_tools') }}">Graphics tools</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Tools
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                  <li><a class="dropdown-item" href="{{ url_for('tools.graphics') }}">Graphics</a></li>
+                                  <li><a class="dropdown-item" href="{{ url_for('tools.utm') }}">UTM</a></li>
+                                </ul>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link"  aria-current="page" href="{{ url_for('drbl_like.like_dribbble') }}">Dribbble liker</a>

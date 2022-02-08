@@ -6,10 +6,18 @@ app_route = Blueprint('route', __name__, url_prefix='/graphics-tools')
 
 
 @logger.catch
-@app_route.route('/', methods=['GET', 'POST'])
-def graphics_tools():
+@app_route.route('/graphics', methods=['GET'])
+def graphics():
     return render_template(
         'graphics_tools.html',
+    )
+
+
+@logger.catch
+@app_route.route('/utm', methods=['GET'])
+def utm():
+    return render_template(
+        'utm_tools.html',
     )
 
 
@@ -53,3 +61,9 @@ def gify():
         logger.error(e.args)
         return
     return send_file(result_gif, mimetype='image/gif')
+
+
+@logger.catch
+@app_route.route('/get_utm', methods=['POST'])
+def get_utm():
+    return connectors.link_dealer.get_utm(**request.form.to_dict()).json()
