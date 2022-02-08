@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, send_file
 from loguru import logger
 from pb_portal import connectors
 
-app_route = Blueprint('route', __name__, url_prefix='/graphics-tools')
+app_route = Blueprint('route', __name__, url_prefix='/tools')
 
 
 @logger.catch
