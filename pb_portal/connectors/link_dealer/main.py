@@ -5,7 +5,7 @@ from pb_portal.connectors.link_dealer import schemas
 from loguru import logger
 
 URL = os.environ.get('LINK_DEALER_URL') or 'http://127.0.0.1:8000'
-TOKEN = os.environ.get('TAG_BOARD_TOKEN') or 'pass'
+TOKEN = os.environ.get('LINK_DEALER_TOKEN') or 'pass'
 
 
 def get_utm(link, source, item_type, project) -> schemas.utms:
