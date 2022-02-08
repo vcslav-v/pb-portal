@@ -12,7 +12,7 @@ def get_utm(link, source, item_type, project) -> schemas.utms:
     with requests.sessions.Session() as session:
         if not project or project.isspace():
             project = 'pb'
-        session.auth = ('root', TOKEN)
+        session.auth = ('api', TOKEN)
         data = {
             "link": link,
             "source": source,
