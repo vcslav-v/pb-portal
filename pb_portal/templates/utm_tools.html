@@ -44,20 +44,9 @@
                   <tr>
                     <th scope="col">to</th>
                     <th scope="col">Link</th>
-                    <th scope="col">Short link</th>
                   </tr>
                 </thead>
                 <tbody name="body_link_table">
-                  <tr>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                  </tr>
-                  <tr>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                  </tr>
                   
                 </tbody>
               </table>
@@ -87,7 +76,7 @@
                     $('#link_table').removeClass("visually-hidden");
                     body_link_table.empty();
                     for(utm of data.utms){
-                        body_link_table.append('<tr><td>' + utm.desc + '</td><td><a href="' + utm.link + '">'+ utm.link +'</a></td><td><a href="' + utm.short_link + '">'+ utm.short_link +'</a></td></tr>');
+                        body_link_table.append('<tr><td>' + utm.desc + '</td><td><a href="' + utm.link + '">'+ utm.link +'</a></td></tr>');
                     }
                 },
                 error: function(error) {
