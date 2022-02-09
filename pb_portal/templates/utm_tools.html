@@ -76,7 +76,7 @@
                     $('#link_table').removeClass("visually-hidden");
                     body_link_table.empty();
                     for(utm of data.utms){
-                        body_link_table.append('<tr><td>' + utm.desc + '</td><td><a href="' + utm.link + '">'+ utm.link +'</a></td></tr>');
+                        body_link_table.append('<tr><td>' + utm.desc + '</td><td><a target="_blank" href="' + utm.link + '">'+ utm.link +'</a></td></tr>');
                     }
                 },
                 error: function(error) {
