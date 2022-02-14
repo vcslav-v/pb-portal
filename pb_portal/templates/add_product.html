@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block head %}
+{% endblock %}
+{% block app_content %}
+<div class="row m-4">
+    <div class="col-4">
+        <h3>Add product</h3>
+    </div>
+</div>
+<div class="row m-4">
+    <div class="col-8">
+        <form id="product_form" action="#" method="post" enctype="multipart/form-data">
+            <input name="product_name" type="text" class="form-control mb-3" placeholder="Product name" aria-label="Product name" aria-describedby="button-addon2">
+            
+            <div class="input-group mb-4">
+                <label class="input-group-text" for="inputGroupSelect01">Creator</label>
+                <select name="creator_id" class="form-select" id="inputGroupSelect01">
+                    {% for creator in creators %}
+                        <option value="{{ creator.ident }}">{{creator.name}}</option>
+                    {% endfor %}
+                </select>
+                <span class="input-group-text" id="inputGroup-sizing-default">is_bundle</span>
+                <div class="input-group-text">
+                    <input name="is_bundle" class="form-check-input mt-0" type="checkbox" value="is_bundle" aria-label="Checkbox for following text input">
+                </div>
+            </div>
+            <div id="item_place">
+            </div>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+                <button type="button" id="add_item_field_btn" class="btn btn-outline-secondary">Add item</button>
+            </div>
+            <div class="d-grid gap-2 mb-5">
+                <button id="load_btn" class="btn btn-outline-info visually-hidden" type="button" disabled>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Uploading...
+                </button>
+                <button id="sub_btn" class="btn btn-outline-success" type="submit">Add product</button>
+            </div>
+        </form>
+        <div id="modal_result" class="modal" tabindex="-1">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Add product result</h5>
+                </div>
+                <div class="modal-body">
+                  <p id="modal_text">Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                  <button id="close_modal" type="button" class="btn btn-outline-primary">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    $("#add_item_field_btn").on("click", function(){
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('products.get_item_field') }}",
+            dataType: 'html',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(response) {
+                $("#item_place").append(response)
+            },
+            error: function(error) {
+                console.log(error);
+            },
+        })
+    })
+</script>
+<script>
+    var productForm = document.getElementById('product_form');
+    productForm.onsubmit = function(){
+        event.preventDefault();
+        $('#load_btn').removeClass('visually-hidden')
+        $('#sub_btn').addClass('visually-hidden')
+        var formData = new FormData(productForm);
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('products.post_product') }}",
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(data) {
+                $('#modal_text').empty()
+                $('#modal_text').append(data.arg)
+                $('#modal_result').show()
+                $('#sub_btn').removeClass('visually-hidden')
+                $('#load_btn').addClass('visually-hidden')
+                console.log(data);
+            },
+            error: function(error) {
+                console.log(error);
+            },
+        });
+    }
+</script>
+<script>
+    $('#close_modal').on('click', function(){
+        $('#modal_result').hide()
+    });
+</script>
+{% endblock %}

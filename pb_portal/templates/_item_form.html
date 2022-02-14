@@ -1,0 +1,16 @@
+<div class="input-group mb-3">
+    <input name="item|url|{{ form_ident }}" type="text" class="form-control w-50" placeholder="url" aria-label="url" aria-describedby="button-addon2">
+    <select name="item|account_id|{{ form_ident }}" class="form-select" id="inputGroupSelect01">
+        {% for market in markets %}
+            <option value="{{ market.account_ident }}">{{market.market_name}}/{{market.account_name}}</option>
+        {% endfor %}
+    </select>
+</div>
+<div class="input-group mb-3">
+    <span class="input-group-text" id="inputGroup-sizing-default">$</span>
+    <input name="item|personal_price|{{ form_ident }}" type="text" class="form-control" placeholder="personal" aria-label="personal" aria-describedby="button-addon2">
+    <span class="input-group-text" id="inputGroup-sizing-default">$</span>
+    <input name="item|commercial_price|{{ form_ident }}" type="text" class="form-control" placeholder="commercial" aria-label="commercial" aria-describedby="button-addon2">
+    <span class="input-group-text" id="inputGroup-sizing-default">$</span>
+    <input name="item|extended_price|{{ form_ident }}" type="text" class="form-control" placeholder="extended" aria-label="extended" aria-describedby="button-addon2">
+</div>

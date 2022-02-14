@@ -1,4 +1,4 @@
-from . import drbl_like, money, tag_board, fin_stat, tools
+from . import drbl_like, money, tag_board, fin_stat, tools, products
 
 __all__ = [
     'tools',
@@ -6,4 +6,5 @@ __all__ = [
     'money',
     'tag_board',
     'fin_stat',
+    'products',
 ]
