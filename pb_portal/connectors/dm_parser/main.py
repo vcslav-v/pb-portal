@@ -4,14 +4,15 @@ import requests
 from pb_portal.connectors.dm_parser import schemas
 from loguru import logger
 
-URL = os.environ.get('LINK_DEALER_URL') or 'http://127.0.0.1:8000'
-TOKEN = os.environ.get('LINK_DEALER_TOKEN') or 'pass'
+URL = os.environ.get('PRODUCT_BASE_URL') or 'http://127.0.0.1:8000'
+TOKEN = os.environ.get('PRODUCT_BASE_TOKEN') or 'pass'
 
 
 def get_creators() -> schemas.creators:
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
         resp = session.post(f'{URL}/api/get_creators')
+        logger.debug(resp.content)
         if resp.ok:
             logger.debug(resp.content)
             return schemas.creators.parse_raw(resp.content)
