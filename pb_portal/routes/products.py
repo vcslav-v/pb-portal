@@ -30,7 +30,6 @@ def verify_password(username, password):
 
 @logger.catch
 @app_route.route('/add', methods=['GET'])
-@auth.login_required
 def add():
     return render_template(
         'add_product.html',
@@ -40,7 +39,6 @@ def add():
 
 @logger.catch
 @app_route.route('/get_item_field', methods=['POST'])
-@auth.login_required
 def get_item_field():
     return render_template(
         '_item_form.html',
@@ -51,7 +49,6 @@ def get_item_field():
 
 @logger.catch
 @app_route.route('/post_product', methods=['POST'])
-@auth.login_required
 def post_product():
     result = connectors.dm_parser.schemas.result()
     product_name = request.form.get('product_name')
