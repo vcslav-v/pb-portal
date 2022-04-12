@@ -6,7 +6,7 @@ from loguru import logger
 from pb_portal import connectors
 from werkzeug.security import check_password_hash, generate_password_hash
 
-app_route = Blueprint('route', __name__, url_prefix='/fin_stat')
+app_route = Blueprint('route', __name__, url_prefix='/reports')
 
 auth = HTTPBasicAuth()
 users = {
@@ -24,26 +24,38 @@ def verify_password(username, password):
 
 
 @logger.catch
-@app_route.route('/PB', methods=['GET'])
+@app_route.route('/PB-finance', methods=['GET'])
 @auth.login_required
 def fin_stat():
     name = 'PB'
     return render_template(
         'money_stat.html',
         name=name,
-        api_url=url_for('fin_stat.get_site_stat_data'),
+        api_url=url_for('reports.get_site_stat_data'),
     )
 
 
 @logger.catch
-@app_route.route('/TD', methods=['GET'])
+@app_route.route('/TD-finance', methods=['GET'])
 @auth.login_required
 def fin_stat_td():
     name = 'TD'
     return render_template(
         'money_stat.html',
         name=name,
-        api_url=url_for('fin_stat.get_site_stat_data'),
+        api_url=url_for('reports.get_site_stat_data'),
+    )
+
+
+@logger.catch
+@app_route.route('/PB-plus', methods=['GET'])
+@auth.login_required
+def plus_report():
+    name = 'Plus'
+    return render_template(
+        'plus_report.html',
+        name=name,
+        api_url=url_for('reports.get_plus_data'),
     )
 
 
@@ -54,4 +66,12 @@ def get_site_stat_data():
     year = int(request.form.get('year'))
     site_name = request.form.get('site_name')
     page_data = connectors.finam.get_site_stat_data(year, site_name)
+    return page_data.json()
+
+
+@logger.catch
+@app_route.route('/get-plus-data', methods=['POST'])
+@auth.login_required
+def get_plus_data():
+    page_data = connectors.finam.get_plus_data()
     return page_data.json()

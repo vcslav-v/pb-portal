@@ -85,3 +85,11 @@ def get_site_stat_data(year: int, site_name: str) -> schemas.FinSiteStat:
         resp = session.get(f'https://{NETLOC}/api/site_stat_data?year={year}&site_name={site_name}')
         logger.debug(resp.content)
         return schemas.FinSiteStat.parse_raw(resp.content)
+
+
+def get_plus_data() -> schemas.PlusSiteData:
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        resp = session.get(f'https://{NETLOC}/api/get_plus_data')
+        logger.debug(resp.content)
+        return schemas.PlusSiteData.parse_raw(resp.content)
