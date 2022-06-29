@@ -83,6 +83,7 @@ class Graph(BaseModel):
     x: list[str] = []
     y: list[int] = []
     yaxis: str = 'y'
+    opacity: float = 1.0
     name: str = ''
     type: str = 'bar'
 
@@ -93,5 +94,6 @@ class FinSiteStat(TransactionPage):
     profit_graphs: list[Graph] = []
 
 
-class PlusSiteData(BaseModel):
-    plus_graphs: list[Graph] = []
+class PlusSiteData(TransactionPage):
+    gross_data: list[Graph] = []
+    flow_data: list[Graph] = []
