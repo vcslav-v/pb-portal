@@ -82,6 +82,7 @@ class Debts(BaseModel):
 class Graph(BaseModel):
     x: list[str] = []
     y: list[int] = []
+    yaxis: str = 'y'
     name: str = ''
     type: str = 'bar'
 

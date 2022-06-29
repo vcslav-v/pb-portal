@@ -19,7 +19,12 @@
 <script>
     var subsGraph = document.getElementById('subsGraph');
     var subs_layout = {
-        showlegend: true
+        showlegend: true,
+        yaxis: {},
+        yaxis2: {
+            overlaying: 'y',
+            side: 'right'
+        }
         };
     refresh = function () {
         var formData = new FormData();
