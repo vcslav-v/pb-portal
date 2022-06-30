@@ -97,3 +97,5 @@ class FinSiteStat(TransactionPage):
 class PlusSiteData(TransactionPage):
     gross_data: list[Graph] = []
     flow_data: list[Graph] = []
+    month_gross_usd: int = 0
+    year_gross_usd: int = 0

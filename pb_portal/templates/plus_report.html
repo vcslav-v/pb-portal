@@ -2,9 +2,19 @@
 
 {% block app_content %}
 <div class="container">
-    <div class="row mt-4">
-        <div class="col-6">
+    <div class="row m-4">
+        <div class="col-5">
             <h1>Plus subscriptions report</h1>
+        </div>
+        <div class="col-2 mt-2">
+            <select class="form-select" aria-label="Default select example" id="period">
+                <option selected value="all">All</option>
+                <option value="month">Month</option>
+                <option value="year">Year</option>
+            </select>
+        </div>
+        <div class="col-5 mt-2">
+            <h3>MRR $<span id="mrr"></span> | YRR $<span id="yrr"></span></h3>
         </div>
     </div>
     <div class="row">
@@ -24,6 +34,9 @@
 <script>
     var subsGraph = document.getElementById('subsGraph');
     var flowDataGraph = document.getElementById('flowDataGraph');
+    var month_gross_usd = 0;
+    var year_gross_usd = 0;
+
     var subs_layout = {
         showlegend: true,
         yaxis: {},
@@ -47,6 +60,9 @@
             mimeType: "multipart/form-data",
             processData: false,
             success: function(response) {
+                month_gross_usd = response.month_gross_usd
+                year_gross_usd = response.year_gross_usd
+                refresh_rr()
                 Plotly.newPlot(subsGraph, response.gross_data, subs_layout, {'displayModeBar': false});
                 Plotly.newPlot(flowDataGraph, response.flow_data, flow_data_layout, {'displayModeBar': false});
             },
@@ -56,12 +72,34 @@
         })
     };
 
+    refresh_rr = function () {
+        var period = $('#period').val()
+        var mrr = 0
+        var yrr = 0
+        if (period == "all") {
+            mrr = Math.round((month_gross_usd + year_gross_usd / 12) / 100)
+            yrr = Math.round((month_gross_usd * 12 + year_gross_usd) / 100)
+        } else if (period == "month") {
+            mrr = Math.round((month_gross_usd) / 100)
+            yrr = Math.round((month_gross_usd * 12) / 100)
+        } else if (period == "year"){
+            mrr = Math.round((year_gross_usd / 12) / 100)
+            yrr = Math.round((year_gross_usd) / 100)
+        }
+        $("#mrr").empty()
+        $("#yrr").empty()
+        $("#mrr").append(mrr)
+        $("#yrr").append(yrr)
+    };
     $(function(){
         refresh($('#year option:selected').text())
         $('#year').change(function () {
             refresh($('#year option:selected').text())
         })
         
+    });
+    $('#period').change(function(){
+        refresh_rr();
     });
 </script>
 {% endblock %}
