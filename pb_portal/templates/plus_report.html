@@ -77,19 +77,22 @@
         var mrr = 0
         var yrr = 0
         if (period == "all") {
-            mrr = Math.round((month_gross_usd + year_gross_usd / 12) / 100)
-            yrr = Math.round((month_gross_usd * 12 + year_gross_usd) / 100)
+            mrr = Math.round((month_gross_usd + year_gross_usd / 12) / 100);
+            yrr = Math.round((month_gross_usd * 12 + year_gross_usd) / 100);
         } else if (period == "month") {
-            mrr = Math.round((month_gross_usd) / 100)
-            yrr = Math.round((month_gross_usd * 12) / 100)
+            mrr = Math.round((month_gross_usd) / 100);
+            yrr = Math.round((month_gross_usd * 12) / 100);
         } else if (period == "year"){
-            mrr = Math.round((year_gross_usd / 12) / 100)
-            yrr = Math.round((year_gross_usd) / 100)
+            mrr = Math.round((year_gross_usd / 12) / 100);
+            yrr = Math.round((year_gross_usd) / 100);
         }
+
+        var mrr_format = new Intl.NumberFormat().format(mrr);
+        var yrr_format = new Intl.NumberFormat().format(yrr);
         $("#mrr").empty()
         $("#yrr").empty()
-        $("#mrr").append(mrr)
-        $("#yrr").append(yrr)
+        $("#mrr").append(mrr_format)
+        $("#yrr").append(yrr_format)
     };
     $(function(){
         refresh($('#year option:selected').text())
