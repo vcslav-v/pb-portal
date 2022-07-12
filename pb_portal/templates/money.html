@@ -371,10 +371,16 @@
                 console.log(error);
             },
         })
-    $('select[name=sec_stat]').change(function (params) {
+    $('#stat_first_datepicker .input-daterange [name="start"]').change(function (params) {
         stat_refresh();
     });
-    $('select[name=first_stat]').change(function (params) {
+    $('#stat_first_datepicker .input-daterange [name="end"]').change(function (params) {
+        stat_refresh();
+    });
+    $('#stat_sec_datepicker .input-daterange [name="start"]').change(function (params) {
+        stat_refresh();
+    });
+    $('#stat_sec_datepicker .input-daterange [name="end"]').change(function (params) {
         stat_refresh();
     });
     
