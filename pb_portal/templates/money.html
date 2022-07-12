@@ -65,19 +65,29 @@
                 </div>
             </form>
         </div>
-        <div class="col-4 offset-md-1">
+        <div class="col-5 offset-md-1">
             <div class="row">
                 <table class="table">
                     <thead>
                         <tr>
                           <th scope="col"></th>
                           <th scope="col">
-                            <select class="form-select form-select-sm" aria-label=".form-select-sm example" name="first_stat">
-                              </select>
+                            <div id="stat_first_datepicker">
+                                <div class="input-daterange input-group input-group-sm" id="datepicker">
+                                    <input type="text" class="form-control" name="start" aria-describedby="inputGroup-sizing-sm" />
+                                    <span class="input-group-text" id="inputGroup-sizing-sm">to</span>
+                                    <input type="text" class="form-control" name="end" aria-describedby="inputGroup-sizing-sm" />
+                                </div>
+                            </div>
                           </th>
                           <th scope="col">
-                            <select class="form-select form-select-sm" aria-label=".form-select-sm example" name="sec_stat">
-                              </select>
+                            <div id="stat_sec_datepicker">
+                                <div class="input-daterange input-group input-group-sm" id="datepicker">
+                                    <input type="text" class="input-sm form-control" name="start" />
+                                    <span class="input-group-text">to</span>
+                                    <input type="text" class="input-sm form-control" name="end" />
+                                </div>
+                            </div>
                           </th>
                         </tr>
                       </thead>
@@ -123,7 +133,6 @@
                 </table>
             </div>
         </div>
-        <div class="col-1"></div>
     </div>
 </div>
 <div class="container">
@@ -246,6 +255,10 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.en.min.js') }}"></script>
 <script>
+    var today = new Date();
+    var last_month = new Date();
+    last_month.setMonth(last_month.getMonth()-1)
+    
     $('#sandbox-container .input-group.date').datepicker({
         format: "dd-mm-yyyy",
         weekStart: 1,
@@ -253,13 +266,39 @@
         autoclose: true,
         todayHighlight: true
     });
-    $('#sandbox-container .input-group.date').datepicker('update', new Date());
+    $('#sandbox-container .input-group.date').datepicker('update', today);
+    $('#stat_first_datepicker .input-daterange').datepicker({
+        format: "mm-yyyy",
+        weekStart: 0,
+        startView: 1,
+        minViewMode: 1,
+        autoclose: true,
+        todayHighlight: true,
+    });
+    
+    $('#stat_first_datepicker .input-daterange [name="start"]').datepicker('update', today);
+    $('#stat_first_datepicker .input-daterange [name="end"]').datepicker('update', today);
+    $('#stat_sec_datepicker .input-daterange').datepicker({
+        format: "mm-yyyy",
+        weekStart: 0,
+        startView: 1,
+        minViewMode: 1,
+        autoclose: true,
+        todayHighlight: true,
+    });
+    $('#stat_sec_datepicker .input-daterange [name="start"]').datepicker('update', last_month);
+    $('#stat_sec_datepicker .input-daterange [name="end"]').datepicker('update', last_month);
+    $('#stat_first_datepicker .input-daterange [name="end"]').change(function(params){
+        console.log($('#stat_first_datepicker .input-daterange [name="end"]').val())
+    })
 </script>
 <script>
     var stat_refresh = function () {
         var formData = new FormData();
-        formData.append('first_stat', $('select[name=first_stat]').val())
-        formData.append('sec_stat', $('select[name=sec_stat]').val())
+        formData.append('first_stat_start', $('#stat_first_datepicker .input-daterange [name="start"]').val())
+        formData.append('first_stat_end', $('#stat_first_datepicker .input-daterange [name="end"]').val())
+        formData.append('sec_stat_start', $('#stat_sec_datepicker .input-daterange [name="start"]').val())
+        formData.append('sec_stat_end', $('#stat_sec_datepicker .input-daterange [name="end"]').val())
         $.ajax({
             type: 'POST',
             url: "{{ url_for('money.get_short_stat') }}",

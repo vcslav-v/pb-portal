@@ -1,5 +1,6 @@
 import os
 from datetime import datetime, date, timedelta
+import calendar
 
 from flask import Blueprint, flash, jsonify, render_template, request
 from flask_httpauth import HTTPBasicAuth
@@ -74,6 +75,7 @@ def post_transaction():
     connectors.finam.post_transaction(transaction)
     from_cattegory_id = request.form.get('from_money')
     if from_cattegory_id:
+        logger.debug(ACCOUNTS.children)
         debt_k = ((len(ACCOUNTS.children) - 1) / len(ACCOUNTS.children))
         debt_value = int(float(request.form.get('sum').replace(',', '.')) * debt_k * 100)
         balance_transaction = connectors.finam.schemas.Transaction(
@@ -128,14 +130,26 @@ def get_categories():
 @app_route.route('/get-short-stat', methods=['POST'])
 @auth.login_required
 def get_short_stat():
+    first_col_month_start, first_col_year_start = request.form.get('first_stat_start').split('-')
+    first_col_date_from = date.fromisoformat(f'{first_col_year_start}-{first_col_month_start}-01')
+
+    first_col_month_end, first_col_year_end = request.form.get('first_stat_end').split('-')
+    _, end_days_month = calendar.monthrange(int(first_col_year_end), int(first_col_month_end))
+    first_col_date_to = date.fromisoformat(f'{first_col_year_end}-{first_col_month_end}-{end_days_month}')
     first_col_dates = connectors.finam.schemas.ShortStat(
-        frm=date.fromisoformat(request.form.get('first_stat').split('/')[0]),
-        to=date.fromisoformat(request.form.get('first_stat').split('/')[1]),
+        frm=first_col_date_from,
+        to=first_col_date_to,
     )
     first_col = connectors.finam.get_get_short_stat(first_col_dates)
+
+    sec_col_month_start, sec_col_year_start = request.form.get('sec_stat_start').split('-')
+    sec_col_date_from = date.fromisoformat(f'{sec_col_year_start}-{sec_col_month_start}-01')
+    sec_col_month_end, sec_col_year_end = request.form.get('sec_stat_end').split('-')
+    _, end_days_month = calendar.monthrange(int(sec_col_year_end), int(sec_col_month_end))
+    sec_col_date_to = date.fromisoformat(f'{sec_col_year_end}-{sec_col_month_end}-{end_days_month}')
     sec_col_dates = connectors.finam.schemas.ShortStat(
-        frm=date.fromisoformat(request.form.get('sec_stat').split('/')[0]),
-        to=date.fromisoformat(request.form.get('sec_stat').split('/')[1]),
+        frm=sec_col_date_from,
+        to=sec_col_date_to,
     )
     sec_col = connectors.finam.get_get_short_stat(sec_col_dates)
     return jsonify({'first_col': first_col.dict(), 'sec_col': sec_col.dict()})
