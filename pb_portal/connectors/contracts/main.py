@@ -9,14 +9,14 @@ API_URL = os.environ.get('CONTRACT_URL') or 'http://127.0.0.1:8000'
 TOKEN = os.environ.get('CONTRACT_TOKEN') or 'pass'
 
 
-def get_contract_page() -> schemas.ContractInfo:
+def get_contract_page() -> schemas.Page:
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
         resp = session.get(f'{API_URL}/api/get-page')
         if resp.ok:
             logger.debug(resp.content)
-            return schemas.ContractInfo.parse_raw(resp.content)
-        return schemas.ContractInfo()
+            return schemas.Page.parse_raw(resp.content)
+        return schemas.Page()
 
 
 def get_contract(ident: int):

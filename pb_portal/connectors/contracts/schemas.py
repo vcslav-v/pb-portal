@@ -13,3 +13,7 @@ class ContractInfo(BaseModel):
     contract_date: date
     is_check: bool
     is_signed: bool
+
+
+class Page(BaseModel):
+    contracts: list[ContractInfo]
