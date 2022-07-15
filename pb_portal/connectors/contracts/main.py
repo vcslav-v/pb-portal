@@ -13,9 +13,9 @@ def get_contract_page() -> schemas.Page:
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
         resp = session.get(f'{API_URL}/api/get-page')
+        logger.debug(resp.content)
         if resp.ok:
-            logger.debug(resp.content)
-            return schemas.Page.parse_raw(resp.content)
+            return schemas.Page.parse_raw(resp.content)        
         return schemas.Page()
 
 
