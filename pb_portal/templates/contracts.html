@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-datepicker3.min.css') }}">
+{% endblock %}
+{% block app_content %}
+<div class="container">
+    <div class="row m-4">
+        <div class="col-4">
+            <h3>Contracts</h3>
+        </div>
+    </div>
+    <div class="row m-4">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                  <th scope="col">Contract N</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Selfemployer</th>
+                  <th scope="col">Service</th>
+                  <th scope="col">Amount</th>
+                  <th scope="col">PDF</th>
+                  <th scope="col">Sign PDF</th>
+                  <th scope="col">Check</th>
+                </tr>
+              </thead>
+            
+            <tbody id="warning_contracts">
+                <tr>
+                    <td></td>
+                    <td id="sandbox-container">
+                        <div class="input-group-sm date">
+                            <input type="text" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                          </div>
+                    </td>
+                    <td>
+                        <select class="form-select form-select-sm" aria-label=".form-select-sm example">
+                            <option selected>Open this select menu</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </td> 
+                    <td>
+                        <select class="form-select form-select-sm" aria-label=".form-select-sm example">
+                            <option selected>Open this select menu</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input class="form-control form-control-sm" type="text" placeholder="Amount">
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-outline-primary btn-sm">Add</button>
+                    </td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>          
+        </table>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.en.min.js') }}"></script>
+<script>
+    $('#sandbox-container .input-group-sm.date').datepicker({
+        format: "dd-mm-yyyy",
+        weekStart: 1,
+        todayBtn: "linked",
+        autoclose: true,
+        todayHighlight: true
+    });
+</script>
+<script>
+    getContract = function(ident){
+        var formData = new FormData();
+        formData.append('contr_ident', ident)
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('contracts.get_contract') }}",
+            dataType: 'binary',
+            xhrFields: {
+                'responseType': 'blob'
+            },
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(data, status, xhr) {
+                var blob = new Blob([data], {type: xhr.getResponseHeader('Content-Type')});
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = 'contract.pdf';
+                link.click();
+            },
+                error: function(error) {
+                    console.log(error);
+                },
+                
+            });
+    };
+    getCheck = function(ident){
+        var formData = new FormData();
+        formData.append('contr_ident', ident)
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('contracts.get_check') }}",
+            dataType: 'binary',
+            xhrFields: {
+                'responseType': 'blob'
+            },
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(data, status, xhr) {
+                var blob = new Blob([data], {type: xhr.getResponseHeader('Content-Type')});
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = 'check.png';
+                link.click();
+            },
+                error: function(error) {
+                    console.log(error);
+                },
+                
+            });
+    };
+    getSignedContract = function(ident){
+        var formData = new FormData();
+        formData.append('contr_ident', ident)
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('contracts.get_signed_contract') }}",
+            dataType: 'binary',
+            xhrFields: {
+                'responseType': 'blob'
+            },
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(data, status, xhr) {
+                var blob = new Blob([data], {type: xhr.getResponseHeader('Content-Type')});
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = 'signed_contract.pdf';
+                link.click();
+            },
+                error: function(error) {
+                    console.log(error);
+                },
+                
+            });
+    };
+</script>
+<script>
+    $.ajax({
+        type: 'POST',
+        url: "{{ url_for('contracts.get_contracts') }}",
+        dataType: 'json',
+        contentType: false,
+        cache: false,
+        mimeType: "multipart/form-data",
+        processData: false,
+        success: function(response) {
+            var contracts = response.contracts;
+            for(contract of contracts){
+                $("#warning_contracts").append('<tr>')
+                $("#warning_contracts").append('<td>'+contract.contract_num+'</td>')
+                $("#warning_contracts").append('<td>'+contract.contract_date+'</td>')
+                $("#warning_contracts").append('<td>'+contract.selfemployed_name+'</td>')
+                $("#warning_contracts").append('<td>'+contract.sevice_name+'</td>')
+                $("#warning_contracts").append('<td>'+contract.amount+'</td>')
+                $("#warning_contracts").append('<td><button type="button" class="btn btn-outline-primary" onclick="getContract('+contract.ident+')">PDF</button></td>')
+                if(contracts.is_signed){
+                    $("#warning_contracts").append('<td><button type="button" class="btn btn-outline-secondary" onclick="getSignedContract('+contract.ident+')>Sign_PDF</button></td>')
+                } else {
+                    $("#warning_contracts").append('<td><button type="button" class="btn btn-outline-primary">Upload</button></td>')
+                }
+                if(contracts.is_check){
+                    $("#warning_contracts").append('<td><button type="button" class="btn btn-outline-secondary" onclick="getCheck('+contract.ident+')>Check</button></td>')
+                } else {
+                    $("#warning_contracts").append('<td><button type="button" class="btn btn-outline-primary">Upload</button></td>')
+                }
+                $("#warning_contracts").append('</tr>')
+            }
+        },
+        error: function(error) {
+            console.log(error);
+        },
+    })
+</script>
+{% endblock %}
