@@ -36,7 +36,7 @@ def contracts():
 @app_route.route('/get-contracts', methods=['POST'])
 @auth.login_required
 def get_contracts():
-    return connectors.contracts.get_contract_page()
+    return connectors.contracts.get_contract_page().json()
 
 
 @logger.catch
@@ -45,8 +45,7 @@ def get_contracts():
 def get_contract():
     return send_file(connectors.contracts.get_contract(
         int(request.form.get('contr_ident')),
-        mimetype='application/pdf'
-    ))
+    ), mimetype='image/png')
 
 
 @logger.catch
@@ -55,8 +54,7 @@ def get_contract():
 def get_check():
     return send_file(connectors.contracts.get_check(
         int(request.form.get('contr_ident')),
-        mimetype='image/png'
-    ))
+    ), mimetype='image/png')
 
 
 @logger.catch
@@ -65,5 +63,4 @@ def get_check():
 def get_signed_contract():
     return send_file(connectors.contracts.get_signed_contract(
         int(request.form.get('contr_ident')),
-        mimetype='application/pdf'
-    ))
+    ), mimetype='image/png')
