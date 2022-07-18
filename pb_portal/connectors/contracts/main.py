@@ -41,3 +41,33 @@ def get_signed_contract(ident: int):
         resp = session.post(f'{API_URL}/api/get-signed-contract?ident={ident}')
         signed_contract_file = io.BytesIO(resp.content)
         return signed_contract_file
+
+
+def add_signed_contract(files_data, ident):
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        file_data = files_data[0]
+        files = {
+            'signed_contract': (file_data.filename, file_data.stream, file_data.content_type),
+        }
+        params = {
+            'ident_contract': ident,
+        }
+        session.post(
+            f'{API_URL}/api/add-signed-contract',
+            params=params,
+            files=files,
+        )
+
+
+def add_check(ident, check_url):
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        json_data = {
+            'url': check_url,
+            'ident_contract': ident,
+        }
+        session.post(
+            f'{API_URL}/api/add-check',
+            json=json_data,
+        )

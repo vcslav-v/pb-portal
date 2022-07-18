@@ -1,6 +1,6 @@
 import os
 
-from flask import Blueprint, render_template, send_file, request
+from flask import Blueprint, redirect, render_template, send_file, request
 from flask_httpauth import HTTPBasicAuth
 from loguru import logger
 from pb_portal import connectors
@@ -24,9 +24,20 @@ def verify_password(username, password):
 
 
 @logger.catch
-@app_route.route('/', methods=['GET'])
+@app_route.route('/', methods=['GET', 'POST'])
 @auth.login_required
 def contracts():
+    if request.method == 'POST':
+        if request.form.get('check_url'):
+            connectors.contracts.add_check(
+                int(request.form.get('contract_ident')),
+                request.form.get('check_url'),
+            )
+        else:
+            connectors.contracts.add_signed_contract(
+                request.files.getlist('signed_pdf'),
+                int(request.form.get('contract_ident'))
+            )
     return render_template(
         'contracts.html',
     )
