@@ -74,4 +74,4 @@ def get_check():
 def get_signed_contract():
     return send_file(connectors.contracts.get_signed_contract(
         int(request.form.get('contr_ident')),
-    ), mimetype='image/png')
+    ), mimetype='application/pdf')
