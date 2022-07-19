@@ -214,14 +214,14 @@
             }
 
             var selfemployers = response.selfemployers;
+            $("#selfemployer_select").empty()
             for(selfemployer of selfemployers){
-                $("#selfemployer_select").empty()
                 $("#selfemployer_select").append('<option value="'+selfemployer.ident+'">'+selfemployer.fio_short+'</option>')
             }
 
             var serices = response.serices;
+            $("#service_select").empty()
             for(serice of serices){
-                $("#service_select").empty()
                 $("#service_select").append('<option value="'+serice.ident+'">'+serice.name+'</option>')
             }
             
