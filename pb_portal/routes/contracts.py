@@ -34,8 +34,19 @@ def contracts():
                 int(request.form.get('contract_ident')),
                 request.form.get('check_url'),
             )
-        elif request.form.get('new_contract_date'):
+        elif request.form.get('type') == 'add':
             connectors.contracts.add_contract(
+                connectors.contracts.schemas.Contract(
+                    id_selfemployed=int(request.form.get('selfemployer_id')),
+                    id_sevice=int(request.form.get('service_id')),
+                    ammount=int(request.form.get('new_contract_amount')),
+                    contract_date=datetime.strptime(
+                        request.form.get('new_contract_date'), '%d-%m-%Y'
+                    ).date(),
+                )
+            )
+        elif request.form.get('type') == 'gen':
+            connectors.contracts.gen_contracts(
                 connectors.contracts.schemas.Contract(
                     id_selfemployed=int(request.form.get('selfemployer_id')),
                     id_sevice=int(request.form.get('service_id')),

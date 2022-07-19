@@ -80,3 +80,12 @@ def add_contract(new_contract: schemas.Contract):
             f'{API_URL}/api/make-contract',
             data=new_contract.json(),
         )
+
+
+def gen_contracts(new_contract: schemas.Contract):
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        session.post(
+            f'{API_URL}/api/make-contracts',
+            data=new_contract.json(),
+        )
