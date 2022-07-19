@@ -71,3 +71,12 @@ def add_check(ident, check_url):
             f'{API_URL}/api/add-check',
             json=json_data,
         )
+
+
+def add_contract(new_contract: schemas.Contract):
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        session.post(
+            f'{API_URL}/api/make-contract',
+            data=new_contract.json(),
+        )

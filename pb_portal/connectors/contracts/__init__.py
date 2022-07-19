@@ -1,6 +1,6 @@
 from . import schemas
 from .main import (add_signed_contract, get_check, get_contract,
-                   get_contract_page, get_signed_contract, add_check)
+                   get_contract_page, get_signed_contract, add_check, add_contract)
 
 __all__ = [
     'get_contract_page',
@@ -10,4 +10,5 @@ __all__ = [
     'schemas',
     'add_signed_contract',
     'add_check',
+    'add_contract',
 ]

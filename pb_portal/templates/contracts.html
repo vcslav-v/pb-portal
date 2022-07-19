@@ -26,36 +26,38 @@
             
             <tbody id="warning_contracts">
                 <tr>
-                    <td></td>
-                    <td id="sandbox-container">
-                        <div class="input-group-sm date">
-                            <input type="text" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-                          </div>
-                    </td>
-                    <td>
-                        <select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                            <option selected>Open this select menu</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
-                        </select>
-                    </td> 
-                    <td>
-                        <select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                            <option selected>Open this select menu</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
-                        </select>
-                    </td>
-                    <td>
-                        <input class="form-control form-control-sm" type="text" placeholder="Amount">
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-outline-primary btn-sm">Add</button>
-                    </td>
-                    <td></td>
-                    <td></td>
+                    <form action="{{ url_for('contracts.contracts') }}" method="post" enctype="multipart/form-data">
+                        <td></td>
+                        <td id="sandbox-container">
+                            <div class="input-group-sm date">
+                                <input type="text" class="form-control" name="new_contract_date"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                            </div>
+                        </td>
+                        <td>
+                            <select class="form-select form-select-sm" aria-label=".form-select-sm example" id="selfemployer_select" name="selfemployer_id">
+                                <option selected>Open this select menu</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                        </td> 
+                        <td>
+                            <select class="form-select form-select-sm" aria-label=".form-select-sm example" id="service_select" name="service_id">
+                                <option selected>Open this select menu</option>
+                                <option value="1">One</option>
+                                <option value="2">Two</option>
+                                <option value="3">Three</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input class="form-control form-control-sm" type="text" placeholder="Amount" name="new_contract_amount">
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-outline-primary btn-sm">Add</button>
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </form>
                 </tr>
             </tbody>          
         </table>
@@ -161,7 +163,6 @@
     };
 </script>
 <script>
-    var g = [];
     $.ajax({
         type: 'POST',
         url: "{{ url_for('contracts.get_contracts') }}",
@@ -173,9 +174,11 @@
         success: function(response) {
             var contracts = response.contracts;
             for(contract of contracts){
+                var row_date = contract.contract_date.split("-")
+                var local_date = row_date[2]+'-'+row_date[1]+'-'+row_date[0]
                 var row = '<tr>'
                 row += '<th scope="row">'+contract.contract_num+'</th>'
-                row += '<td>'+contract.contract_date+'</td>'
+                row += '<td>'+local_date+'</td>'
                 row += '<td>'+contract.selfemployed_name+'</td>'
                 row += '<td>'+contract.sevice_name+'</td>'
                 row += '<td>'+contract.amount+'</td>'
@@ -209,7 +212,21 @@
                     $('#'+contract.ident+'_submit_signed_contract').click();
                 })
             }
+
+            var selfemployers = response.selfemployers;
+            for(selfemployer of selfemployers){
+                $("#selfemployer_select").empty()
+                $("#selfemployer_select").append('<option value="'+selfemployer.ident+'">'+selfemployer.fio_short+'</option>')
+            }
+
+            var serices = response.serices;
+            for(serice of serices){
+                $("#service_select").empty()
+                $("#service_select").append('<option value="'+serice.ident+'">'+serice.name+'</option>')
+            }
+            
         },
+
         error: function(error) {
             console.log(error);
         },

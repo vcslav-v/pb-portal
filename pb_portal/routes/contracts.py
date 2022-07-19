@@ -1,10 +1,11 @@
 import os
 
-from flask import Blueprint, redirect, render_template, send_file, request
+from flask import Blueprint, render_template, send_file, request
 from flask_httpauth import HTTPBasicAuth
 from loguru import logger
 from pb_portal import connectors
 from werkzeug.security import check_password_hash, generate_password_hash
+from datetime import datetime
 
 app_route = Blueprint('route', __name__, url_prefix='/contracts')
 
@@ -33,6 +34,17 @@ def contracts():
                 int(request.form.get('contract_ident')),
                 request.form.get('check_url'),
             )
+        elif request.form.get('new_contract_date'):
+            connectors.contracts.add_contract(
+                connectors.contracts.schemas.Contract(
+                    id_selfemployed=int(request.form.get('selfemployer_id')),
+                    id_sevice=int(request.form.get('service_id')),
+                    ammount=int(request.form.get('new_contract_amount')),
+                    contract_date=datetime.strptime(
+                        request.form.get('new_contract_date'), '%d-%m-%Y'
+                    ).date(),
+                )
+            )
         else:
             connectors.contracts.add_signed_contract(
                 request.files.getlist('signed_pdf'),
@@ -56,7 +68,7 @@ def get_contracts():
 def get_contract():
     return send_file(connectors.contracts.get_contract(
         int(request.form.get('contr_ident')),
-    ), mimetype='image/png')
+    ), mimetype='application/pdf')
 
 
 @logger.catch
