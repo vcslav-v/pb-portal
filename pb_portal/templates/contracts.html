@@ -161,6 +161,12 @@
                 
             });
     };
+    clickOnInput = function(ident){
+        $('#'+ident+'_upload_signed_contract_input').click();
+        $('#'+ident+'_upload_signed_contract_input').change(function(){
+            $('#'+ident+'_submit_signed_contract').click();
+        })
+    };
 </script>
 <script>
     $.ajax({
@@ -189,7 +195,7 @@
                     row += '<td><form action="{{ url_for("contracts.contracts") }}" method="post" enctype="multipart/form-data">'
                     row += '<input class="form-control" type="file" name="signed_pdf" id="'+contract.ident+'_upload_signed_contract_input" hidden>'
                     row += '<input class="form-control" type="text" name="contract_ident" value="'+contract.ident+'" hidden>'
-                    row += '<button type="button" class="btn btn-outline-primary btn-sm" id="'+contract.ident+'_upload_signed_contract">Upload</button>'
+                    row += '<button type="button" class="btn btn-outline-primary btn-sm" id="'+contract.ident+'_upload_signed_contract" onclick="clickOnInput('+contract.ident+')">Upload</button>'
                     row += '<button type="submit" class="btn btn-outline-primary btn-sm" id="'+contract.ident+'_submit_signed_contract" hidden>Submit</button>'
                     row += '</form></td>'
                 }
@@ -205,12 +211,6 @@
                 }
                 row += '</tr>'
                 $("#warning_contracts").append(row)
-                $("#"+contract.ident+"_upload_signed_contract").click(function(){
-                    $('#'+contract.ident+'_upload_signed_contract_input').click();
-                });
-                $('#'+contract.ident+'_upload_signed_contract_input').change(function(){
-                    $('#'+contract.ident+'_submit_signed_contract').click();
-                })
             }
 
             var selfemployers = response.selfemployers;
