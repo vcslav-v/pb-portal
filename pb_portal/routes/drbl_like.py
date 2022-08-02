@@ -26,7 +26,6 @@ def verify_password(username, password):
 
 @logger.catch
 @app_route.route('/', methods=['GET', 'POST'])
-@auth.login_required
 def like_dribbble():
     if request.method == 'POST':
         acc_target = request.form.get('acc_target')
