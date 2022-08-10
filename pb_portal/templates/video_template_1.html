@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block app_content %}
+<div class="container">
+    <div class="row m-4">
+        <div class="col-12">
+            <h3>Video Template 1</h3>
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Cover</th>
+                    <th scope="col">Shots</th>
+                    <th scope="col">Central images</th>
+                    <th scope="col">Float images</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Size</th>
+                    <td>1200x800 .jpg</td>
+                    <td>1920x1080 .jpg</td>
+                    <td>600x400 .jpg</td>
+                    <td>660x340 .jpg</td>
+                  </tr>
+                  
+                </tbody>
+              </table>
+        </div>
+    </div>
+    <form id="t1_form" action="{{ url_for('tools.video_template_1') }}" method="post" enctype="multipart/form-data">
+        <div class="row my-2 mx-4">
+            <div class="col-4">
+                <h4>Common settings</h4>
+            </div>
+        </div>
+        <div class="row my-2 mx-4">
+            <div class="col-12">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">Background color</span>
+                    <input type="text" class="form-control" id="t1_bg_color" placeholder="#000000" value="#000000" name="t1_bg_color" required>
+                    <span class="input-group-text" id="basic-addon1">Text color</span>
+                    <input type="text" class="form-control" id="t1_text_color" placeholder="#FFFFFF" value="#FFFFFF" name="t1_text_color" required>
+                    <label class="input-group-text" for="t1_music">Music</label>
+                    <select class="form-select" id="t1_music" name="t1_music">
+                        <option value="funk">Funk</option>
+                        <option value="grunge">Grunge</option>
+                        <option value="summer">Summer</option>
+                    </select>
+                
+                </div>
+            </div>
+        </div>
+        <div class="row my-2 mx-4">
+            <div class="col-4">
+                <h4>First shot</h4>
+            </div>
+            <div class="col-4">
+                <h4>Shots</h4>
+            </div>
+            <div class="col-4">
+                <h4>Final</h4>
+            </div>
+        </div>
+        <div class="row my-2 mx-4">
+            <div class="col-4">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">Show time</span>
+                    <input type="text" class="form-control" id="t1_cover_time" placeholder="3" value="3" name="t1_cover_time" required>
+                    <span class="input-group-text" id="basic-addon1">sec</span>
+                </div>
+                <div class="mb-3">
+                    <textarea class="form-control" id="t1_title" rows="3"placeholder="Title" name="t1_title" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="t1_subtitle" placeholder="Sub title" name="t1_subtitle" required>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" id="t1_cover" name="t1_cover" required>
+                    <label class="input-group-text" for="t1_cover">Cover</label>
+                </div>       
+            </div>
+            <div class="col-4">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">Show time</span>
+                    <input type="text" class="form-control" id="t1_shot_time" placeholder="3" value="3" name="t1_shot_time" required>
+                    <span class="input-group-text" id="basic-addon1">sec</span>
+                </div>
+                <div id="t1_shots_place">
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="t1_shot|before|0" name="t1_shot|before|0" required>
+                        <label class="input-group-text" for="t1_shot|before|0">Before</label>
+                    </div> 
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="t1_shot|after|0" name="t1_shot|after|0" required>
+                        <label class="input-group-text" for="t1_shot|after|0">After</label>
+                    </div>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" id="t1_add_shots">Add</button>
+                </div>
+            </div> 
+            <div class="col-4">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">Show time</span>
+                    <input type="text" class="form-control" id="t1_final_time" placeholder="3" value="3" name="t1_final_time" required>
+                    <span class="input-group-text" id="basic-addon1">sec</span>
+                </div>
+                <div class="mb-3">
+                    <textarea class="form-control" id="t1_final_text" rows="3"placeholder="Final text" name="t1_final_text" required></textarea>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" id="t1_central|0" name="t1_central|0" required>
+                    <label class="input-group-text" for="t1_central|0">Central img 1</label>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" id="t1_central|1" name="t1_central|1" required>
+                    <label class="input-group-text" for="t1_central|1">Central img 2</label>
+                </div> 
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" id="t1_central|2" name="t1_central|2" required>
+                    <label class="input-group-text" for="t1_central|2">Central img 3</label>
+                </div> 
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" id="t1_central|3" name="t1_central|3" required>
+                    <label class="input-group-text" for="t1_central|3">Central img 4</label>
+                </div> 
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" id="t1_float_left" name="t1_float_left" required>
+                    <label class="input-group-text" for="t1_float_left">Left float img</label>
+                </div> 
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" id="t1_float_right" name="t1_float_right" required>
+                    <label class="input-group-text" for="t1_float_right">Right float img</label>
+                </div> 
+            </div>
+        </div>
+        <div class="row m-4">
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-success" id="t1_add_shots">Make video</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    var num_shot = 0;
+    $("#t1_add_shots").on("click", function(){
+        num_shot += 1;
+        $("#t1_shots_place").append('<div class="input-group mb-3"><input type="file" class="form-control" id="t1_shot|before|'+num_shot+'" name="t1_shot|before|'+num_shot+'" required><label class="input-group-text" for="t1_shot|before|'+num_shot+'">Before</label></div> <div class="input-group mb-3"><input type="file" class="form-control" id="t1_shot|after|'+num_shot+'" name="t1_shot|after|'+num_shot+'" required><label class="input-group-text" for="t1_shot|after|'+num_shot+'">After</label></div>')
+    })
+</script>
+{% endblock %}

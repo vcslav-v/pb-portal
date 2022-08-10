@@ -31,6 +31,15 @@
                                   <li><a class="dropdown-item" href="{{ url_for('contracts.contracts') }}">Contracts</a></li>
                                 </ul>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Video tools
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                  <li><a class="dropdown-item" href="{{ url_for('tools.all_videos') }}">All</a></li>
+                                  <li><a class="dropdown-item" href="{{ url_for('tools.video_template_1') }}">Template 1</a></li>
+                                </ul>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link"  aria-current="page" href="{{ url_for('drbl_like.like_dribbble') }}">Dribbble liker</a>
                             </li>
