@@ -27,7 +27,7 @@ user_roles = {
 
 @auth.get_user_roles
 def get_user_roles(user):
-    return user_roles(user)
+    return user_roles[user]
 
 CATEGORIES = connectors.finam.get_categories()
 if CATEGORIES.children:
