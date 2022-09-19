@@ -11,10 +11,21 @@ app_route = Blueprint('route', __name__, url_prefix='/contracts')
 
 auth = HTTPBasicAuth()
 users = {
-    os.environ.get('FLASK_LOGIN', 'root'): generate_password_hash(
-        os.environ.get('FLASK_PASS', 'pass')
+    os.environ.get('FLASK_LOGIN') or 'root': generate_password_hash(
+        os.environ.get('FLASK_PASS') or 'pass'
+    ),
+    os.environ.get('TD_ADMIN_LOGIN') or 'td_root': generate_password_hash(
+        os.environ.get('TD_ADMIN_PASS') or 'td_pass'
     ),
 }
+user_roles = {
+    os.environ.get('FLASK_LOGIN') or 'root': 'admin',
+    os.environ.get('TD_ADMIN_LOGIN') or 'td_root': 'td_admin',
+}
+
+@auth.get_user_roles
+def get_user_roles(user):
+    return user_roles(user)
 
 
 @auth.verify_password
@@ -26,7 +37,7 @@ def verify_password(username, password):
 
 @logger.catch
 @app_route.route('/', methods=['GET', 'POST'])
-@auth.login_required
+@auth.login_required(role='admin')
 def contracts():
     if request.method == 'POST':
         if request.form.get('check_url'):
@@ -68,14 +79,14 @@ def contracts():
 
 @logger.catch
 @app_route.route('/get-contracts', methods=['POST'])
-@auth.login_required
+@auth.login_required(role='admin')
 def get_contracts():
     return connectors.contracts.get_contract_page().json()
 
 
 @logger.catch
 @app_route.route('/get-contract', methods=['POST'])
-@auth.login_required
+@auth.login_required(role='admin')
 def get_contract():
     return send_file(connectors.contracts.get_contract(
         int(request.form.get('contr_ident')),
@@ -84,7 +95,7 @@ def get_contract():
 
 @logger.catch
 @app_route.route('/get-check', methods=['POST'])
-@auth.login_required
+@auth.login_required(role='admin')
 def get_check():
     return send_file(connectors.contracts.get_check(
         int(request.form.get('contr_ident')),
@@ -93,7 +104,7 @@ def get_check():
 
 @logger.catch
 @app_route.route('/get-signed-contract', methods=['POST'])
-@auth.login_required
+@auth.login_required(role='admin')
 def get_signed_contract():
     return send_file(connectors.contracts.get_signed_contract(
         int(request.form.get('contr_ident')),

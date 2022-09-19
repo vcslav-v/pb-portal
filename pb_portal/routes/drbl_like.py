@@ -14,7 +14,18 @@ users = {
     os.environ.get('FLASK_LOGIN') or 'root': generate_password_hash(
         os.environ.get('FLASK_PASS') or 'pass'
     ),
+    os.environ.get('TD_ADMIN_LOGIN') or 'td_root': generate_password_hash(
+        os.environ.get('TD_ADMIN_PASS') or 'td_pass'
+    ),
 }
+user_roles = {
+    os.environ.get('FLASK_LOGIN') or 'root': 'admin',
+    os.environ.get('TD_ADMIN_LOGIN') or 'td_root': 'td_admin',
+}
+
+@auth.get_user_roles
+def get_user_roles(user):
+    return user_roles(user)
 
 
 @auth.verify_password

@@ -13,8 +13,18 @@ users = {
     os.environ.get('FLASK_LOGIN') or 'root': generate_password_hash(
         os.environ.get('FLASK_PASS') or 'pass'
     ),
+    os.environ.get('TD_ADMIN_LOGIN') or 'td_root': generate_password_hash(
+        os.environ.get('TD_ADMIN_PASS') or 'td_pass'
+    ),
+}
+user_roles = {
+    os.environ.get('FLASK_LOGIN') or 'root': 'admin',
+    os.environ.get('TD_ADMIN_LOGIN') or 'td_root': 'td_admin',
 }
 
+@auth.get_user_roles
+def get_user_roles(user):
+    return user_roles(user)
 
 @auth.verify_password
 def verify_password(username, password):
@@ -25,7 +35,7 @@ def verify_password(username, password):
 
 @logger.catch
 @app_route.route('/PB-finance', methods=['GET'])
-@auth.login_required
+@auth.login_required(role='admin')
 def fin_stat():
     name = 'PB'
     return render_template(
@@ -37,7 +47,7 @@ def fin_stat():
 
 @logger.catch
 @app_route.route('/TD-finance', methods=['GET'])
-@auth.login_required
+@auth.login_required(role=['admin', 'td_root'])
 def fin_stat_td():
     name = 'TD'
     return render_template(
@@ -49,7 +59,7 @@ def fin_stat_td():
 
 @logger.catch
 @app_route.route('/PB-plus', methods=['GET'])
-@auth.login_required
+@auth.login_required(role='admin')
 def plus_report():
     name = 'Plus'
     return render_template(
@@ -61,7 +71,7 @@ def plus_report():
 
 @logger.catch
 @app_route.route('/get_site_stat_data', methods=['POST'])
-@auth.login_required
+@auth.login_required(role='admin')
 def get_site_stat_data():
     year = int(request.form.get('year'))
     site_name = request.form.get('site_name')
@@ -71,7 +81,7 @@ def get_site_stat_data():
 
 @logger.catch
 @app_route.route('/get-plus-data', methods=['POST'])
-@auth.login_required
+@auth.login_required(role='admin')
 def get_plus_data():
     page_data = connectors.finam.get_plus_data()
     return page_data.json()

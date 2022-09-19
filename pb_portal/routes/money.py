@@ -16,7 +16,18 @@ users = {
     os.environ.get('FLASK_LOGIN') or 'root': generate_password_hash(
         os.environ.get('FLASK_PASS') or 'pass'
     ),
+    os.environ.get('TD_ADMIN_LOGIN') or 'td_root': generate_password_hash(
+        os.environ.get('TD_ADMIN_PASS') or 'td_pass'
+    ),
 }
+user_roles = {
+    os.environ.get('FLASK_LOGIN') or 'root': 'admin',
+    os.environ.get('TD_ADMIN_LOGIN') or 'td_root': 'td_admin',
+}
+
+@auth.get_user_roles
+def get_user_roles(user):
+    return user_roles(user)
 
 CATEGORIES = connectors.finam.get_categories()
 if CATEGORIES.children:
@@ -36,7 +47,7 @@ def verify_password(username, password):
 
 @logger.catch
 @app_route.route('/', methods=['GET'])
-@auth.login_required
+@auth.login_required(role='admin')
 def money():
     сurrencies = connectors.finam.get_сurrencies()
     return render_template(
@@ -51,7 +62,7 @@ def money():
 
 @logger.catch
 @app_route.route('/post-transaction', methods=['POST'])
-@auth.login_required
+@auth.login_required(role='admin')
 def post_transaction():
     req_cats = []
     for key, value in request.form.to_dict().items():
@@ -99,7 +110,7 @@ def rm_transaction():
 
 @logger.catch
 @app_route.route('/get-transactions', methods=['POST'])
-@auth.login_required
+@auth.login_required(role='admin')
 def get_transactions():
     data = schemas.GetTransactionPage(
         from_date=datetime.strptime(request.form.get('from_date'), '%d-%m-%Y').date()
@@ -112,7 +123,7 @@ def get_transactions():
 
 @logger.catch
 @app_route.route('/get-transaction', methods=['POST'])
-@auth.login_required
+@auth.login_required(role='admin')
 def get_transaction():
     trans_id = request.form.get('trans_id')
     transaction = connectors.finam.get_page_transaction(trans_id)
@@ -128,7 +139,7 @@ def get_categories():
 
 @logger.catch
 @app_route.route('/get-short-stat', methods=['POST'])
-@auth.login_required
+@auth.login_required(role='admin')
 def get_short_stat():
     first_col_month_start, first_col_year_start = request.form.get('first_stat_start').split('-')
     first_col_date_from = date.fromisoformat(f'{first_col_year_start}-{first_col_month_start}-01')
