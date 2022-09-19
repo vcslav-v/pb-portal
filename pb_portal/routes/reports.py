@@ -71,7 +71,7 @@ def plus_report():
 
 @logger.catch
 @app_route.route('/get_site_stat_data', methods=['POST'])
-@auth.login_required(role='admin')
+@auth.login_required(role=['admin', 'td_admin'])
 def get_site_stat_data():
     year = int(request.form.get('year'))
     site_name = request.form.get('site_name')
