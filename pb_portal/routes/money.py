@@ -21,8 +21,8 @@ users = {
     ),
 }
 user_roles = {
-    os.environ.get('FLASK_LOGIN') or 'root': 'admin',
-    os.environ.get('TD_ADMIN_LOGIN') or 'td_root': 'td_admin',
+    os.environ.get('FLASK_LOGIN') or 'root': ['admin', 'td_admin'],
+    os.environ.get('TD_ADMIN_LOGIN') or 'td_root': ['td_admin'],
 }
 
 @auth.get_user_roles
