@@ -47,7 +47,7 @@ def fin_stat():
 
 @logger.catch
 @app_route.route('/TD-finance', methods=['GET'])
-@auth.login_required(role=['admin', 'td_root'])
+@auth.login_required(role=['admin', 'td_admin'])
 def fin_stat_td():
     name = 'TD'
     return render_template(
