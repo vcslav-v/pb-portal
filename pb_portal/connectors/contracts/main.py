@@ -60,16 +60,20 @@ def add_signed_contract(files_data, ident):
         )
 
 
-def add_check(ident, check_url):
+def add_check(ident, files_data):
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        json_data = {
-            'url': check_url,
+        file_data = files_data[0]
+        files = {
+            'check': (file_data.filename, file_data.stream, file_data.content_type),
+        }
+        params = {
             'ident_contract': ident,
         }
         session.post(
             f'{API_URL}/api/add-check',
-            json=json_data,
+            params=params,
+            files=files
         )
 
 

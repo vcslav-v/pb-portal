@@ -40,10 +40,10 @@ def verify_password(username, password):
 @auth.login_required(role='admin')
 def contracts():
     if request.method == 'POST':
-        if request.form.get('check_url'):
+        if request.files.getlist('check_png'):
             connectors.contracts.add_check(
                 int(request.form.get('contract_ident')),
-                request.form.get('check_url'),
+                request.files.getlist('check_png'),
             )
         elif request.form.get('type') == 'add':
             connectors.contracts.add_contract(
