@@ -167,6 +167,13 @@
             $('#'+ident+'_submit_signed_contract').click();
         })
     };
+
+    clickOnInputCheck = function(ident){
+        $('#'+ident+'_upload_check_input').click();
+        $('#'+ident+'_upload_check_input').change(function(){
+            $('#'+ident+'_submit_check').click();
+        })
+    };
 </script>
 <script>
     $.ajax({
@@ -205,8 +212,9 @@
                     row += '<td><form action="{{ url_for("contracts.contracts") }}" method="post" enctype="multipart/form-data">'
                     row += '<input class="form-control" type="text" name="contract_ident" value="'+contract.ident+'" hidden>'
                     row += '<div class="input-group-sm">'
-                    row += '<input class="form-control" type="text" name="check_url">'
-                    row += '<button type="submit" class="btn btn-outline-primary" id="'+contract.ident+'_submit_check">Submit</button>'
+                    row += '<input class="form-control" type="file" name="check_png" id="'+contract.ident+'_upload_check_input" hidden>'
+                    row += '<button type="button" class="btn btn-outline-primary btn-sm" id="'+contract.ident+'_upload_check" onclick="clickOnInputCheck('+contract.ident+')">Upload</button>'
+                    row += '<button type="submit" class="btn btn-outline-primary" id="'+contract.ident+'_submit_check" hiden>Submit</button>'
                     row += '</div></form></td>'
                 }
                 row += '</tr>'
