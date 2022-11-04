@@ -48,6 +48,9 @@ def longy():
     try:
         long_jpg = connectors.graphic.get_long_jpg(
             request.files.getlist('forLong'),
+            request.form.get('width'),
+            request.form.get('height'),
+            request.form.get('n_cols'),
         )
     except Exception as e:
         logger.error(e.args)

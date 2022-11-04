@@ -24,13 +24,21 @@
     <div class="row m-4 "></div>
     <div class="row m-4 ">
         <div class="col-4">
-            <h3>Make long image</h3>
+            <h3>Make collage like a tile</h3>
         </div>
     </div>
     <form id="uploadLong" action="#" method="post" enctype="multipart/form-data">
         <div class="row m-4">
             <div class="col-8">
                 <div class="input-group">
+                        <span class="input-group-text" id="basic-addon1">Size</span>
+                        <input type="text" class="form-control" placeholder="width" aria-label="width" aria-describedby="basic-addon1" name="width">
+                        <input type="text" class="form-control" placeholder="height" aria-label="height" aria-describedby="basic-addon1" name="height">
+
+                        <span class="input-group-text" id="basic-addon1">Number of columns</span>
+                        <input type="text" class="form-control" aria-describedby="basic-addon1" name="n_cols" placeholder="1">
+
+                  
                         <input class="form-control" type="file" name="forLong" id="forLong" multiple>
                         <button class="btn btn-outline-secondary" type="submit" id="longUpload" name="btn" value="longUpload">Upload</button>
                         <button class="btn btn-outline-secondary visually-hidden" type="button" id="longLoading">

@@ -29,7 +29,19 @@ def get_tiny_zip(files_data, resize_width=None):
 
 
 @logger.catch
-def get_long_jpg(files_data):
+def get_long_jpg(files_data, raw_width: str, raw_height: str, raw_n_cols: str):
+    if raw_width and raw_height:
+        if raw_width.isdigit() and raw_height.isdigit():
+            width = int(raw_width)
+            height = int(raw_height)
+    else:
+        width = -1
+        height = -1
+    if raw_n_cols and raw_n_cols.isdigit():
+        n_cols = int(raw_n_cols)
+    else:
+        n_cols = 1
+
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
         files = []
@@ -37,7 +49,7 @@ def get_long_jpg(files_data):
             files.append(
                 ('files', (file_data.filename, file_data.stream, file_data.content_type))
             )
-        url = f'https://{NETLOC}/api/long'
+        url = f'https://{NETLOC}/api/long?wide={width}&high={height}&n_cols={n_cols}'
         resp = session.post(
             url,
             files=files,
