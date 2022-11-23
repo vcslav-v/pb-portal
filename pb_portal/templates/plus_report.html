@@ -22,11 +22,11 @@
             <div id="subsGraph"></div>
         </div>
     </div>
-    <div class="row">
+    <!-- <div class="row">
         <div class="col-12">
             <div id="flowDataGraph"></div>
         </div>
-    </div>
+    </div> -->
 </div>
 {% endblock %}
 {% block script %}
@@ -64,7 +64,7 @@
                 year_gross_usd = response.year_gross_usd
                 refresh_rr()
                 Plotly.newPlot(subsGraph, response.gross_data, subs_layout, {'displayModeBar': false});
-                Plotly.newPlot(flowDataGraph, response.flow_data, flow_data_layout, {'displayModeBar': false});
+                // Plotly.newPlot(flowDataGraph, response.flow_data, flow_data_layout, {'displayModeBar': false});
             },
             error: function(error) {
                 console.log(error);
