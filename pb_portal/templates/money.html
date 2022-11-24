@@ -147,7 +147,10 @@
                 </div>
             </div>
         </div>
-        <div class="col-4 offset-md-5" id="filter_cats">
+        <div class="col-3 offset-md-1">
+            <input type="text" aria-label="Search" id="search_req" name="search_req" placeholder="Search" class="form-control">
+        </div>
+        <div class="col-4 offset-md-1" id="filter_cats">
             <div class="row">
                 <div class="col">
                     <div class="form-check form-switch">
@@ -611,6 +614,7 @@
         var formData = new FormData();
 
         formData.append('from_date', $('input[name=from_date]').val())
+        formData.append('search_req', $('input[name=search_req]').val())
         if(page) {
             formData.append('page', page);
         } else {
@@ -669,9 +673,15 @@
     refresh_transactions();
     
     $('#from_date').change(function(){
+        page = 0
+        refresh_transactions();
+    });
+    $('#search_req').change(function(){
+        page = 0
         refresh_transactions();
     });
     $('#filter_cats').change(function(){
+        page = 0
         filter_transactions();
     });
     // $(window).scroll(function() {

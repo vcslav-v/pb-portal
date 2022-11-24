@@ -46,6 +46,7 @@ class TransactionPage(BaseModel):
 class GetTransactionPage(BaseModel):
     from_date: date_type
     page: Optional[int]
+    req_str: Optional[str]
 
 
 class ShortStat(BaseModel):

@@ -117,6 +117,8 @@ def get_transactions():
     )
     if request.form.get('page'):
         data.page = int(request.form.get('page'))
+    if request.form.get('search_req').strip():
+        data.req_str = request.form.get('search_req').strip()
     transactions = connectors.finam.get_page_transactions(data)
     return transactions.json()
 
