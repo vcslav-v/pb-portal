@@ -29,6 +29,25 @@ def utm():
 
 
 @logger.catch
+@app_route.route('/neuro', methods=['GET', 'POST'])
+def neuro():
+    gpt_results = ['']
+    if request.method == 'POST':
+        params = connectors.neuro.schemas.TextGPT(
+            prompt=request.form.get('prompt')
+        )
+        if request.form.get('tokens') and request.form.get('tokens').isdigit():
+            params.tokens = int(request.form.get('tokens'))
+        if request.form.get('quantity') and request.form.get('quantity').isdigit():
+            params.quantity = int(request.form.get('quantity'))
+        gpt_results = connectors.neuro.get_gpt_text(params)
+    return render_template(
+        'neuro.html',
+        gpt_results=gpt_results,
+    )
+
+
+@logger.catch
 @app_route.route('/tinify', methods=['POST'])
 def tinify():
     try:

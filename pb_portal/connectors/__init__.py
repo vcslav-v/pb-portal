@@ -1,4 +1,4 @@
-from . import tag_board, graphic, drbl_like, finam, link_dealer, dm_parser, contracts, video
+from . import tag_board, graphic, drbl_like, finam, link_dealer, dm_parser, contracts, video, neuro
 
 __all__ = [
     'tag_board',
@@ -9,4 +9,5 @@ __all__ = [
     'dm_parser',
     'contracts',
     'video',
+    'neuro'
 ]

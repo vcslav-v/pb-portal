@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block app_content %}
+<div class="container">
+    <div class="row m-4">
+        <div class="col-4">
+            <h3>Neuro</h3>
+        </div>
+    </div>
+    <div class="row m-4">
+        <div class="col-5">
+            <form id="neuro" action="{{ url_for('tools.neuro') }}" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="promptArea" class="form-label">Prompt area</label>
+                    <textarea class="form-control" id="promptArea" rows="3" name="prompt"></textarea>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Tokens</span>
+                    <input type="text" class="form-control" placeholder="200"  name="tokens">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Quantity</span>
+                    <input type="text" class="form-control" placeholder="1" name="quantity">
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-outline-secondary">Get text</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-5 offset-md-1">
+            <label for="gpt_result" class="form-label">Result area</label>
+            <span id="gpt_result">
+                {% for gpt_result in gpt_results %}
+                    <p>
+                        {{ gpt_result }}
+                    </p>
+                {% endfor %}
+            </span>
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+</script>
+{% endblock %}
