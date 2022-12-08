@@ -14,5 +14,5 @@ def get_gpt_text(params: schemas.TextGPT) -> list[str]:
         resp = session.post(f'{API_URL}/api/get_text', data=params.json())
         logger.debug(resp.content)
         if resp.ok:
-            return [option.strip().replace('\\n', ' ') for option in resp.text.strip('"').split('||')]
+            return [option.strip().replace('\\n', ' ').replace('\\', '') for option in resp.text.strip('"').split('||')]
         return ['Error']
