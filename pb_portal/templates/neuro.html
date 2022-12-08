@@ -11,15 +11,15 @@
             <form id="neuro" action="{{ url_for('tools.neuro') }}" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="promptArea" class="form-label">Prompt area</label>
-                    <textarea class="form-control" id="promptArea" rows="3" name="prompt"></textarea>
+                    <textarea class="form-control" id="promptArea" rows="3" name="prompt">{{ last_prompt }}</textarea>
                 </div>
                 <div class="input-group mb-3">
                     <span class="input-group-text">Tokens</span>
-                    <input type="text" class="form-control" placeholder="200"  name="tokens">
+                    <input type="text" class="form-control" placeholder="200"  name="tokens" value="{{ last_tokens }}">
                 </div>
                 <div class="input-group mb-3">
                     <span class="input-group-text">Quantity</span>
-                    <input type="text" class="form-control" placeholder="1" name="quantity">
+                    <input type="text" class="form-control" placeholder="1" name="quantity" value="{{ last_quantity }}">
                 </div>
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-outline-secondary">Get text</button>
