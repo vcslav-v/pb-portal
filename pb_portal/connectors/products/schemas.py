@@ -1,5 +1,4 @@
 """Pydantic's models."""
-from __future__ import annotations
 from pydantic import BaseModel
 from datetime import date
 from typing import Optional
