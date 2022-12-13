@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block app_content %}
+<div class="container">
+    <div class="row m-4">
+        <div class="col-4">
+            <h3>Products</h3>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-12">
+            <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Designer</th>
+                    <th scope="col">Start</th>
+                    <th scope="col">End</th>
+                    <th scope="col">Links</th>
+                  </tr>
+                </thead>
+                <tbody id="product_rows">
+                </tbody>
+              </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+$.ajax({
+        type: 'POST',
+        url: "{{ url_for('products.list') }}",
+        dataType: 'html',
+        contentType: false,
+        cache: false,
+        mimeType: "multipart/form-data",
+        processData: false,
+        success: function(response) {
+            $('#product_rows').empty()
+            $("#product_rows").append(response)
+        },
+
+        error: function(error) {
+            console.log(error);
+        },
+    })
+</script>
+{% endblock %}

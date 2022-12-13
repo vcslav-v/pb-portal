@@ -1,0 +1,36 @@
+{% for product in pbd.products %}
+<tr>
+    <td scope="row">{{product.ident}}</td>
+    <td scope="row">{% if product.is_done %}✅{% else %}…{% endif %}</td>
+    <td>{{product.category}}</td>
+    <td>{{product.title}}</td>
+    <td>{{product.short_description}}...</td>
+    <td>{{product.designer_name}}</td>
+    <td>{{product.start_date}}</td>
+    <td>{% if product.end_date %}{{product.end_date}}{% else %}WIP{% endif %}</td>
+    <td>
+        <div class="btn-group" role="group">
+            <a href="{{product.trello_link}}" class="btn btn-info btn-sm" role="button" target="_blank">Trello</a>
+            <a href="{{product.dropbox_link}}" class="btn btn-primary btn-sm" role="button" target="_blank">Dropbox</a>
+        </div>
+    </td>
+</tr>
+{% for child in product.children %}
+<tr>
+    <td scope="row">{{child.ident}}</td>
+    <td scope="row">{% if child.is_done %}✅{% else %}…{% endif %}</td>
+    <td>{{child.category}}</td>
+    <td>{{child.title}}</td>
+    <td>{{child.short_description}}...</td>
+    <td>{{child.designer_name}}</td>
+    <td>24.10.2022</td>
+    <td>25.10.2022</td>
+    <td>
+        <div class="btn-group" role="group">
+            <a href="{{child.trello_link}}" class="btn btn-info btn-sm" role="button" target="_blank">Trello</a>
+            <a href="{{child.dropbox_link}}" class="btn btn-primary btn-sm" role="button" target="_blank">Dropbox</a>
+        </div>
+    </td>
+</tr>
+{% endfor %}
+{% endfor %}
