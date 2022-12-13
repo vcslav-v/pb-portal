@@ -23,8 +23,8 @@
     <td>{{child.title}}</td>
     <td>{{child.short_description}}...</td>
     <td>{{child.designer_name}}</td>
-    <td>24.10.2022</td>
-    <td>25.10.2022</td>
+    <td>{child.start_date}}</td>
+    <td>{% if child.end_date %}{{child.end_date}}{% else %}WIP{% endif %}</td>
     <td>
         <div class="btn-group" role="group">
             <a href="{{child.trello_link}}" class="btn btn-info btn-sm" role="button" target="_blank">Trello</a>
