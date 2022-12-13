@@ -14,7 +14,7 @@ class ProductInPage(BaseModel):
     category_id: int
     trello_link: str
     dropbox_link: str
-    children: list['ProductInPage'] = []
+    children: list['ProductInPage']
     is_done: bool
     start_date: date
     end_date: Optional[date]
