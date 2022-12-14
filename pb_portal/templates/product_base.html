@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-datepicker3.min.css') }}">
+{% endblock %}
 {% block app_content %}
 <div class="container">
     <div class="row m-4">
@@ -6,47 +9,99 @@
             <h3>Products</h3>
         </div>
     </div>
+    <div class="row" id="filters">
+        <div class="col-3">
+            <select class="form-select form-select-sm" id="designer_filter">
+                <option selected value="all">All designers</option>
+                {% for designer in page_data.designers %}
+                  <option value="{{ designer.ident }}">{{ designer.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-3">
+            <div id="end_date_datepicker">
+                <div class="input-daterange input-group input-group-sm" id="datepicker">
+                    <span class="input-group-text">End date</span>
+                    <input type="text" class="input-sm form-control" name="start" />
+                    <span class="input-group-text">to</span>
+                    <input type="text" class="input-sm form-control" name="end" />
+                </div>
+            </div>
+        </div>
+        <div class="col-1">
+            <button type="button" class="btn btn-secondary btn-sm" id="clear_btn">Clear</button>
+        </div>
+    </div>
     <div class="row mt-2">
-        <div class="col-12">
-            <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Category</th>
-                    <th scope="col">Title</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Designer</th>
-                    <th scope="col">Start</th>
-                    <th scope="col">End</th>
-                    <th scope="col">Links</th>
-                  </tr>
-                </thead>
-                <tbody id="product_rows">
-                </tbody>
-              </table>
+        <div class="col-12" id="filter">
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-12" id="product_page">
         </div>
     </div>
 </div>
 {% endblock %}
 {% block script %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.en.min.js') }}"></script>
 <script>
-$.ajax({
-        type: 'POST',
-        url: "{{ url_for('products.list') }}",
-        dataType: 'html',
-        contentType: false,
-        cache: false,
-        mimeType: "multipart/form-data",
-        processData: false,
-        success: function(response) {
-            $('#product_rows').empty()
-            $("#product_rows").append(response)
-        },
+    var today = new Date();
+    var last_month = new Date();
+    last_month.setMonth(last_month.getMonth()-1)
+    $('#end_date_datepicker .input-daterange').datepicker({
+        format: "mm-yyyy",
+        weekStart: 0,
+        startView: 1,
+        minViewMode: 1,
+        autoclose: true,
+        todayHighlight: true,
+    });
+    // $('#end_date_datepicker .input-daterange [name="start"]').datepicker('update', last_month);
+    // $('#end_date_datepicker .input-daterange [name="end"]').datepicker('update', last_month);
+</script>
+<script>
+    refresh_products = function(page){
+        var formData = new FormData();
+        formData.append('page', page)
+        formData.append('designer', $('#designer_filter').val())
+        formData.append('end_date_datepicker_start', $('#end_date_datepicker .input-daterange [name="start"]').val())
+        formData.append('end_date_datepicker_end', $('#end_date_datepicker .input-daterange [name="end"]').val())
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('products.list') }}",
+            data: formData,
+            dataType: 'html',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(response) {
+                $('#product_page').empty()
+                $("#product_page").append(response)
+            },
 
-        error: function(error) {
-            console.log(error);
-        },
+            error: function(error) {
+                console.log(error);
+            },
+        })
+    }
+    refresh_products(1);
+    $('#filters').change(function(){
+        refresh_products(1);
     })
+    $('#clear_btn').click(function(){
+        $('#end_date_datepicker .input-daterange [name="start"]').datepicker('update', '');
+        $('#end_date_datepicker .input-daterange [name="end"]').datepicker('update', '');
+        $('#designer_filter option:first').prop('selected', true);
+        refresh_products(1);
+    })
+
 </script>
 {% endblock %}
+<script>
+    // $('#from_date').change(function(){
+    //     page = 0
+    //     refresh_transactions();
+    // });
+</script>

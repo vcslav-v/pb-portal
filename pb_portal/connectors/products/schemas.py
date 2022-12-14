@@ -20,5 +20,23 @@ class ProductInPage(BaseModel):
     end_date: Optional[date]
 
 
+class Designer(BaseModel):
+    ident: int
+    name: str
+
+
 class ProductPage(BaseModel):
     products: list[ProductInPage] = []
+    page: int = 1
+    number_pages: int = 1
+
+
+class ProductPageData(BaseModel):
+    designers: list[Designer] = []
+
+
+class FilterPage(BaseModel):
+    page: int = 1
+    designer_id: Optional[int]
+    end_date_start: Optional[date]
+    end_date_end: Optional[date]
