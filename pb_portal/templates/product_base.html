@@ -19,6 +19,14 @@
             </select>
         </div>
         <div class="col-3">
+            <select class="form-select form-select-sm" id="category_filter">
+                <option selected value="all">All categories</option>
+                {% for category in page_data.categories %}
+                  <option value="{{ category.ident }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-3">
             <div id="end_date_datepicker">
                 <div class="input-daterange input-group input-group-sm" id="datepicker">
                     <span class="input-group-text">End date</span>
@@ -65,6 +73,7 @@
         var formData = new FormData();
         formData.append('page', page)
         formData.append('designer', $('#designer_filter').val())
+        formData.append('category', $('#category_filter').val())
         formData.append('end_date_datepicker_start', $('#end_date_datepicker .input-daterange [name="start"]').val())
         formData.append('end_date_datepicker_end', $('#end_date_datepicker .input-daterange [name="end"]').val())
         $.ajax({
@@ -94,6 +103,7 @@
         $('#end_date_datepicker .input-daterange [name="start"]').datepicker('update', '');
         $('#end_date_datepicker .input-daterange [name="end"]').datepicker('update', '');
         $('#designer_filter option:first').prop('selected', true);
+        $('#category_filter option:first').prop('selected', true);
         refresh_products(1);
     })
 

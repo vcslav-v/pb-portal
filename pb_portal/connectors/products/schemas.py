@@ -31,12 +31,19 @@ class ProductPage(BaseModel):
     number_pages: int = 1
 
 
+class Category(BaseModel):
+    ident: int
+    name: str
+
+
 class ProductPageData(BaseModel):
     designers: list[Designer] = []
+    categories: list[Category] = []
 
 
 class FilterPage(BaseModel):
     page: int = 1
     designer_id: Optional[int]
+    category_id: Optional[int]
     end_date_start: Optional[date]
     end_date_end: Optional[date]

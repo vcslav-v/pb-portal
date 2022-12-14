@@ -67,6 +67,8 @@ def list():
 
         if request.form.get('designer').isdecimal():
             page_data.designer_id = int(request.form.get('designer'))
+        if request.form.get('category').isdecimal():
+            page_data.category_id = int(request.form.get('category'))
         pbd = connectors.products.get_all(page_data)
         return render_template(
             '_product_page.html',
