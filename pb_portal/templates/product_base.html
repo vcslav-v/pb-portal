@@ -27,9 +27,9 @@
             </select>
         </div>
         <div class="col-3">
-            <div id="end_date_datepicker">
+            <div id="end_design_date_datepicker">
                 <div class="input-daterange input-group input-group-sm" id="datepicker">
-                    <span class="input-group-text">End date</span>
+                    <span class="input-group-text">End design date</span>
                     <input type="text" class="input-sm form-control" name="start" />
                     <span class="input-group-text">to</span>
                     <input type="text" class="input-sm form-control" name="end" />
@@ -57,7 +57,7 @@
     var today = new Date();
     var last_month = new Date();
     last_month.setMonth(last_month.getMonth()-1)
-    $('#end_date_datepicker .input-daterange').datepicker({
+    $('#end_design_date_datepicker .input-daterange').datepicker({
         format: "mm-yyyy",
         weekStart: 0,
         startView: 1,
@@ -65,8 +65,8 @@
         autoclose: true,
         todayHighlight: true,
     });
-    // $('#end_date_datepicker .input-daterange [name="start"]').datepicker('update', last_month);
-    // $('#end_date_datepicker .input-daterange [name="end"]').datepicker('update', last_month);
+    // $('#end_design_date_datepicker .input-daterange [name="start"]').datepicker('update', last_month);
+    // $('#end_design_date_datepicker .input-daterange [name="end"]').datepicker('update', last_month);
 </script>
 <script>
     refresh_products = function(page){
@@ -74,8 +74,8 @@
         formData.append('page', page)
         formData.append('designer', $('#designer_filter').val())
         formData.append('category', $('#category_filter').val())
-        formData.append('end_date_datepicker_start', $('#end_date_datepicker .input-daterange [name="start"]').val())
-        formData.append('end_date_datepicker_end', $('#end_date_datepicker .input-daterange [name="end"]').val())
+        formData.append('end_design_date_datepicker_start', $('#end_design_date_datepicker .input-daterange [name="start"]').val())
+        formData.append('end_design_date_datepicker_end', $('#end_design_date_datepicker .input-daterange [name="end"]').val())
         $.ajax({
             type: 'POST',
             url: "{{ url_for('products.list') }}",
@@ -100,8 +100,8 @@
         refresh_products(1);
     })
     $('#clear_btn').click(function(){
-        $('#end_date_datepicker .input-daterange [name="start"]').datepicker('update', '');
-        $('#end_date_datepicker .input-daterange [name="end"]').datepicker('update', '');
+        $('#end_design_date_datepicker .input-daterange [name="start"]').datepicker('update', '');
+        $('#end_design_date_datepicker .input-daterange [name="end"]').datepicker('update', '');
         $('#designer_filter option:first').prop('selected', true);
         $('#category_filter option:first').prop('selected', true);
         refresh_products(1);

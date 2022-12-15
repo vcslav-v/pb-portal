@@ -8,6 +8,7 @@
       <th scope="col">Description</th>
       <th scope="col">Designer</th>
       <th scope="col">Start</th>
+      <th scope="col">End design</th>
       <th scope="col">End</th>
       <th scope="col">Links</th>
     </tr>
@@ -23,6 +24,7 @@
                 <td>{{product.short_description}}...</td>
                 <td>{{product.designer_name}}</td>
                 <td>{{product.start_date}}</td>
+                <td>{% if product.end_designer_date %}{{product.end_designer_date}}{% else %}WIP{% endif %}</td>
                 <td>{% if product.end_date %}{{product.end_date}}{% else %}WIP{% endif %}</td>
                 <td>
                     <div class="btn-group" role="group">
@@ -40,6 +42,7 @@
                     <td>{{child.short_description}}...</td>
                     <td>{{child.designer_name}}</td>
                     <td>{{child.start_date}}</td>
+                    <td>{% if child.end_designer_date %}{{child.end_designer_date}}{% else %}WIP{% endif %}</td>
                     <td>{% if child.end_date %}{{child.end_date}}{% else %}WIP{% endif %}</td>
                     <td>
                         <div class="btn-group" role="group">

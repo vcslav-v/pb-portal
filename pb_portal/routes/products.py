@@ -47,21 +47,21 @@ def list():
         page_data.page = int(request.form.get('page'))
 
         if request.form.get(
-            'end_date_datepicker_start'
+            'end_design_date_datepicker_start'
         ) and request.form.get(
-            'end_date_datepicker_end'
+            'end_design_date_datepicker_end'
         ):
             end_date_start_mon, end_date_start_year = request.form.get(
-                'end_date_datepicker_start'
+                'end_design_date_datepicker_start'
             ).split('-')
-            page_data.end_date_start = date.fromisoformat(
+            page_data.end_design_date_start = date.fromisoformat(
                 f'{end_date_start_year}-{end_date_start_mon}-01'
             )
             end_date_end_mon, end_date_end_year = request.form.get(
-                'end_date_datepicker_end'
+                'end_design_date_datepicker_end'
             ).split('-')
             _, end_days_month = calendar.monthrange(int(end_date_end_year), int(end_date_end_mon))
-            page_data.end_date_end = date.fromisoformat(
+            page_data.end_design_date_end = date.fromisoformat(
                 f'{end_date_end_year}-{end_date_end_mon}-{end_days_month}'
             )
 
