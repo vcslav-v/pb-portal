@@ -30,6 +30,7 @@ class ProductPage(BaseModel):
     products: list[ProductInPage] = []
     page: int = 1
     number_pages: int = 1
+    number_products: int = 1
 
 
 class Category(BaseModel):
