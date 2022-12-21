@@ -204,3 +204,20 @@ def video_template_file_prepare(temp_dir_name, t1_data, files, zip_name):
         for file in files:
             if file != zip_name:
                 zip_file.write(os.path.join(root, file), arcname=file)
+
+
+@logger.catch
+@app_route.route('/long_tile', methods=['POST'])
+def long_tile():
+    try:
+        long_jpg = connectors.graphic.get_long_tile_jpg(
+            request.files.getlist('forLongTile'),
+            request.form.get('width'),
+            request.form.get('schema'),
+            request.form.get('border'),
+            request.form.get('border_color'),
+        )
+    except Exception as e:
+        logger.error(e.args)
+        return
+    return send_file(long_jpg, mimetype='image/jpeg')

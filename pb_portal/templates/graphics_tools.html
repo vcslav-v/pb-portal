@@ -71,6 +71,35 @@
             </div>
         </div>
     </form>
+    <div class="row m-4 ">
+        <div class="col-4">
+            <h3>Make long img</h3>
+        </div>
+    </div>
+    <form id="uploadLongTile" action="#" method="post" enctype="multipart/form-data">
+        <div class="row m-4">
+            <div class="col-8">
+                <div class="input-group">
+                        <span class="input-group-text" id="basic-addon1">Width</span>
+                        <input type="text" class="form-control" placeholder="width" aria-label="width" aria-describedby="basic-addon1" name="width">
+
+                        <span class="input-group-text" id="basic-addon1">Schema</span>
+                        <input type="text" class="form-control" placeholder="1-2-1-1" aria-label="schema" aria-describedby="basic-addon1" name="schema">
+
+                        <span class="input-group-text" id="basic-addon1">Border</span>
+                        <input type="text" class="form-control" placeholder="0" aria-label="border" aria-describedby="basic-addon1" name="border" value="0">
+                        <input type="text" class="form-control" placeholder="#FFFFFF" aria-label="border_color" aria-describedby="basic-addon1" name="border_color" value="#FFFFFF">
+                  
+                        <input class="form-control" type="file" name="forLongTile" id="forLongTile" multiple>
+                        <button class="btn btn-outline-secondary" type="submit" id="longTileUpload" name="btn" value="longTileUpload">Upload</button>
+                        <button class="btn btn-outline-secondary visually-hidden" type="button" id="longTileLoading">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Loading...
+                        </button>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 {% endblock %}
 {% block script %}
@@ -79,8 +108,11 @@
     var myFile = document.getElementById('forTiny');
     var longForm = document.getElementById('uploadLong');
     var longFile = document.getElementById('forLong');
+    var longTileForm = document.getElementById('uploadLongTile');
+    var longTileFile = document.getElementById('forLongTile');
     var gifForm = document.getElementById('uploadForGif');
     var gifFile = document.getElementById('forGif');
+
     myForm.onsubmit = function(event) {
         event.preventDefault();
         $('#tinyUpload').addClass('visually-hidden')
@@ -172,6 +204,39 @@
                     var link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);
                     link.download = 'result.gif';
+                    link.click();
+                },
+                error: function(error) {
+                    console.log(error);
+                },
+                
+            });
+    };
+    longTileForm.onsubmit = function(event) {
+        event.preventDefault();
+        $('#longTileUpload').addClass('visually-hidden')
+        $('#longTileLoading').removeClass('visually-hidden')
+        var files = longTileFile.files;
+        var formData = new FormData(longTileForm);
+        $.ajax({
+                type: 'POST',
+                url: "{{ url_for('tools.long_tile') }}",
+                data: formData,
+                dataType: 'binary',
+                xhrFields: {
+                    'responseType': 'blob'
+                },
+                contentType: false,
+                cache: false,
+                mimeType: "multipart/form-data",
+                processData: false,
+                success: function(data, status, xhr) {
+                    $('#longTileLoading').addClass('visually-hidden')
+                    $('#longTileUpload').removeClass('visually-hidden')
+                    var blob = new Blob([data], {type: xhr.getResponseHeader('Content-Type')});
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'long_tile.jpg';
                     link.click();
                 },
                 error: function(error) {
