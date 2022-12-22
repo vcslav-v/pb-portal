@@ -247,13 +247,9 @@ def prepare_s3_url():
 @app_route.route('/long_tile_check', methods=['POST'])
 def long_tile_check():
     logger.debug('check long tile')
-    try:
-        long_jpg = connectors.graphic.long_tile_check(
-            request.form.get('prefix'),
-        )
-    except Exception as e:
-        logger.error(e.args)
-        return
+    long_jpg = connectors.graphic.long_tile_check(
+        request.form.get('prefix'),
+    )
     if long_jpg:
         return send_file(long_jpg, mimetype='image/jpeg')
     response = Response(status=204)
