@@ -113,6 +113,122 @@
     var gifForm = document.getElementById('uploadForGif');
     var gifFile = document.getElementById('forGif');
 
+    var num_files = 0;
+    const max_attempts = 24;
+
+    function longTileChecker(prefix, attempts){
+        var formData = new FormData(longTileForm);
+        formData.append('prefix', prefix);
+        formData.append('num_files', longTileFile.files.length);
+        $.ajax({
+                type: 'POST',
+                url: "{{ url_for('tools.long_tile_check') }}",
+                data: formData,
+                dataType: 'binary',
+                xhrFields: {
+                    'responseType': 'blob'
+                },
+                contentType: false,
+                cache: false,
+                mimeType: "multipart/form-data",
+                processData: false,
+                success: function(data, status, xhr) {
+                    $('#longTileLoading').addClass('visually-hidden')
+                    $('#longTileUpload').removeClass('visually-hidden')
+                    var blob = new Blob([data], {type: xhr.getResponseHeader('Content-Type')});
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'result.jpg';
+                    link.click();
+                },
+                error: function(error) {
+                    if(attempts < max_attempts){
+                        console.log(attempts)
+                        setTimeout(longTileChecker, 5000, prefix, attempts + 1);
+                    } else {
+                        $('#longTileLoading').addClass('visually-hidden')
+                        $('#longTileUpload').removeClass('visually-hidden')
+                    }
+                        
+                },
+                
+            });
+    }
+    function sendToWorker(prefix){
+        var formData = new FormData(longTileForm);
+        formData.append('prefix', prefix);
+        formData.append('num_files', longTileFile.files.length);
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('tools.long_tile') }}",
+            data: formData,
+            dataType: 'html',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(response) {
+                longTileChecker(prefix, 0);
+            },
+            error: function(error) {
+                console.log(error);
+            },
+                
+        });
+    }
+
+    function uploadFile(file, s3Data, url, prefix){
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', s3Data.url);
+      xhr.setRequestHeader('x-amz-acl', 'public-read');
+
+      const postData = new FormData();
+      for(key in s3Data.fields){
+        postData.append(key, s3Data.fields[key]);
+      }
+      postData.append('file', file);
+
+      xhr.onreadystatechange = () => {
+        if(xhr.readyState === 4){
+          if(xhr.status === 200 || xhr.status === 204){
+            num_files -= 1;
+            if(num_files === 0){
+                sendToWorker(prefix)
+            };
+          }
+          else{
+            alert('Could not upload file.');
+          }
+        }
+      };
+      xhr.send(postData);
+    }
+
+    function getSignedRequest(file, prefix){
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', `{{ url_for('tools.prepare_s3_url') }}?filename=${file.name}&content_type=${file.type}&prefix=${prefix}`);
+      xhr.onreadystatechange = () => {
+        if(xhr.readyState === 4){
+          if(xhr.status === 200){
+            const response = JSON.parse(xhr.responseText);
+            uploadFile(file, response.data, response.url, prefix);
+          }
+          else{
+            alert('Could not get signed URL.');
+          }
+        }
+      };
+      xhr.send();
+    }
+
+    function initUpload(prefix){
+      const files = longTileFile.files;
+      num_files = files.length;
+      for(let file of files){
+        getSignedRequest(file, prefix);
+      }
+    }
+
     myForm.onsubmit = function(event) {
         event.preventDefault();
         $('#tinyUpload').addClass('visually-hidden')
@@ -216,26 +332,8 @@
         event.preventDefault();
         $('#longTileUpload').addClass('visually-hidden')
         $('#longTileLoading').removeClass('visually-hidden')
-        var files = longTileFile.files;
-        var formData = new FormData(longTileForm);
-        $.ajax({
-                type: 'POST',
-                url: "{{ url_for('tools.long_tile') }}",
-                data: formData,
-                dataType: 'html',
-                contentType: false,
-                cache: false,
-                mimeType: "multipart/form-data",
-                processData: false,
-                success: function(response) {
-                    $('#longTileLoading').addClass('visually-hidden')
-                    $('#longTileUpload').removeClass('visually-hidden')
-                },
-                error: function(error) {
-                    console.log(error);
-                },
-                
-            });
+        const prefix = 'long_tile_' + Date.now()
+        initUpload(prefix)
     };
 </script>
 {% endblock %}

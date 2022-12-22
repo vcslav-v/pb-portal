@@ -211,13 +211,46 @@ def video_template_file_prepare(temp_dir_name, t1_data, files, zip_name):
 def long_tile():
     try:
         connectors.graphic.get_long_tile_jpg(
-            request.files.getlist('forLongTile'),
+            int(request.form.get('num_files')),
             request.form.get('width'),
             request.form.get('schema'),
             request.form.get('border'),
             request.form.get('border_color'),
+            request.form.get('prefix'),
         )
     except Exception as e:
         logger.error(e.args)
         return
     return 'ok'
+
+
+@logger.catch
+@app_route.route('/prepare_s3_url', methods=['GET'])
+def prepare_s3_url():
+    filename = request.args.get('filename')
+    content_type = request.args.get('content_type')
+    prefix = request.args.get('prefix')
+    try:
+        result = connectors.graphic.make_s3_url(
+            filename,
+            content_type,
+            prefix,
+        )
+    except Exception as e:
+        logger.error(e.args)
+        return
+    return result
+
+
+@logger.catch
+@app_route.route('/long_tile_check', methods=['POST'])
+def long_tile_check():
+    try:
+        long_jpg = connectors.graphic.long_tile_check(
+            request.form.get('prefix'),
+        )
+    except Exception as e:
+        logger.error(e.args)
+        return
+    if long_jpg:
+        return send_file(long_jpg, mimetype='image/jpeg')
