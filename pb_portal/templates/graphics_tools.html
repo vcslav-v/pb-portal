@@ -124,16 +124,13 @@
                 type: 'POST',
                 url: "{{ url_for('tools.long_tile_check') }}",
                 data: formData,
-                dataType: 'binary',
-                xhrFields: {
-                    'responseType': 'blob'
-                },
+                dataType: 'json',
                 contentType: false,
                 cache: false,
                 mimeType: "multipart/form-data",
                 processData: false,
-                success: function(data, status, xhr) {
-                    if(status === 'nocontent'){
+                success: function(response) {
+                    if(response.status === 'in work'){
                         if(attempts < max_attempts){
                             console.log(attempts)
                             setTimeout(longTileChecker, 5000, prefix, attempts + 1);
@@ -144,10 +141,8 @@
                     } else {
                         $('#longTileLoading').addClass('visually-hidden')
                         $('#longTileUpload').removeClass('visually-hidden')
-                        var blob = new Blob([data], {type: xhr.getResponseHeader('Content-Type')});
                         var link = document.createElement('a');
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = 'result.jpg';
+                        link.href = response.url;
                         link.click();
                     }
                 },
@@ -184,7 +179,7 @@
             mimeType: "multipart/form-data",
             processData: false,
             success: function(response) {
-                setTimeout(longTileChecker, 30000, prefix, 0);
+                longTileChecker(prefix, 0)
             },
             error: function(error) {
                 console.log(error);

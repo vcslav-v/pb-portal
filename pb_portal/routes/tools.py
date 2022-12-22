@@ -250,7 +250,4 @@ def long_tile_check():
     long_jpg = connectors.graphic.long_tile_check(
         request.form.get('prefix'),
     )
-    if long_jpg:
-        return send_file(long_jpg, mimetype='image/jpeg')
-    response = Response(status=204)
-    return response
+    return long_jpg

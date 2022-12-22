@@ -160,16 +160,28 @@ def make_s3_url(filename, content_type, prefix):
 
 @logger.catch
 def long_tile_check(prefix: str):
-    with requests.sessions.Session() as session:
-        logger.debug(prefix)
-        session.auth = ('api', TOKEN)
-        url = f'https://{NETLOC}/api/check_logn_tile?prefix={prefix}'
-        resp = session.post(
-            url,
+    local_session = s3_session.Session()
+    client = local_session.client(
+            's3',
+            region_name=DO_SPACE_REGION,
+            endpoint_url=DO_SPACE_ENDPOINT,
+            aws_access_key_id=DO_SPACE_KEY,
+            aws_secret_access_key=DO_SPACE_SECRET
         )
-        resp.raise_for_status()
-        logger.debug(resp.status_code)
-        if resp.content == b'{"status":"in work"}':
-            return
-        long_tile_jpg = io.BytesIO(resp.content)
-        return long_tile_jpg
+    s3_keys = client.list_objects_v2(Bucket=DO_SPACE_BUCKET, Prefix=f'temp/{prefix}/').get('Contents')
+    if s3_keys:
+        s3_keys = [s3_key['Key'] for s3_key in s3_keys]
+    else:
+        s3_keys = []
+    result_key = f'temp/{prefix}/result.jpg'
+    if result_key in s3_keys:
+        link = client.generate_presigned_url(
+            ClientMethod='get_object',
+            Params={
+                'Bucket': DO_SPACE_BUCKET,
+                'Key': result_key,
+            },
+            ExpiresIn=300
+        )
+        return json.dumps({'status': 'done', 'url': link})
+    return json.dumps({'status': 'in work'})
