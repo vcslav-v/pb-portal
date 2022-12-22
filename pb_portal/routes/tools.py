@@ -1,13 +1,14 @@
 import os
 import shutil
 import zipfile
-
-from flask import (Blueprint, flash, redirect, render_template, request,
-                   send_file, url_for)
-from loguru import logger
-from pb_portal import connectors
-from pydantic import ValidationError
 from datetime import datetime
+
+from flask import (Blueprint, Response, flash, redirect, render_template,
+                   request, send_file, url_for)
+from loguru import logger
+from pydantic import ValidationError
+
+from pb_portal import connectors
 
 app_route = Blueprint('route', __name__, url_prefix='/tools')
 
@@ -254,3 +255,5 @@ def long_tile_check():
         return
     if long_jpg:
         return send_file(long_jpg, mimetype='image/jpeg')
+    response = Response(status=204)
+    return response
