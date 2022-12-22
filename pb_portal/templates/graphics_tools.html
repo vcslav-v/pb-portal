@@ -155,9 +155,15 @@
             });
     }
     function sendToWorker(prefix){
-        var formData = new FormData(longTileForm);
+        var local_formData = new FormData(longTileForm);
+        var formData = new FormData();
+        $()
         formData.append('prefix', prefix);
         formData.append('num_files', longTileFile.files.length);
+        formData.append('width', local_formData.get('width'))
+        formData.append('schema', local_formData.get('schema'))
+        formData.append('border', local_formData.get('border'))
+        formData.append('border_color', local_formData.get('border_color'))
         $.ajax({
             type: 'POST',
             url: "{{ url_for('tools.long_tile') }}",
