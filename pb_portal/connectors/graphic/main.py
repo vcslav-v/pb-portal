@@ -167,6 +167,7 @@ def long_tile_check(prefix: str):
             url,
         )
         resp.raise_for_status()
+        logger.debug(resp.status_code)
         if resp.content == b'{"status":"in work"}':
             return
         long_tile_jpg = io.BytesIO(resp.content)
