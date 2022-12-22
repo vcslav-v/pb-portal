@@ -106,7 +106,11 @@ def get_long_tile_jpg(files_data, raw_width: str, raw_schema: str, raw_border: s
     collor_check = re.findall(r"^#[a-f0-9]{6}$", raw_border_color, re.IGNORECASE)
     if collor_check:
         border_color = collor_check[0][1:]
-
+    logger.debug('start_save')
+    for file in files_data:
+        file.save(file.filename)
+        logger.debug(file.filename)
+    logger.debug('end save')
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
         files = []
