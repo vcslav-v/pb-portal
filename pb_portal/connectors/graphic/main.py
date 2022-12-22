@@ -119,6 +119,7 @@ def get_long_tile_jpg(files_data, raw_width: str, raw_schema: str, raw_border: s
         resp = session.post(
             url,
             files=files,
+            timeout=120
         )
         resp.raise_for_status()
         long_tile_jpg = io.BytesIO(resp.content)
