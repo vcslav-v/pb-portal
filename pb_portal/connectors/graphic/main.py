@@ -161,6 +161,7 @@ def make_s3_url(filename, content_type, prefix):
 @logger.catch
 def long_tile_check(prefix: str):
     with requests.sessions.Session() as session:
+        logger.debug(prefix)
         session.auth = ('api', TOKEN)
         url = f'https://{NETLOC}/api/check_logn_tile?prefix={prefix}'
         resp = session.post(
