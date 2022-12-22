@@ -184,7 +184,7 @@
             mimeType: "multipart/form-data",
             processData: false,
             success: function(response) {
-                longTileChecker(prefix, 0);
+                setTimeout(longTileChecker, 30000, prefix, 0);
             },
             error: function(error) {
                 console.log(error);
