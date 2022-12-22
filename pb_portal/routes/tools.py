@@ -210,7 +210,7 @@ def video_template_file_prepare(temp_dir_name, t1_data, files, zip_name):
 @app_route.route('/long_tile', methods=['POST'])
 def long_tile():
     try:
-        long_jpg = connectors.graphic.get_long_tile_jpg(
+        connectors.graphic.get_long_tile_jpg(
             request.files.getlist('forLongTile'),
             request.form.get('width'),
             request.form.get('schema'),
@@ -220,4 +220,4 @@ def long_tile():
     except Exception as e:
         logger.error(e.args)
         return
-    return send_file(long_jpg, mimetype='image/jpeg')
+    return 'ok'

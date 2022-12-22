@@ -5,8 +5,8 @@ import re
 import requests
 from loguru import logger
 
-NETLOC = os.environ.get('GRAPH_NETLOC') or '127.0.0.1:8000'
-TOKEN = os.environ.get('GRAPH_TOKEN') or 'pass'
+NETLOC = os.environ.get('GRAPH_NETLOC', '127.0.0.1:8000')
+TOKEN = os.environ.get('GRAPH_TOKEN', 'pass')
 
 
 @logger.catch
