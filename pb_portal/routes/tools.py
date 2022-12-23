@@ -75,16 +75,17 @@ def tinify():
 @app_route.route('/longy', methods=['POST'])
 def longy():
     try:
-        long_jpg = connectors.graphic.get_long_jpg(
-            request.files.getlist('forLong'),
+        connectors.graphic.get_long_jpg(
+            int(request.form.get('num_files')),
             request.form.get('width'),
             request.form.get('height'),
             request.form.get('n_cols'),
+            request.form.get('prefix'),
         )
     except Exception as e:
         logger.error(e.args)
         return
-    return send_file(long_jpg, mimetype='image/jpeg')
+    return 'ok'
 
 
 @logger.catch
