@@ -117,9 +117,8 @@
     const max_attempts = 24;
 
     function longTileChecker(prefix, attempts){
-        var formData = new FormData(longTileForm);
+        var formData = new FormData();
         formData.append('prefix', prefix);
-        formData.append('num_files', longTileFile.files.length);
         $.ajax({
                 type: 'POST',
                 url: "{{ url_for('tools.long_tile_check') }}",
