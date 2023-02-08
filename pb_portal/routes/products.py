@@ -102,6 +102,7 @@ def uploader():
             product_file_name=request.form.get('product_file_name'),
             title=request.form.get('title'),
             slug=request.form.get('slug'),
+            size=f'{request.form.get("product_size_mb")} mb',
             excerpt=request.form.get('excerpt'),
             description=request.form.get('description'),
             categories=get_form_list(request.form.to_dict(), 'category'),

@@ -489,6 +489,7 @@
   function initUpload(prefix, formData, gallery, safe_product_name){
     num_uploads = 2 + gallery.length;
     var product_file = formData.get('product_file')
+    formData.append('product_size_mb', Math.floor(product_file.size/1000000))
     getSignedRequest(product_file, prefix, safe_product_name, formData);
     var thumbnail = formData.get('thumbnail')
     getSignedRequest(thumbnail, prefix, 'thumbnail_x2', formData);

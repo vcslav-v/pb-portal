@@ -76,7 +76,7 @@ class UploadProduct(BaseModel):
     title: str
     slug: str
     excerpt: str
-    size: str = ''
+    size: str
     description: str
     date_upload: date
     guest_author: Optional[str]
