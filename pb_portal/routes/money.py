@@ -25,11 +25,16 @@ user_roles = {
     os.environ.get('TD_ADMIN_LOGIN') or 'td_root': ['td_admin'],
 }
 
+
 @auth.get_user_roles
 def get_user_roles(user):
     return user_roles[user]
 
-CATEGORIES = connectors.finam.get_categories()
+
+try:
+    CATEGORIES = connectors.finam.get_categories()
+except Exception:
+    CATEGORIES = connectors.finam.schemas.Node(name='root')
 if CATEGORIES.children:
     ACCOUNTS = next(filter(lambda x: x.name == 'Balance', CATEGORIES.children))
     INCOME = next(filter(lambda x: x.name == 'Income', CATEGORIES.children))

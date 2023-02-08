@@ -13,7 +13,7 @@ NAME = os.environ.get('PB_API_NAME', '')
 def get_site_info_of(type_info: str = 'category') -> list[str]:
     with requests.sessions.Session() as session:
         session.auth = (NAME, TOKEN)
-        resp = session.post(f'{API_URL}/{type_info}',)
+        resp = session.get(f'{API_URL}/{type_info}',)
         if resp.ok:
             return json.loads(resp.content)
     return []
