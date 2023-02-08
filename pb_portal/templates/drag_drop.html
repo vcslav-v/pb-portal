@@ -1,0 +1,539 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dd.css') }}">
+
+{% endblock %}
+{% block app_content %}
+<div class="row">
+  <div class="col-6">
+    <form id="productForm" action="#" method="post" enctype="multipart/form-data">
+      <div class="row mb-3">
+        <div class="col-8">
+          <select class="form-select" aria-label="Default select example" name="product_type">
+            <option selected value="Freebie">Freebie</option>
+            <option value="Plus">Plus</option>
+            <option value="Premium">Premium</option>
+          </select>
+        </div>
+        <div class="col-4" id="sandbox-container">
+          <div class="input-group date">
+            <span class="input-group-text" id="basic-addon1">Date</span>
+            <input type="text" class="form-control" name="date"><span class="input-group-addon"><i
+                class="glyphicon glyphicon-th"></i></span>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-12">
+          <div class="form-floating">
+            <input type="text" class="form-control" id="TitleInput" placeholder="Title" name="title" required>
+            <label for="TitleInput">Title</label>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-12">
+          <div class="form-floating">
+            <input type="text" class="form-control" id="SlugInput" placeholder="Slug" name="slug" required>
+            <label for="TitleInput">Slug</label>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-12">
+          <textarea rows="2" class="form-control" id="ExcerptInput" placeholder="Excerpt" name="excerpt" required></textarea>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-12">
+          <textarea rows="5" class="form-control" id="DescriptionInput" placeholder="Description" name="description" required></textarea>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-6">
+          <div class="form-floating">
+            <input type="text" class="form-control" id="AuthorInput" placeholder="Invited author" name="guest_author">
+            <label for="AuthorInput">Guest author</label>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-floating">
+            <input type="text" class="form-control" id="AuthorUrlInput" placeholder="Invited author link" name="guest_author_link">
+            <label for="AuthorUrlInput">Guest author link</label>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <h3>
+            <small class="text-muted">Cattegory</small>
+          </h3>
+        </div>
+      </div>
+      <div class="row mb-3">
+        {% for i_category in range(0, upload_page_info.categories|length, upload_page_info.items_in_col) %}
+            <div class="col-3">
+            {% for category in upload_page_info.categories[i_category:i_category+upload_page_info.items_in_col]%}
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="category|{{category}}">
+                <label class="form-check-label" for="flexSwitchCheckDefault">
+                  {{ category }}
+                </label>
+              </div>
+            {% endfor %}
+            </div>
+        {% endfor %}
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <h3>
+            <small class="text-muted">Format</small>
+          </h3>
+        </div>
+      </div>
+      <div class="row mb-3">
+        {% for i_format in range(0, upload_page_info.formats|length, upload_page_info.items_in_col) %}
+            <div class="col-2">
+            {% for format in upload_page_info.formats[i_format:i_format+upload_page_info.items_in_col]%}
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="format|{{format}}">
+                <label class="form-check-label" for="flexSwitchCheckDefault">
+                  {{ format }}
+                </label>
+              </div>
+            {% endfor %}
+            </div>
+        {% endfor %}
+      </div>
+      <div class="row mb-3">
+        <div class="col-12" id="freebie_options">
+          <div class="row">
+            <div class="col-12">
+              <h3>
+                <small class="text-muted">Freebies options</small>
+              </h3>
+            </div>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name="download_by_email">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Download by email</label>
+          </div>
+        </div>
+        <div class="col-12" id="premium_options">
+          <div class="row mb-3">
+            <div class="input-group">
+              <span class="input-group-text" id="basic-addon2">Standard price</span>
+              <input type="text" class="form-control" placeholder="0" aria-label="Standard price"
+                aria-describedby="basic-addon2" name="standart_price" required>
+              <span class="input-group-text" id="basic-addon2">Extended price</span>
+              <input type="text" class="form-control" placeholder="0" aria-label="Extended price"
+                aria-describedby="basic-addon2" name="extended_price" required>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="input-group">
+              <span class="input-group-text" id="basic-addon2">Sale standard price</span>
+              <input type="text" class="form-control" aria-label="Sale standard price" aria-describedby="basic-addon2" name="sale_standart_price">
+              <span class="input-group-text" id="basic-addon2">Sale extended price</span>
+              <input type="text" class="form-control" aria-label="Sale extended price" aria-describedby="basic-addon2" name="sale_extended_price">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <h3>
+                <small class="text-muted">Compatibilities</small>
+              </h3>
+            </div>
+          </div>
+          <div class="row mb-3">
+            {% for i_compatibility in range(0, upload_page_info.compatibilities|length, upload_page_info.items_in_col) %}
+                <div class="col-6">
+                {% for compatibility in upload_page_info.compatibilities[i_compatibility:i_compatibility+upload_page_info.items_in_col]%}
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="compatibility|{{compatibility}}">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">
+                      {{ compatibility }}
+                    </label>
+                  </div>
+                {% endfor %}
+                </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-12">
+          <label for="formFile" class="form-label">Product file</label>
+          <input class="form-control" type="file" id="product_file" name="product_file" required>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <h3>
+            <small class="text-muted">Images</small>
+          </h3>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-6">
+          <label for="formFile" class="form-label">Thumbnail</label>
+          <input class="form-control" type="file" id="thumbnail" name="thumbnail" required>
+        </div>
+        <div class="col-6">
+          <label for="formFile" class="form-label">Image for push</label>
+          <input class="form-control" type="file" id="image_for_push" name="image_for_push">
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="file-upload col-12" id="upload_area">
+          <div class="image-upload-wrap">
+            <input class="file-upload-input" type="file" id="gallery" onchange="readURL(this);" accept="image/*" multiple required/>
+            <div class="drag-text">
+              <h3>Drag and drop a file or select add Image</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-12" id="show_img_area">
+          <div id="file-upload-content" class="text-center">
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <button type="submit" class="btn btn-primary">Publish</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block script %}
+<script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.en.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+<script>
+  var today = new Date();
+  $('#sandbox-container .input-group.date').datepicker({
+    format: "dd-mm-yyyy",
+    weekStart: 1,
+    todayBtn: "linked",
+    autoclose: true,
+    todayHighlight: true
+  });
+  // $('#sandbox-container .input-group.date').datepicker('update', today);
+</script>
+<script>
+  function img_close(img_container) {
+    var img_name = img_container.getAttribute('name');
+    files = files.filter(function (element) { return element.name != img_container.getAttribute('name') })
+    img_container.parentElement.removeChild(img_container);
+    if ($('.img_container').length == 0) {
+      removeUpload();
+    }
+    makeMainImg();
+  }
+  function move_img_left(img_container) {
+    var img_name = img_container.getAttribute('name');
+    var elem_list = $('#file-upload-content').children();
+    for (let i = 1; i < elem_list.length; i++) {
+      if (elem_list[i].getAttribute('name') == img_name) {
+        elem_list[i - 1].insertAdjacentElement('beforebegin', elem_list[i])
+      }
+    }
+
+    var file_indx = files.findIndex(function (el) { return el.name == img_name });
+    if (file_indx > 0) {
+      var file_temp = files[file_indx - 1]
+      files[file_indx - 1] = files[file_indx]
+      files[file_indx] = file_temp
+    }
+    makeMainImg();
+  }
+  function move_img_right(img_container) {
+    var img_name = img_container.getAttribute('name');
+    var elem_list = $('#file-upload-content').children();
+    for (let i = 0; i < (elem_list.length - 1); i++) {
+      if (elem_list[i].getAttribute('name') == img_name) {
+        elem_list[i + 1].insertAdjacentElement('afterend', elem_list[i])
+      }
+    }
+    var file_indx = files.findIndex(function (el) { return el.name == img_name });
+    if (file_indx < (files.length - 1)) {
+      var file_temp = files[file_indx + 1]
+      files[file_indx + 1] = files[file_indx]
+      files[file_indx] = file_temp
+    }
+    makeMainImg();
+  }
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  var files = [];
+  async function readURL(input) {
+    if (input.files && input.files[0]) {
+      var temp_file;
+      var reader = new FileReader();
+      reader.onload = function () {
+        $('#file-upload-content').append('<div class="img_container" name="' + temp_file.name + '"><img src="' + reader.result + '" class="rounded float-start" alt="..."><button type="button" class="btn-close" aria-label="Close" onclick="img_close(this.parentElement)"></button><div class="btn-group btn-nav"><a class="btn btn-outline-dark" onclick="move_img_left(this.parentElement.parentElement)">❮</a><a class="btn btn-outline-dark" onclick="move_img_right(this.parentElement.parentElement)">❯</a></div></div>');
+      };
+      $('.file-upload-content').show();
+
+      for (let i_img = 0; i_img < input.files.length; i_img++) {
+        await sleep(100)
+        temp_file = input.files[i_img];
+        reader.readAsDataURL(input.files[i_img]);
+        files.push(input.files[i_img])
+        await sleep(100)
+      }
+      makeMainImg();
+      $('.file-upload-content').show();
+
+    } else {
+      removeUpload();
+    }
+  }
+
+  function makeMainImg() {
+    $('#file-upload-content .img_container').removeClass('cover');
+    $('#file-upload-content .img_container:first').addClass('cover');
+  }
+
+  function removeUpload() {
+    $('.file-upload-input').replaceWith($('.file-upload-input').clone());
+    $('.file-upload-content').hide();
+  }
+  $('.image-upload-wrap').bind('dragover', function () {
+    $('.image-upload-wrap').addClass('image-dropping');
+  });
+  $('.image-upload-wrap').bind('dragleave', function () {
+    $('.image-upload-wrap').removeClass('image-dropping');
+  });
+</script>
+<script>
+  function string_to_slug(str) {
+  str = str.replace(/^\s+|\s+$/g, ''); // trim
+  str = str.toLowerCase();
+  
+  // remove accents, swap ñ for n, etc
+  var from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
+  var to   = "aaaaeeeeiiiioooouuuunc------";
+  for (var i=0, l=from.length ; i<l ; i++) {
+    str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+  }
+
+  str = str.replace(/[^a-z0-9 -]/g, '-') // remove invalid chars
+    .replace(/\s+/g, '-') // collapse whitespace and replace by -
+    .replace(/-+/g, '-'); // collapse dashes
+
+  return str;
+  }
+  const formProductChanger = function(){
+    if($('select[name="product_type"]').val() == 'Freebie'){
+      $('#freebie_options').show();
+      $('input[name="standart_price"]').prop('required', false);
+      $('input[name="extended_price"]').prop('required', false);
+      $('#premium_options').hide();
+    } else if($('select[name="product_type"]').val() == 'Plus'){
+      $('#freebie_options').hide();
+      $('input[name="standart_price"]').prop('required', false);
+      $('input[name="extended_price"]').prop('required', false);
+      $('#premium_options').hide();
+      $('#premium_options').hide();
+    } else if($('select[name="product_type"]').val() == 'Premium'){
+      $('#freebie_options').hide();
+      $('input[name="standart_price"]').prop('required', true);
+      $('input[name="extended_price"]').prop('required', true);
+      $('#premium_options').hide();
+      $('#premium_options').show();
+    }
+  }
+  $('select[name="product_type"]').change(function(){formProductChanger();});
+  $(document).ready(function() {
+    $('textarea[name="description"]').summernote({
+      tabsize: 2,
+      placeholder: 'Description',
+      height: 200,
+      toolbar: [
+        ['insert', ['link']],
+        ['style', ['bold', 'italic', 'underline', 'clear']],
+        ['font', ['strikethrough', 'superscript', 'subscript']],
+        ['fontsize', ['fontsize']],
+        ['para', ['ul', 'ol']],
+        ['view', ['codeview']]
+      ]
+});
+    formProductChanger();
+    $('#TitleInput').change(function(){
+      $('#SlugInput').val(string_to_slug($('#TitleInput').val()))
+    })
+});
+</script>
+<script>
+  var productForm = document.getElementById('productForm');
+  var num_uploads = 0;
+
+  function Checker(prefix, attempts, cancel_func){
+        var formData = new FormData();
+        formData.append('prefix', prefix);
+        // $.ajax({
+        //         type: 'POST',
+        //         url: "{{ url_for('tools.long_tile_check') }}",
+        //         data: formData,
+        //         dataType: 'json',
+        //         contentType: false,
+        //         cache: false,
+        //         mimeType: "multipart/form-data",
+        //         processData: false,
+        //         success: function(response) {
+        //             if(response.status === 'in work'){
+        //                 if(attempts < max_attempts){
+        //                     console.log(attempts)
+        //                     setTimeout(Checker, 5000, prefix, attempts + 1, cancel_func);
+        //                 } else {
+        //                     cancel_func();
+        //                 }
+        //             } else {
+        //                 cancel_func();
+        //                 var link = document.createElement('a');
+        //                 link.href = response.url;
+        //                 link.click();
+        //             }
+        //         },
+        //         error: function(error) {
+        //             if(attempts < max_attempts){
+        //                 console.log(attempts)
+        //                 setTimeout(Checker, 5000, prefix, attempts + 1, cancel_func);
+        //             } else {
+        //                 cancel_func();
+        //             }      
+        //         },
+                
+        //     });
+    }
+
+  function sendToWorker(formData, url){
+    formData.delete('product_file');
+    formData.delete('thumbnail');
+    formData.delete('image_for_push');
+        $.ajax({
+            type: 'POST',
+            url: '{{ url_for("products.uploader") }}',
+            data: formData,
+            dataType: 'html',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function(response) {
+                // Checker(prefix, 0, cancel_func)
+            },
+            error: function(error) {
+                console.log(error);
+            },
+                
+        });
+    }
+
+  function uploadFile(file, s3Data, formData){
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', s3Data.url);
+      xhr.setRequestHeader('x-amz-acl', 'public-read');
+
+      const postData = new FormData();
+      for(key in s3Data.fields){
+        postData.append(key, s3Data.fields[key]);
+      }
+      postData.append('file', file);
+
+      xhr.onreadystatechange = () => {
+        if(xhr.readyState === 4){
+          if(xhr.status === 200 || xhr.status === 204){
+            num_uploads--;
+            if(num_uploads === 0){
+              sendToWorker(formData)
+              console.log('done')
+            }
+          }
+          else{
+            alert('Could not upload file.');
+          }
+        }
+      };
+      xhr.send(postData);
+    }
+
+  function getSignedRequest(file, prefix, filename, formData){
+    console.log(`sending ${filename}`)
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', `{{ url_for('products.prepare_s3_url') }}?cur_filename=${file.name}&content_type=${file.type}&prefix=${prefix}&filename=${filename}`);
+      xhr.onreadystatechange = () => {
+        if(xhr.readyState === 4){
+          if(xhr.status === 200){
+            const response = JSON.parse(xhr.responseText);
+            formData.append('prefix', prefix)
+            uploadFile(file, response.data, formData);
+          }
+          else{
+            alert('Could not get signed URL.');
+          }
+        }
+      };
+      xhr.send();
+    }
+  function initUpload(prefix, formData, gallery, safe_product_name){
+    num_uploads = 2 + gallery.length;
+    var product_file = formData.get('product_file')
+    getSignedRequest(product_file, prefix, safe_product_name, formData);
+    var thumbnail = formData.get('thumbnail')
+    getSignedRequest(thumbnail, prefix, 'thumbnail_x2', formData);
+    if(formData.get('image_for_push') && formData.get('image_for_push').size>0){
+      num_uploads++;
+      var image_for_push = formData.get('image_for_push')
+      getSignedRequest(image_for_push, prefix, 'image_for_push', formData);
+    }
+    getSignedRequest(gallery[0], prefix, 'main_x2', formData);
+    for(let i_img = 1; i_img < files.length; i_img++){
+      getSignedRequest(gallery[i_img], prefix, `image_for_gallery_x2|${i_img}`, formData);
+    }
+    
+    // sendToWorker(prefix, formData,)
+    }
+  
+  productForm.onsubmit = function (event) {
+    event.preventDefault();
+    var formData = new FormData(productForm);
+    const safe_product_name = formData.get('title').replace(/[ &\/\\#,+()$~%.'":*?<>{}]/g, "_");
+    const prefix = safe_product_name + '|' + Date.now();
+    formData.append('product_file_name', safe_product_name)
+    initUpload(prefix, formData, files, safe_product_name);
+    // const product_file = formData.get("product_file");
+    // const thumbnail = formData.get("thumbnail");
+    // const image_for_push = formData.get("image_for_push");
+    // const gallery = formData.get("gallery");
+
+    // initUpload(prefix, files, formData, '{{ url_for("tools.long_tile") }}', cancel_func)
+    // $.ajax({
+    //   type: 'POST',
+    //   url: "{{ url_for('products.uploader') }}",
+    //   data: formData,
+    //   dataType: 'json',
+    //   contentType: false,
+    //   cache: false,
+    //   mimeType: "multipart/form-data",
+    //   processData: false,
+    //   success: function (data) {
+    //     console.log(data);
+    //   },
+    //   error: function (error) {
+    //     console.log(error);
+    //   },
+    // });
+  };
+</script>
+{% endblock %}

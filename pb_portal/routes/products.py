@@ -1,8 +1,8 @@
 import calendar
 import os
-from datetime import date
+from datetime import date, datetime
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, redirect, render_template, request, url_for
 from flask_httpauth import HTTPBasicAuth
 from loguru import logger
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -80,3 +80,65 @@ def list():
             'product_base.html',
             page_data=page_data
         )
+
+
+def get_form_list(form_data: dict, key_word: str):
+    result = []
+    for key in form_data:
+        if len(key.split('|')[0]) > 1 and key.split('|')[0] == key_word:
+            if form_data[key] == 'on':
+                result.append(key.split('|')[-1])
+    return result
+
+
+@logger.catch
+@app_route.route('/uploader', methods=['GET', 'POST'])
+@auth.login_required(role='admin')
+def uploader():
+    # TODO research https://www.plupload.com/
+    if request.method == 'POST':
+        product_schema = connectors.products.schemas.UploadProduct(
+            prefix=request.form.get('prefix'),
+            product_file_name=request.form.get('product_file_name'),
+            title=request.form.get('title'),
+            slug=request.form.get('slug'),
+            excerpt=request.form.get('excerpt'),
+            description=request.form.get('description'),
+            categories=get_form_list(request.form.to_dict(), 'category'),
+            formats=get_form_list(request.form.to_dict(), 'format'),
+            date_upload=datetime.strptime(request.form.get('date'), '%d-%m-%Y').date() if request.form.get('date') else datetime.now().date()
+        )
+        if request.form.get('guest_author') and request.form.get('guest_author_link'):
+            product_schema.guest_author = request.form.get('guest_author')
+            product_schema.guest_author_link = request.form.get('guest_author_link')
+        if request.form.get('product_type') == 'Freebie':
+            freebie_schema = connectors.products.schemas.UploadFreebie.parse_obj(product_schema)
+            freebie_schema.download_by_email = True if request.form.get('download_by_email') else False
+            connectors.products.upload_freebie(freebie_schema)
+
+        return redirect(url_for('products.uploader'))
+    upload_page_info = connectors.products.get_upload_page_data()
+    return render_template(
+            'drag_drop.html',
+            upload_page_info=upload_page_info,
+        )
+
+
+@logger.catch
+@app_route.route('/prepare_s3_url', methods=['GET'])
+def prepare_s3_url():
+    filename = request.args.get('filename')
+    cur_filename = request.args.get('cur_filename')
+    right_filename = f'{filename}.{cur_filename.split(".")[-1]}'
+    content_type = 'application/octet-stream'
+    prefix = request.args.get('prefix')
+    try:
+        result = connectors.products.make_s3_url(
+            right_filename,
+            content_type,
+            prefix,
+        )
+    except Exception as e:
+        logger.error(e.args)
+        return
+    return result

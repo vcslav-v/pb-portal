@@ -49,3 +49,40 @@ class FilterPage(BaseModel):
     category_id: Optional[int]
     end_design_date_start: Optional[date]
     end_design_date_end: Optional[date]
+
+
+class Features(BaseModel):
+    title: str
+    value: str
+
+
+class MetaTags(BaseModel):
+    title: str
+    description: str
+    key_words: list[str]
+
+
+class UploadProductPageInfo(BaseModel):
+    tags: list[str] = []
+    categories: list[str] = []
+    formats: list[str] = []
+    compatibilities: list[str] = []
+    items_in_col: int = 5
+
+
+class UploadProduct(BaseModel):
+    prefix: str
+    product_file_name: str
+    title: str
+    slug: str
+    excerpt: str
+    description: str
+    date_upload: date
+    guest_author: Optional[str]
+    guest_author_link: Optional[str]
+    categories: list[str] = []
+    formats: list[str] = []
+
+
+class UploadFreebie(UploadProduct):
+    download_by_email: bool = False
