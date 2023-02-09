@@ -204,6 +204,9 @@
       <div class="row mb-3">
         <button type="submit" class="btn btn-primary">Publish</button>
       </div>
+      <div class="progress" role="progressbar" aria-label="Example with label" aria-valuemin="0" aria-valuemax="100" id="progress_bar" style="height: 30px">
+        <div class="progress-bar" style="width: 10%">25%</div>
+      </div>
     </form>
   </div>
 </div>
@@ -371,7 +374,8 @@
     formProductChanger();
     $('#TitleInput').change(function(){
       $('#SlugInput').val(string_to_slug($('#TitleInput').val()))
-    })
+    });
+    $('#progress_bar').hide()
 });
 </script>
 <script>
@@ -450,7 +454,12 @@
         postData.append(key, s3Data.fields[key]);
       }
       postData.append('file', file);
-
+      xhr.upload.addEventListener("progress", function (event) {
+        if (event.lengthComputable) 
+          { 
+            status_bar(loaded=event.loaded, total=event.total);
+          };
+      });
       xhr.onreadystatechange = () => {
         if(xhr.readyState === 4){
           if(xhr.status === 200 || xhr.status === 204){
@@ -467,7 +476,17 @@
       };
       xhr.send(postData);
     }
-
+  function status_bar(loaded=0, total=0, init=false){
+    if(init=true){
+      $('button[type="submit"]').hide();
+      $('#progress_bar').show();
+    };
+    var procents = Math.floor((loaded / total) * 100);
+    var loaded_mb =   Math.floor((loaded / 1000000));
+    var total_mb =   Math.floor((total / 1000000));
+    $('#progress_bar > div[class="progress-bar"]').attr('style', `width: ${procents}%`);
+    $('#progress_bar > div[class="progress-bar"]').text(`${loaded_mb}MB /${total_mb}MB`);
+  };
   function getSignedRequest(file, prefix, filename, formData){
     console.log(`sending ${filename}`)
       const xhr = new XMLHttpRequest();
@@ -488,22 +507,26 @@
     }
   function initUpload(prefix, formData, gallery, safe_product_name){
     num_uploads = 2 + gallery.length;
-    var product_file = formData.get('product_file')
-    formData.append('product_size_mb', Math.floor(product_file.size/1000000))
-    getSignedRequest(product_file, prefix, safe_product_name, formData);
-    var thumbnail = formData.get('thumbnail')
-    getSignedRequest(thumbnail, prefix, 'thumbnail_x2', formData);
+    var product_file = formData.get('product_file');
+    var thumbnail = formData.get('thumbnail');
+    var image_for_push;
+
     if(formData.get('image_for_push') && formData.get('image_for_push').size>0){
       num_uploads++;
-      var image_for_push = formData.get('image_for_push')
+      image_for_push = formData.get('image_for_push')
+    };
+
+    formData.append('product_size_mb', Math.floor(product_file.size/1000000))
+    status_bar(init=true)
+    getSignedRequest(product_file, prefix, safe_product_name, formData);
+    getSignedRequest(thumbnail, prefix, 'thumbnail_x2', formData);
+    if(image_for_push){
       getSignedRequest(image_for_push, prefix, 'image_for_push', formData);
     }
     getSignedRequest(gallery[0], prefix, 'main_x2', formData);
     for(let i_img = 1; i_img < files.length; i_img++){
       getSignedRequest(gallery[i_img], prefix, `image_for_gallery_x2|${i_img}`, formData);
     }
-    
-    // sendToWorker(prefix, formData,)
     }
   
   productForm.onsubmit = function (event) {
