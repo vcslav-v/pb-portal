@@ -1,4 +1,5 @@
 import calendar
+import json
 import os
 from datetime import date, datetime
 
@@ -117,7 +118,7 @@ def uploader():
             freebie_schema.download_by_email = True if request.form.get('download_by_email') else False
             connectors.products.upload_freebie(freebie_schema)
 
-        return redirect(url_for('products.uploader'))
+        return json.dumps({'prefix': request.form.get('prefix')})
     upload_page_info = connectors.products.get_upload_page_data()
     return render_template(
             'drag_drop.html',
@@ -143,3 +144,11 @@ def prepare_s3_url():
         logger.error(e.args)
         return
     return result
+
+
+@logger.catch
+@app_route.route('/get_upload_status', methods=['POST'])
+def get_upload_status():
+    prefix = request.form.get('prefix')
+    result = {'status': connectors.products.get_upload_status(prefix)}
+    return json.dumps(result)

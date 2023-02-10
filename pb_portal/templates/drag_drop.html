@@ -8,6 +8,7 @@
 <div class="row">
   <div class="col-6">
     <form id="productForm" action="#" method="post" enctype="multipart/form-data">
+      <fieldset id="Fieldset">
       <div class="row mb-3">
         <div class="col-8">
           <select class="form-select" aria-label="Default select example" name="product_type">
@@ -204,6 +205,7 @@
       <div class="row mb-3">
         <button type="submit" class="btn btn-primary">Publish</button>
       </div>
+    </fieldset>
       <div class="progress" role="progressbar" aria-label="Example with label" aria-valuemin="0" aria-valuemax="100" id="progress_bar" style="height: 30px">
         <div class="progress-bar" style="width: 10%">25%</div>
       </div>
@@ -381,44 +383,55 @@
 <script>
   var productForm = document.getElementById('productForm');
   var num_uploads = 0;
+  var max_attempts = 40;
 
-  function Checker(prefix, attempts, cancel_func){
+  function SuccessUpload(){
+      $('#progress_bar > div[class="progress-bar"]').text('DONE');
+      $('#progress_bar > div[class="progress-bar"]').addClass('bg-success');
+  };
+
+  function UnsuccessUpload(){
+      $('#progress_bar > div[class="progress-bar"]').text('ERROR');
+      $('#progress_bar > div[class="progress-bar"]').addClass('bg-danger');
+      
+  };
+
+function SetStatus(status){
+    $('#progress_bar > div[class="progress-bar"]').text(status);
+  };
+
+  function Checker(prefix, attempts){
         var formData = new FormData();
         formData.append('prefix', prefix);
-        // $.ajax({
-        //         type: 'POST',
-        //         url: "{{ url_for('tools.long_tile_check') }}",
-        //         data: formData,
-        //         dataType: 'json',
-        //         contentType: false,
-        //         cache: false,
-        //         mimeType: "multipart/form-data",
-        //         processData: false,
-        //         success: function(response) {
-        //             if(response.status === 'in work'){
-        //                 if(attempts < max_attempts){
-        //                     console.log(attempts)
-        //                     setTimeout(Checker, 5000, prefix, attempts + 1, cancel_func);
-        //                 } else {
-        //                     cancel_func();
-        //                 }
-        //             } else {
-        //                 cancel_func();
-        //                 var link = document.createElement('a');
-        //                 link.href = response.url;
-        //                 link.click();
-        //             }
-        //         },
-        //         error: function(error) {
-        //             if(attempts < max_attempts){
-        //                 console.log(attempts)
-        //                 setTimeout(Checker, 5000, prefix, attempts + 1, cancel_func);
-        //             } else {
-        //                 cancel_func();
-        //             }      
-        //         },
+        $.ajax({
+                type: 'POST',
+                url: "{{ url_for('products.get_upload_status') }}",
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                cache: false,
+                mimeType: "multipart/form-data",
+                processData: false,
+                success: function(response) {
+                    if(response.status === 'Done'){
+                          SuccessUpload();
+                    } else if(response.status === 'Error'){
+                      UnsuccessUpload();
+                    } else {
+                      SetStatus(response.status)
+                      var link = document.createElement('a');
+                      setTimeout(Checker, 5000, prefix, attempts + 1);
+                    }
+                },
+                error: function(error) {
+                    if(attempts < max_attempts){
+                        setTimeout(Checker, 5000, prefix, attempts + 1);
+                    } else {
+                      UnsuccessUpload();
+                    }      
+                },
                 
-        //     });
+            });
     }
 
   function sendToWorker(formData, url){
@@ -429,13 +442,13 @@
             type: 'POST',
             url: '{{ url_for("products.uploader") }}',
             data: formData,
-            dataType: 'html',
+            dataType: 'json',
             contentType: false,
             cache: false,
             mimeType: "multipart/form-data",
             processData: false,
             success: function(response) {
-                // Checker(prefix, 0, cancel_func)
+              setTimeout(Checker, 5000, response.prefix, 0);
             },
             error: function(error) {
                 console.log(error);
@@ -476,16 +489,18 @@
       };
       xhr.send(postData);
     }
-  function status_bar(loaded=0, total=0, init=false){
-    if(init=true){
-      $('button[type="submit"]').hide();
-      $('#progress_bar').show();
-    };
-    var procents = Math.floor((loaded / total) * 100);
-    var loaded_mb =   Math.floor((loaded / 1000000));
-    var total_mb =   Math.floor((total / 1000000));
-    $('#progress_bar > div[class="progress-bar"]').attr('style', `width: ${procents}%`);
-    $('#progress_bar > div[class="progress-bar"]').text(`${loaded_mb}MB /${total_mb}MB`);
+  function InintStatusBar(){
+    $('button[type="submit"]').hide();
+    $('#progress_bar').show();
+  }
+  function status_bar(loaded=0, total=0){
+      var procents = Math.floor((loaded / total) * 100);
+      var loaded_mb =   Math.floor((loaded / 1000000));
+      var total_mb =   Math.floor((total / 1000000));
+      $('#progress_bar > div[class="progress-bar"]').attr('style', `width: ${procents}%`);
+      $('#progress_bar > div[class="progress-bar"]').text(`${loaded_mb}MB /${total_mb}MB`);
+    
+    
   };
   function getSignedRequest(file, prefix, filename, formData){
     console.log(`sending ${filename}`)
@@ -517,7 +532,7 @@
     };
 
     formData.append('product_size_mb', Math.floor(product_file.size/1000000))
-    status_bar(init=true)
+    InintStatusBar();
     getSignedRequest(product_file, prefix, safe_product_name, formData);
     getSignedRequest(thumbnail, prefix, 'thumbnail_x2', formData);
     if(image_for_push){
@@ -534,6 +549,8 @@
     var formData = new FormData(productForm);
     const safe_product_name = formData.get('title').replace(/[ &\/\\#,+()$~%.'":*?<>{}]/g, "_");
     const prefix = safe_product_name + '|' + Date.now();
+    var Fieldset = document.getElementById("Fieldset");
+    Fieldset.disabled = true;
     formData.append('product_file_name', safe_product_name)
     initUpload(prefix, formData, files, safe_product_name);
     // const product_file = formData.get("product_file");

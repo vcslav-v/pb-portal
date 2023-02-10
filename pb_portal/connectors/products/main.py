@@ -76,3 +76,13 @@ def make_s3_url(filename, content_type, prefix):
         'data': presigned_post,
         'url': 'https://%s.s3.amazonaws.com/%s' % (DO_SPACE_BUCKET, f'temp/{prefix}/{filename}')
     })
+
+
+@logger.catch
+def get_upload_status(prefix):
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        resp = session.post(f'{API_URL}/api/get_status_upload?prefix={prefix}')
+        if resp.ok:
+            return resp.text.strip('"')
+        return 'Error'
