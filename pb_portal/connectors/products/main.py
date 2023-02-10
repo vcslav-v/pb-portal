@@ -15,6 +15,60 @@ DO_SPACE_KEY = os.environ.get('DO_SPACE_KEY', '')
 DO_SPACE_SECRET = os.environ.get('DO_SPACE_SECRET', '')
 DO_SPACE_BUCKET = os.environ.get('DO_SPACE_BUCKET', '')
 
+POSIBLE_CATS = [
+    'Add-Ons',
+    'Brush Packs',
+    'Effects',
+    'Fonts',
+    'Graphics',
+    'HTML',
+    'Icons',
+    'Logo Templates',
+    'Patterns',
+    'photo',
+    'Presentations',
+    'PS Actions',
+    'PSD Mockups',
+    'Social Media',
+    'templates',
+    'Textures',
+    'UI/UX Resources',
+    'Vectors',
+]
+
+POSIBLE_FORMATS = [
+    'ABR',
+    'AFBRUSHES',
+    'AI',
+    'ASL',
+    'ATN',
+    'BRUSH',
+    'BRUSHSET',
+    'CDR',
+    'EOT',
+    'EPS',
+    'FIG',
+    'GIF',
+    'GRD',
+    'HTML',
+    'JPG',
+    'Lightroom',
+    'OTF',
+    'TTF',
+    'WOFF',
+    'Webfonts',
+    'PAT',
+    'PDF',
+    'PNG',
+    'PROCREATE',
+    'PSD',
+    'SVG',
+    'SWATCHES',
+    'TIFF',
+    'TXT',
+    'XD',
+]
+
 
 def get_all(page_data: schemas.FilterPage) -> schemas.ProductPage:
     with requests.sessions.Session() as session:
@@ -44,10 +98,11 @@ def upload_freebie(freebie: schemas.UploadFreebie):
 
 @logger.catch()
 def get_upload_page_data() -> schemas.UploadProductPageInfo:
-    result = schemas.UploadProductPageInfo()
-    result.categories = pb.get_site_info_of('category')
-    result.formats = pb.get_site_info_of('format')
-    result.compatibilities = pb.get_site_info_of('compatibility')
+    result = schemas.UploadProductPageInfo(
+        categories=pb.get_site_info_of('category', POSIBLE_CATS),
+        formats=pb.get_site_info_of('format', POSIBLE_FORMATS),
+        compatibilities=pb.get_site_info_of('compatibility'),
+    )
     return result
 
 
