@@ -141,3 +141,13 @@ def get_upload_status(prefix):
         if resp.ok:
             return resp.text.strip('"')
         return 'Error'
+
+
+@logger.catch
+def get_correct_slug(slug: str, product_type: str):
+    if not pb.get_correct_slug(slug, product_type).get('is_exists'):
+        return {'slug': slug}
+    i = 0
+    while pb.get_correct_slug(f'{slug}-{i}', product_type).get('is_exists') and i < 10:
+        i += 1
+    return {'slug': f'{slug}-{i}'}

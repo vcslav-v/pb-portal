@@ -1,6 +1,6 @@
 from . import schemas
 from .main import (get_all, get_page_data, get_upload_page_data,
-                   get_upload_status, make_s3_url, upload_freebie)
+                   get_upload_status, make_s3_url, upload_freebie, get_correct_slug)
 
 __all__ = [
     'get_all',
@@ -9,5 +9,6 @@ __all__ = [
     'make_s3_url',
     'upload_freebie',
     'get_upload_page_data',
-    'get_upload_status'
+    'get_upload_status',
+    'get_correct_slug',
 ]

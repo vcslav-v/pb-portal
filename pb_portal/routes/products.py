@@ -152,3 +152,12 @@ def get_upload_status():
     prefix = request.form.get('prefix')
     result = {'status': connectors.products.get_upload_status(prefix)}
     return json.dumps(result)
+
+
+@logger.catch
+@app_route.route('/get_correct_slug', methods=['POST'])
+def get_correct_slug():
+    slug = request.form.get('slug')
+    product_type = request.form.get('product_type').lower()
+    result = connectors.products.get_correct_slug(slug, product_type)
+    return json.dumps(result)

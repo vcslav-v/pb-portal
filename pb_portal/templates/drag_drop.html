@@ -373,10 +373,36 @@
         ['view', ['codeview']]
       ]
 });
+function slugChecker(){
+  slugData = new FormData();
+  slugData.append('slug', $('#SlugInput').val());
+  slugData.append('product_type', $('select[name="product_type"]').val());
+  $.ajax({
+    type: 'POST',
+    url: "{{ url_for('products.get_correct_slug') }}",
+    data: slugData,
+    dataType: 'json',
+    contentType: false,
+    cache: false,
+    mimeType: "multipart/form-data",
+    processData: false,
+    success: function(response) {
+      $('#SlugInput').val(response.slug)
+    },
+      error: function(error) {
+        console.log(response)
+      },
+      
+  });
+};
     formProductChanger();
     $('#TitleInput').change(function(){
       $('#SlugInput').val(string_to_slug($('#TitleInput').val()))
+      slugChecker();
     });
+    $('#SlugInput').change(function(){
+      slugChecker();
+    })
     $('#progress_bar').hide()
 });
 </script>
@@ -547,7 +573,7 @@ function SetStatus(status){
   productForm.onsubmit = function (event) {
     event.preventDefault();
     var formData = new FormData(productForm);
-    const safe_product_name = formData.get('title').replace(/[ &\/\\#,+()$~%.'":*?<>{}]/g, "_");
+    const safe_product_name = $('#SlugInput').val();
     const prefix = safe_product_name + '|' + Date.now();
     var Fieldset = document.getElementById("Fieldset");
     Fieldset.disabled = true;
