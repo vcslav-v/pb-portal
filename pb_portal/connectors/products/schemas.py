@@ -87,3 +87,7 @@ class UploadProduct(BaseModel):
 
 class UploadFreebie(UploadProduct):
     download_by_email: bool = False
+
+
+class UploadPlus(UploadProduct):
+    pass

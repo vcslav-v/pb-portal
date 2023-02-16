@@ -96,6 +96,12 @@ def upload_freebie(freebie: schemas.UploadFreebie):
         session.post(f'{API_URL}/api/pb_freebie_upload', data=freebie.json())
 
 
+def upload_plus(plus: schemas.UploadPlus):
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        session.post(f'{API_URL}/api/pb_plus_upload', data=plus.json())
+
+
 @logger.catch()
 def get_upload_page_data() -> schemas.UploadProductPageInfo:
     result = schemas.UploadProductPageInfo(
