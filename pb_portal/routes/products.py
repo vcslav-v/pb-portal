@@ -108,7 +108,7 @@ def uploader():
             description=request.form.get('description'),
             categories=get_form_list(request.form.to_dict(), 'category'),
             formats=get_form_list(request.form.to_dict(), 'format'),
-            date_upload=datetime.strptime(request.form.get('date'), '%d-%m-%Y').date() if request.form.get('date') else datetime.now().date()
+            date_upload=datetime.strptime(request.form.get('date'), '%d-%m-%Y %H:%M') if request.form.get('date') else datetime.now()
         )
         if request.form.get('guest_author') and request.form.get('guest_author_link'):
             product_schema.guest_author = request.form.get('guest_author')
@@ -117,6 +117,17 @@ def uploader():
             freebie_schema = connectors.products.schemas.UploadFreebie.parse_obj(product_schema)
             freebie_schema.download_by_email = True if request.form.get('download_by_email') else False
             connectors.products.upload_freebie(freebie_schema)
+        elif request.form.get('product_type') == 'Plus':
+            plus_schema = connectors.products.schemas.UploadPlus.parse_obj(product_schema)
+            connectors.products.upload_plus(plus_schema)
+        elif request.form.get('product_type') == 'Premium':
+            prem_schema = connectors.products.schemas.UploadPrem.parse_obj(product_schema)
+            prem_schema.standart_price = int(request.form.get('standart_price'))
+            prem_schema.extended_price = int(request.form.get('extended_price'))
+            prem_schema.sale_standart_price = int(request.form.get('sale_standart_price'))
+            prem_schema.sale_extended_price = int(request.form.get('sale_extended_price'))
+            prem_schema.compatibilities = get_form_list(request.form.to_dict(), 'compatibility'),
+            connectors.products.upload_prem(prem_schema)
 
         return json.dumps({'prefix': request.form.get('prefix')})
     upload_page_info = connectors.products.get_upload_page_data()

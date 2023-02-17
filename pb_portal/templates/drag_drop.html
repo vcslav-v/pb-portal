@@ -2,7 +2,7 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/dd.css') }}">
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 {% endblock %}
 {% block app_content %}
 <div class="row">
@@ -17,12 +17,8 @@
             <option value="Premium">Premium</option>
           </select>
         </div>
-        <div class="col-4" id="sandbox-container">
-          <div class="input-group date">
-            <span class="input-group-text" id="basic-addon1">Date</span>
-            <input type="text" class="form-control" name="date"><span class="input-group-addon"><i
-                class="glyphicon glyphicon-th"></i></span>
-          </div>
+        <div class="col-4">
+            <input type="text" class="form-control" name="date" placeholder="Date" style="background-color: #fff;">
         </div>
       </div>
       <div class="row mb-3">
@@ -125,19 +121,19 @@
           <div class="row mb-3">
             <div class="input-group">
               <span class="input-group-text" id="basic-addon2">Standard price</span>
-              <input type="text" class="form-control" placeholder="0" aria-label="Standard price"
+              <input type="number" class="form-control" placeholder="0" aria-label="Standard price"
                 aria-describedby="basic-addon2" name="standart_price" required>
               <span class="input-group-text" id="basic-addon2">Extended price</span>
-              <input type="text" class="form-control" placeholder="0" aria-label="Extended price"
+              <input type="number" class="form-control" placeholder="0" aria-label="Extended price"
                 aria-describedby="basic-addon2" name="extended_price" required>
             </div>
           </div>
           <div class="row mb-3">
             <div class="input-group">
               <span class="input-group-text" id="basic-addon2">Sale standard price</span>
-              <input type="text" class="form-control" aria-label="Sale standard price" aria-describedby="basic-addon2" name="sale_standart_price">
+              <input type="number" class="form-control" aria-label="Sale standard price" aria-describedby="basic-addon2" name="sale_standart_price">
               <span class="input-group-text" id="basic-addon2">Sale extended price</span>
-              <input type="text" class="form-control" aria-label="Sale extended price" aria-describedby="basic-addon2" name="sale_extended_price">
+              <input type="number" class="form-control" aria-label="Sale extended price" aria-describedby="basic-addon2" name="sale_extended_price">
             </div>
           </div>
           <div class="row">
@@ -174,6 +170,14 @@
           <h3>
             <small class="text-muted">Images</small>
           </h3>
+        </div>
+      </div>
+      <div class="col-12" id="premium_img">
+        <div class="row mb-3">
+          <div class="col-12">
+            <label for="formFile" class="form-label">Thumbnail for premium</label>
+            <input class="form-control" type="file" id="prem_thumbnail" name="prem_thumbnail" required>
+          </div>
         </div>
       </div>
       <div class="row mb-3">
@@ -218,19 +222,14 @@
 
 {% block script %}
 <script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.en.min.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-  var today = new Date();
-  $('#sandbox-container .input-group.date').datepicker({
-    format: "dd-mm-yyyy",
-    weekStart: 1,
-    todayBtn: "linked",
-    autoclose: true,
-    todayHighlight: true
-  });
-  // $('#sandbox-container .input-group.date').datepicker('update', today);
+  var optional_config = {
+    enableTime: true,
+    dateFormat: "d-m-Y H:i",
+};
+  $('input[name="date"]').flatpickr(optional_config);
 </script>
 <script>
   function img_close(img_container) {
@@ -343,19 +342,24 @@
       $('#freebie_options').show();
       $('input[name="standart_price"]').prop('required', false);
       $('input[name="extended_price"]').prop('required', false);
+      $('input[name="prem_thumbnail"]').prop('required', false);
       $('#premium_options').hide();
+      $('#premium_img').hide();
     } else if($('select[name="product_type"]').val() == 'Plus'){
       $('#freebie_options').hide();
       $('input[name="standart_price"]').prop('required', false);
       $('input[name="extended_price"]').prop('required', false);
+      $('input[name="prem_thumbnail"]').prop('required', false);
       $('#premium_options').hide();
-      $('#premium_options').hide();
+      $('#premium_img').hide();
     } else if($('select[name="product_type"]').val() == 'Premium'){
       $('#freebie_options').hide();
       $('input[name="standart_price"]').prop('required', true);
       $('input[name="extended_price"]').prop('required', true);
-      $('#premium_options').hide();
+      $('input[name="prem_thumbnail"]').prop('required', true);
       $('#premium_options').show();
+      $('#premium_img').show();
+
     }
   }
   $('select[name="product_type"]').change(function(){formProductChanger();});
@@ -551,10 +555,15 @@ function SetStatus(status){
     var product_file = formData.get('product_file');
     var thumbnail = formData.get('thumbnail');
     var image_for_push;
+    var prem_thumbnail;
 
     if(formData.get('image_for_push') && formData.get('image_for_push').size>0){
       num_uploads++;
       image_for_push = formData.get('image_for_push')
+    };
+    if(formData.get('prem_thumbnail') && formData.get('prem_thumbnail').size>0){
+      num_uploads++;
+      prem_thumbnail = formData.get('prem_thumbnail')
     };
 
     formData.append('product_size_mb', Math.floor(product_file.size/1000000))
@@ -563,6 +572,9 @@ function SetStatus(status){
     getSignedRequest(thumbnail, prefix, 'thumbnail_x2', formData);
     if(image_for_push){
       getSignedRequest(image_for_push, prefix, 'image_for_push', formData);
+    }
+    if(prem_thumbnail){
+      getSignedRequest(prem_thumbnail, prefix, 'prem_thumbnail_x2', formData);
     }
     getSignedRequest(gallery[0], prefix, 'main_x2', formData);
     for(let i_img = 1; i_img < files.length; i_img++){

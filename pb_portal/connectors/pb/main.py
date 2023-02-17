@@ -15,7 +15,7 @@ def get_site_info_of(type_info: str = 'category', _filter: list[str] = []) -> li
         session.auth = (NAME, TOKEN)
         resp = session.get(f'{API_URL}/list/{type_info}',)
         if resp.ok:
-            return list(filter(lambda x: x in _filter, json.loads(resp.content)))
+            return list(filter(lambda x: x not in _filter, json.loads(resp.content)))
     return []
 
 

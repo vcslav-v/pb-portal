@@ -15,59 +15,21 @@ DO_SPACE_KEY = os.environ.get('DO_SPACE_KEY', '')
 DO_SPACE_SECRET = os.environ.get('DO_SPACE_SECRET', '')
 DO_SPACE_BUCKET = os.environ.get('DO_SPACE_BUCKET', '')
 
-POSIBLE_CATS = [
-    'Add-Ons',
-    'Brush Packs',
-    'Effects',
-    'Fonts',
-    'Graphics',
-    'HTML',
-    'Icons',
-    'Logo Templates',
-    'Patterns',
-    'photo',
-    'Presentations',
-    'PS Actions',
-    'PSD Mockups',
-    'Social Media',
-    'templates',
-    'Textures',
-    'UI/UX Resources',
-    'Vectors',
+FILTER_CATS = [
+    'limited offer',
+    'Articles',
+    'sketch',
+    'Interviews',
+    'Sponsored',
+    'html',
+    'Selections',
+    'Tutorials',
+    'poster',
+    'other',
+    'animation'
 ]
 
-POSIBLE_FORMATS = [
-    'ABR',
-    'AFBRUSHES',
-    'AI',
-    'ASL',
-    'ATN',
-    'BRUSH',
-    'BRUSHSET',
-    'CDR',
-    'EOT',
-    'EPS',
-    'FIG',
-    'GIF',
-    'GRD',
-    'HTML',
-    'JPG',
-    'Lightroom',
-    'OTF',
-    'TTF',
-    'WOFF',
-    'Webfonts',
-    'PAT',
-    'PDF',
-    'PNG',
-    'PROCREATE',
-    'PSD',
-    'SVG',
-    'SWATCHES',
-    'TIFF',
-    'TXT',
-    'XD',
-]
+FILTER_FORMATS = ['RTF', 'DOCX', 'IconJar', 'JPEG', 'PSD (vector based logos)', 'VFB', 'DOC', 'SVG. PNG', 'JS', 'OTF & TTF', 'idml', 'PSD (vector-based logos)', 'AEP', 'GLIF', 'WOOF', 'SVG and PNG', 'OTF. TTF', 'AIA', 'KEY', 'SKETCH', 'ACV', 'XMP', 'LRTEMPLATE', 'PPTX', 'JPG (3000x3000px)', 'INDD', 'Lightroom Template', 'PPT', 'EPS. PNG', 'WOFF2', 'CSH', 'PSB', 'PSD (5616x3744px)', 'InDesign', 'MS Word', 'CSS', 'OTF. WOFF', 'TIF']
 
 
 def get_all(page_data: schemas.FilterPage) -> schemas.ProductPage:
@@ -102,11 +64,17 @@ def upload_plus(plus: schemas.UploadPlus):
         session.post(f'{API_URL}/api/pb_plus_upload', data=plus.json())
 
 
+def upload_prem(plus: schemas.UploadPrem):
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        session.post(f'{API_URL}/api/pb_prem_upload', data=plus.json())
+
+
 @logger.catch()
 def get_upload_page_data() -> schemas.UploadProductPageInfo:
     result = schemas.UploadProductPageInfo(
-        categories=pb.get_site_info_of('category', POSIBLE_CATS),
-        formats=pb.get_site_info_of('format', POSIBLE_FORMATS),
+        categories=pb.get_site_info_of('category', FILTER_CATS),
+        formats=pb.get_site_info_of('format', FILTER_FORMATS),
         compatibilities=pb.get_site_info_of('compatibility'),
     )
     return result

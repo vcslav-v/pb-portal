@@ -1,7 +1,7 @@
 """Pydantic's models."""
 from pydantic import BaseModel
 from typing import Optional
-from datetime import date
+from datetime import date, datetime
 
 
 class ProductInPage(BaseModel):
@@ -78,7 +78,7 @@ class UploadProduct(BaseModel):
     excerpt: str
     size: str
     description: str
-    date_upload: date
+    date_upload: datetime
     guest_author: Optional[str]
     guest_author_link: Optional[str]
     categories: list[str] = []
@@ -91,3 +91,11 @@ class UploadFreebie(UploadProduct):
 
 class UploadPlus(UploadProduct):
     pass
+
+
+class UploadPrem(UploadProduct):
+    standart_price: int
+    extended_price: int
+    sale_standart_price: Optional[int]
+    sale_extended_price: Optional[int]
+    compatibilities: list[str] = []
