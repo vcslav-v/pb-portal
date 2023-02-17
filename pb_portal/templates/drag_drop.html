@@ -53,7 +53,7 @@
               <textarea rows="5" class="form-control" id="DescriptionInput" placeholder="Description" name="description" required></textarea>
             </div>
           </div>
-          <div class="row mb-3">
+          <div class="row mb-3" id="guest_authors">
             <div class="col-6">
               <div class="form-floating">
                 <input type="text" class="form-control" id="AuthorInput" placeholder="Invited author" name="guest_author">
@@ -350,6 +350,7 @@
       $('input[name="standart_price"]').prop('required', false);
       $('input[name="extended_price"]').prop('required', false);
       $('input[name="prem_thumbnail"]').prop('required', false);
+      $('#guest_authors').show();
       $('#premium_options').hide();
       $('#premium_img').hide();
     } else if($('select[name="product_type"]').val() == 'Plus'){
@@ -357,6 +358,7 @@
       $('input[name="standart_price"]').prop('required', false);
       $('input[name="extended_price"]').prop('required', false);
       $('input[name="prem_thumbnail"]').prop('required', false);
+      $('#guest_authors').show();
       $('#premium_options').hide();
       $('#premium_img').hide();
     } else if($('select[name="product_type"]').val() == 'Premium'){
@@ -364,6 +366,7 @@
       $('input[name="standart_price"]').prop('required', true);
       $('input[name="extended_price"]').prop('required', true);
       $('input[name="prem_thumbnail"]').prop('required', true);
+      $('#guest_authors').hide();
       $('#premium_options').show();
       $('#premium_img').show();
 
