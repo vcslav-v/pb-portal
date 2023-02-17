@@ -126,7 +126,7 @@ def uploader():
             prem_schema.extended_price = int(request.form.get('extended_price'))
             prem_schema.sale_standart_price = int(request.form.get('sale_standart_price'))
             prem_schema.sale_extended_price = int(request.form.get('sale_extended_price'))
-            prem_schema.compatibilities = get_form_list(request.form.to_dict(), 'compatibility'),
+            prem_schema.compatibilities = get_form_list(request.form.to_dict(), 'compatibility')
             connectors.products.upload_prem(prem_schema)
 
         return json.dumps({'prefix': request.form.get('prefix')})
