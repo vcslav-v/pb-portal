@@ -94,8 +94,8 @@ class UploadPlus(UploadProduct):
 
 
 class UploadPrem(UploadProduct):
-    standart_price: int
-    extended_price: int
+    standart_price: Optional[int]
+    extended_price: Optional[int]
     sale_standart_price: Optional[int]
     sale_extended_price: Optional[int]
     compatibilities: list[str] = []
