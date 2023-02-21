@@ -98,7 +98,7 @@ def get_form_list(form_data: dict, key_word: str):
 
 @logger.catch
 @app_route.route('/uploader', methods=['GET', 'POST'])
-@auth.login_required(role='pb_admin')
+@auth.login_required(role=['admin', 'pb_admin'])
 def uploader():
     # TODO research https://www.plupload.com/
     if request.method == 'POST':
