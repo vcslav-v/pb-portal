@@ -20,10 +20,14 @@ users = {
     os.environ.get('TD_ADMIN_LOGIN') or 'td_root': generate_password_hash(
         os.environ.get('TD_ADMIN_PASS') or 'td_pass'
     ),
+    os.environ.get('PB_ADMIN_LOGIN') or 'pb_root': generate_password_hash(
+        os.environ.get('PB_ADMIN_PASS') or 'pb_pass'
+    ),
 }
 user_roles = {
     os.environ.get('FLASK_LOGIN') or 'root': ['admin', 'td_admin'],
     os.environ.get('TD_ADMIN_LOGIN') or 'td_root': ['td_admin'],
+    os.environ.get('PB_ADMIN_LOGIN') or 'pb_root': ['pb_admin'],
 }
 
 
@@ -94,7 +98,7 @@ def get_form_list(form_data: dict, key_word: str):
 
 @logger.catch
 @app_route.route('/uploader', methods=['GET', 'POST'])
-@auth.login_required(role='admin')
+@auth.login_required(role='pb_admin')
 def uploader():
     # TODO research https://www.plupload.com/
     if request.method == 'POST':
