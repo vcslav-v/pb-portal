@@ -579,16 +579,16 @@ function SetStatus(status){
     formData.append('product_size_mb', Math.floor(product_file.size/1000000))
     InintStatusBar();
     getSignedRequest(product_file, prefix, safe_product_name, formData);
-    getSignedRequest(thumbnail, prefix, 'thumbnail_x2', formData);
+    getSignedRequest(thumbnail, prefix, `${safe_product_name}-by-pixelbuddha-thumbnail_x2`, formData);
     if(image_for_push){
-      getSignedRequest(image_for_push, prefix, 'image_for_push', formData);
+      getSignedRequest(image_for_push, prefix, `${safe_product_name}-by-pixelbuddha-image_for_push`, formData);
     }
     if(prem_thumbnail){
-      getSignedRequest(prem_thumbnail, prefix, 'prem_thumbnail_x2', formData);
+      getSignedRequest(prem_thumbnail, prefix, `${safe_product_name}-by-pixelbuddha-prem_thumbnail_x2`, formData);
     }
-    getSignedRequest(gallery[0], prefix, 'main_x2', formData);
+    getSignedRequest(gallery[0], prefix, `${safe_product_name}-by-pixelbuddha-main_x2`, formData);
     for(let i_img = 1; i_img < files.length; i_img++){
-      getSignedRequest(gallery[i_img], prefix, `image_for_gallery_x2|${i_img}`, formData);
+      getSignedRequest(gallery[i_img], prefix, `${safe_product_name}-by-pixelbuddha-image_for_gallery_x2|${i_img}`, formData);
     }
     }
   
