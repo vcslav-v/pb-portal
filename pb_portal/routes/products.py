@@ -1,9 +1,9 @@
 import calendar
 import json
 import os
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, render_template, request
 from flask_httpauth import HTTPBasicAuth
 from loguru import logger
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -112,8 +112,10 @@ def uploader():
             description=request.form.get('description'),
             categories=get_form_list(request.form.to_dict(), 'category'),
             formats=get_form_list(request.form.to_dict(), 'format'),
-            date_upload=datetime.strptime(request.form.get('date'), '%d-%m-%Y %H:%M') if request.form.get('date') else datetime.now()
+            date_upload=datetime.strptime(request.form.get('date'), '%d-%m-%Y %H:%M') - timedelta(hours=3) if request.form.get('date') else datetime.utcnow()
         )
+        if request.form.get('schedule_date'):
+            product_schema.schedule_date = datetime.strptime(request.form.get('schedule_date'), '%d-%m-%Y %H:%M') - timedelta(hours=3)
         if request.form.get('guest_author') and request.form.get('guest_author_link'):
             product_schema.guest_author = request.form.get('guest_author')
             product_schema.guest_author_link = request.form.get('guest_author_link')
