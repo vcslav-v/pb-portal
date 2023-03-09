@@ -1,7 +1,7 @@
 from . import schemas
 from .main import (get_all, get_correct_slug, get_page_data,
                    get_upload_page_data, get_upload_status, make_s3_url,
-                   upload_freebie, upload_plus, upload_prem)
+                   upload_freebie, upload_plus, upload_prem, get_schedule_page, rm_task, update_task)
 
 __all__ = [
     'get_all',
@@ -14,4 +14,7 @@ __all__ = [
     'get_correct_slug',
     'upload_plus',
     'upload_prem',
+    'get_schedule_page',
+    'rm_task',
+    'update_task',
 ]

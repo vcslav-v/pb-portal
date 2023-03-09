@@ -126,3 +126,28 @@ def get_correct_slug(slug: str, product_type: str):
     while pb.get_correct_slug(f'{slug}-{i}', product_type).get('is_exists') and i < 10:
         i += 1
     return {'slug': f'{slug}-{i}'}
+
+
+@logger.catch
+def get_schedule_page():
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        resp = session.post(f'{API_URL}/api/get_product_schedule')
+        resp.raise_for_status()
+        return schemas.PageProductsSchedule.parse_raw(resp.content)
+
+
+@logger.catch
+def rm_task(ident: int):
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        resp = session.post(f'{API_URL}/api/rm_task/{ident}')
+        resp.raise_for_status()
+
+
+@logger.catch
+def update_task(ident: int, update: schemas.ScheduleUpdate):
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        resp = session.post(f'{API_URL}/api/update_date_task/{ident}', data=update.json())
+        resp.raise_for_status()

@@ -100,3 +100,17 @@ class UploadPrem(UploadProduct):
     sale_standart_price: Optional[int]
     sale_extended_price: Optional[int]
     compatibilities: list[str] = []
+
+
+class ScheduleUpdate(BaseModel):
+    date_time: datetime
+
+
+class ProductsSchedule(ScheduleUpdate):
+    ident: int
+    name: str
+    edit_link: str
+
+
+class PageProductsSchedule(BaseModel):
+    page: list[ProductsSchedule] = []

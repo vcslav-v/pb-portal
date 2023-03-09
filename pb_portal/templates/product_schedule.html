@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+{% block app_content %}
+<div class="container">
+    <div class="row m-4">
+        <div class="col-4">
+            <h3>Product's schedule</h3>
+        </div>
+    </div>
+
+    <div class="row m-4">
+        <div class="col-12">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col">Publish date</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products.page %}
+                    <tr ident="{{product.ident}}">
+                        <td>{{product.name}}</td>
+                        <td>
+                            <input type="text" class="form-control" name="schedule_date" placeholder="Publish date"
+                                style="background-color: #fff;" value="{{product.date_time.strftime('%d-%m-%Y %H:%M')}}"
+                                ident="{{product.ident}}">
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-secondary" onclick="EditDate({{product.ident}})">Change
+                                publish date</button>
+                            <a class="btn btn-outline-info" href="{{product.edit_link}}" role="button"
+                                target="_blank">Edit</a>
+                            <button type="button" class="btn btn-danger" onclick="RmProduct({{product.ident}})">Remove
+                                task</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+{% block script %}
+<script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    var optional_config = {
+        enableTime: true,
+        dateFormat: "d-m-Y H:i",
+        time_24hr: true,
+    };
+    $('input[name="schedule_date"]').flatpickr(optional_config);
+</script>
+<script>
+    function EditDate(ident) {
+        var formData = new FormData();
+        formData.append('ident', ident);
+        formData.append('date_time', $(`input[name="schedule_date"][ident="${ident}"]`).val());
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('products.edit_task') }}",
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function (response) {
+                var link = document.createElement('a');
+                link.href = "{{ url_for('products.product_schedule') }}";
+                link.click();
+            },
+            error: function (error) {
+                console.log(error)
+            },
+
+        });
+    }
+    function RmProduct(ident) {
+        var formData = new FormData();
+        formData.append('ident', ident);
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('products.rm_task') }}",
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function (response) {
+                var link = document.createElement('a');
+                link.href = "{{ url_for('products.product_schedule') }}";
+                link.click();
+            },
+            error: function (error) {
+                console.log(error)
+            },
+
+        });
+    }
+</script>
+{% endblock %}

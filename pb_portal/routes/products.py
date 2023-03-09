@@ -146,6 +146,17 @@ def uploader():
 
 
 @logger.catch
+@app_route.route('/product_schedule', methods=['GET', 'POST'])
+@auth.login_required(role=['admin', 'pb_admin'])
+def product_schedule():
+    products = connectors.products.get_schedule_page()
+    return render_template(
+            'product_schedule.html',
+            products=products,
+        )
+
+
+@logger.catch
 @app_route.route('/prepare_s3_url', methods=['GET'])
 def prepare_s3_url():
     filename = request.args.get('filename')
@@ -180,3 +191,22 @@ def get_correct_slug():
     product_type = request.form.get('product_type').lower()
     result = connectors.products.get_correct_slug(slug, product_type)
     return json.dumps(result)
+
+
+@logger.catch
+@app_route.route('/rm_task', methods=['POST'])
+def rm_task():
+    ident = request.args.get('ident')
+    connectors.products.rm_task(int(ident))
+    return '{}'
+
+
+@logger.catch
+@app_route.route('/edit_task', methods=['POST'])
+def edit_task():
+    ident = request.args.get('ident')
+    update = connectors.products.schemas.ScheduleUpdate(
+        date_time=datetime.strptime(request.form.get('date_time'), '%d-%m-%Y %H:%M')
+    )
+    connectors.products.update_task(int(ident), update)
+    return '{}'
