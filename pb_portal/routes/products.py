@@ -206,7 +206,7 @@ def rm_task():
 def edit_task():
     ident = request.form.get('ident')
     update = connectors.products.schemas.ScheduleUpdate(
-        date_time=datetime.strptime(request.form.get('date_time'), '%d-%m-%Y %H:%M')
+        date_time=datetime.strptime(request.form.get('date_time'), '%d-%m-%Y %H:%M') - timedelta(hours=3)
     )
     connectors.products.update_task(int(ident), update)
     return '{}'
