@@ -196,7 +196,7 @@ def get_correct_slug():
 @logger.catch
 @app_route.route('/rm_task', methods=['POST'])
 def rm_task():
-    ident = request.args.get('ident')
+    ident = request.form.get('ident')
     connectors.products.rm_task(int(ident))
     return '{}'
 
@@ -204,7 +204,7 @@ def rm_task():
 @logger.catch
 @app_route.route('/edit_task', methods=['POST'])
 def edit_task():
-    ident = request.args.get('ident')
+    ident = request.form.get('ident')
     update = connectors.products.schemas.ScheduleUpdate(
         date_time=datetime.strptime(request.form.get('date_time'), '%d-%m-%Y %H:%M')
     )
