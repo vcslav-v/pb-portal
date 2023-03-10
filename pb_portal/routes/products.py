@@ -150,7 +150,7 @@ def uploader():
 @auth.login_required(role=['admin', 'pb_admin'])
 def product_schedule():
     products = connectors.products.get_schedule_page()
-    for product in products:
+    for product in products.page:
         product.date_time = product.date_time + timedelta(hours=3)
     return render_template(
             'product_schedule.html',
