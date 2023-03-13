@@ -22,9 +22,11 @@ user_roles = {
     os.environ.get('TD_ADMIN_LOGIN') or 'td_root': ['td_admin'],
 }
 
+
 @auth.get_user_roles
 def get_user_roles(user):
     return user_roles[user]
+
 
 @auth.verify_password
 def verify_password(username, password):
@@ -42,6 +44,24 @@ def fin_stat():
         'money_stat.html',
         name=name,
         api_url=url_for('reports.get_site_stat_data'),
+    )
+
+
+@logger.catch
+@app_route.route('/PB-stat', methods=['GET', 'POST'])
+@auth.login_required(role='admin')
+def pb_stat():
+    if request.method == 'POST':
+        page_data = connectors.pb.get_top_products(
+            start_date=request.form.get('fromDate'),
+            end_date=request.form.get('toDate'),
+        )
+        return render_template(
+            '_pb_report.html',
+            page_data=page_data,
+        )
+    return render_template(
+        'pb_report.html',
     )
 
 
