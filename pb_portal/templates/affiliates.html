@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block app_content %}
+<div class="container">
+    <div class="row m-4">
+        <div class="col-4">
+            <h3>Affiliates</h3>
+        </div>
+    </div>
+    <div class="row m-4">
+        <div class="col-12">
+            <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Ref's number</th>
+                    <th scope="col">Profit</th>
+                    <th scope="col">To pay</th>
+                  </tr>
+                </thead>
+                <thead>
+                    <tr>
+                      <th scope="col">Total: {{content.aff_num}}</th>
+                      <th scope="col">{{content.ref_num}}</th>
+                      <th scope="col">${{content.profit_sum}}</th>
+                      <th scope="col">${{content.to_pay_sum}}</th>
+                    </tr>
+                  </thead>
+                <tbody>
+                    {% for affilate in content.affilates %}
+                  <tr>
+                    <th><a href="{{affilate.url}}" target="_blank">{{affilate.name}}</a></th>
+                    <td>{{affilate.ref_num}}</td>
+                    <td>${{affilate.profit}}</td>
+                    <td {% if affilate.to_pay >= 100 %}class="table-danger"{%endif%}>${{affilate.to_pay}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+{% endblock %}

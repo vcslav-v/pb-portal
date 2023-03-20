@@ -1,14 +1,17 @@
+import json
 import os
+from datetime import datetime
 
 import requests
 from loguru import logger
-import json
+
 from pb_portal.connectors.pb import schemas
 
 API_URL = os.environ.get('PB_API_URL', '')
 TOKEN = os.environ.get('PB_API_TOKEN', '')
 NAME = os.environ.get('PB_API_NAME', '')
 PB_STAT_API_URL = os.environ.get('PB_STAT_API_URL', '')
+PB_USER_URL = os.environ.get('PB_USER_URL', '')
 
 
 @logger.catch()
@@ -83,3 +86,42 @@ def get_top_products(start_date: str, end_date: str) -> schemas.PBStat:
 
 def get_product_info(url: str) -> schemas.ProductInfo:
     pass
+
+
+def get_affiliates() -> schemas.AffiliateInfo:
+    headers = {'Authorization': f'Bearer {TOKEN}'}
+    json_data = {
+        'from': datetime.utcnow().strftime('%Y-%m-%d'),
+        'to': datetime.utcnow().strftime('%Y-%m-%d'),
+    }
+    resp = requests.post(PB_STAT_API_URL.format(target='ref'), headers=headers, json=json_data)
+    aff_resp = json.loads(resp.text)
+    result = schemas.AffiliateInfo()
+    idents = []
+    for affiliate in aff_resp:
+        if affiliate['currency'] != 'usd':
+            continue
+        if affiliate['id'] not in idents:
+            result.affilates.append(schemas.Affiliate(
+                ident=affiliate['id'],
+                name=affiliate['name'],
+                url=PB_USER_URL.format(ident=affiliate['id']),
+                ref_num=affiliate['num_ref'],
+                profit=int(affiliate['sum'] - affiliate['to_pay']),
+                to_pay=int(affiliate['to_pay'] if affiliate['accrued'] == 0 else 0),
+            ))
+            result.ref_num += affiliate['num_ref']
+            idents.append(affiliate['id'])
+        else:
+            for aff in result.affilates:
+                if aff.ident != affiliate['id']:
+                    continue
+                aff.profit -= int(affiliate['to_pay'])
+                aff.to_pay += int(affiliate['to_pay'] if affiliate['accrued'] == 0 else 0)
+                break
+    result.aff_num = len(result.affilates)
+    for affilate in result.affilates:
+        result.profit_sum += affilate.profit
+        result.to_pay_sum += affilate.to_pay
+    result.affilates.sort(key=lambda x: x.profit, reverse=True)
+    return result

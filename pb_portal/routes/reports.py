@@ -66,6 +66,17 @@ def pb_stat():
 
 
 @logger.catch
+@app_route.route('/PB-affiliates', methods=['GET'])
+@auth.login_required(role='admin')
+def pb_affiliates():
+    content = connectors.pb.get_affiliates()
+    return render_template(
+        'affiliates.html',
+        content=content,
+    )
+
+
+@logger.catch
 @app_route.route('/TD-finance', methods=['GET'])
 @auth.login_required(role=['admin', 'td_admin'])
 def fin_stat_td():

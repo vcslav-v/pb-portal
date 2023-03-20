@@ -31,3 +31,20 @@ class ProductInfo(BaseModel):
     exerpt: str
     regular_price: Optional[int]
     sale_regular_price: Optional[int]
+
+
+class Affiliate(BaseModel):
+    ident: int
+    name: str
+    url: str
+    ref_num: int
+    profit: int
+    to_pay: int
+
+
+class AffiliateInfo(BaseModel):
+    affilates: list[Affiliate] = []
+    aff_num: int = 0
+    ref_num: int = 0
+    profit_sum: int = 0
+    to_pay_sum: int = 0
