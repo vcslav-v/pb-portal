@@ -1,0 +1,23 @@
+<div class="input-group flex-nowrap" ident="{{ident}}">
+    <input type="text" class="form-control" placeholder="Product cell" id="pbUrl" name="product_grid"
+        ident="{{ident}}col_1" onchange="refresh()">
+    <input type="text" class="form-control" placeholder="Product cell" id="pbUrl" name="product_grid"
+        ident="{{ident}}col_2" onchange="refresh()">
+</div>
+<div class="input-group flex-nowrap" ident="{{ident}}">
+    <span class="input-group-text">Gallery|Border</span>
+    <input type="number" class="form-control" name="product_grid_gallery" ident="{{ident}}col_1" value="0"
+        onchange="refresh()">
+    <div class="input-group-text">
+        <input class="form-check-input mt-0" type="checkbox" value="" name="product_grid_boarder" ident="{{ident}}col_1"
+            onchange="refresh()">
+    </div>
+    <input type="number" class="form-control" name="product_grid_gallery" ident="{{ident}}col_2" value="0"
+        onchange="refresh()">
+    <div class="input-group-text">
+        <input class="form-check-input mt-0" type="checkbox" value="" name="product_grid_boarder" ident="{{ident}}col_2"
+            onchange="refresh()">
+    </div>
+    <button class="btn btn-outline-danger" type="button" id="button-addon1" onclick="rmRow('{{ident}}')">Remove
+        row</button>
+</div>

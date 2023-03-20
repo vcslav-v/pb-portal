@@ -1,0 +1,9 @@
+<div class="row m-4" ident="{{ident}}el">
+    <div class="col-12" ident="{{ident}}block">
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button class="btn btn-outline-secondary" type="button" onclick="rmBlock(this)">⨯</button>
+            <button class="btn btn-outline-success" type="button" onclick="addRow('{{ident}}')">Add row</button>
+        </div>
+        {% extends "_digest_field_grid_row.html" %}
+    </div>
+</div>

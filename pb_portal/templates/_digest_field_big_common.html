@@ -1,0 +1,19 @@
+<div class="row m-4">
+    <div class="col-12">
+        <div class="input-group flex-nowrap">
+            <button class="btn btn-outline-secondary" type="button" onclick="rmBlock(this)">⨯</button>
+            <input type="text" class="form-control" placeholder="Freebie, Plus or Article Big" id="pbUrl" name="common_big"
+                ident="{{ident}}" onchange="refresh()">
+        </div>
+        <div class="input-group flex-nowrap">
+            <span class="input-group-text">Img</span>
+            <input type="number" class="form-control" name="common_big_img" ident="{{ident}}" value="0"
+                onchange="refresh()">
+                <span class="input-group-text">Border</span>
+                <div class="input-group-text">
+                    <input class="form-check-input mt-0" type="checkbox" value="" name="common_big_img_border"
+                        ident="{{ident}}" onchange="refresh()">
+                </div>
+        </div>
+    </div>
+</div>

@@ -79,3 +79,7 @@ def get_top_products(start_date: str, end_date: str) -> schemas.PBStat:
         prem_by_sales=prem_by_sales,
         plus=plus,
     )
+
+
+def get_product_info(url: str) -> schemas.ProductInfo:
+    pass

@@ -14,6 +14,7 @@ app.register_blueprint(routes.reports.app_route, name='reports')
 app.register_blueprint(routes.tag_board.app_route, name='tag_board')
 app.register_blueprint(routes.products.app_route, name='products')
 app.register_blueprint(routes.contracts.app_route, name='contracts')
+app.register_blueprint(routes.mail.app_route, name='mail')
 
 
 @app.route('/')

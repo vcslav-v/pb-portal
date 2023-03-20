@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block head %}
+{% endblock %}
+{% block app_content %}
+<div class="container">
+    <div class="row m-4">
+        <div class="col-4">
+            <h3>Digest</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <div id="editArea">
+            </div>
+            <div class="row m-4">
+                <div class="col-6">
+                    <select class="form-select" name="selectType">
+                        <option selected value="premium_big">Premium Big</option>
+                        <option value="common_big">Common big</option>
+                        <option value="product_grid">Product grid</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-info" name="addEditArea">Add block</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-4">
+                <div class="col-12">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-info" onclick="copyResult()">Copy HTML to
+                            clipboard</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-4">
+                <div class="col-12">
+                    <div class="input-group mb-3">
+                        <button class="btn btn-outline-secondary" type="button" id="button-addon1" onclick="copyToClipboard()">Copy preview url</button>
+                        <input type="text" class="form-control" id="preview_url">
+                      </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <iframe class="" src="" title="Preview" id="preview"
+                style="width: 100%; height: 100%; top: 0; left: 0; bottom: 0; right: 0;" frameborder="0" scrolling="no"
+                onload="resizeIframe(this)"></iframe>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    function refresh() {
+        var cur_url = "{{ url_for('mail.make_digest') }}?"
+        for (input_elem of $('input[id="pbUrl"]')) {
+            if (input_elem.getAttribute('name') == 'premium_big') {
+                var name = `${input_elem.getAttribute('name')}|${input_elem.getAttribute('ident')}`;
+                var value = `${input_elem.value}|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_promocode"]`).val()}`;
+                value += `|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_main_boarder"]`).is(":checked")}`
+                value += `|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_gallery_0_boarder"]`).is(":checked")}`
+                value += `|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_gallery_1_boarder"]`).is(":checked")}`
+                value += `|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_gallery_2_boarder"]`).is(":checked")}`
+                if (name.split('|')[0] == 'premium_big') {
+                    for (gallery_num of $(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_gallery"]`)) {
+                        value += `|${gallery_num.value}`
+                    }
+
+                }
+                cur_url += `${name}=${value}&`
+            } else if (input_elem.getAttribute('name') == 'common_big') {
+                var name = `${input_elem.getAttribute('name')}|${input_elem.getAttribute('ident')}`;
+                var value = input_elem.value;
+                value += `|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="common_big_img"]`).val()}`
+                value += `|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="common_big_img_border"]`).is(":checked")}`
+                cur_url += `${name}=${value}&`
+            } else if (input_elem.getAttribute('name') == 'product_grid') {
+                var name = `${input_elem.getAttribute('name')}|${input_elem.parentElement.parentElement.getAttribute('ident')}|${input_elem.getAttribute('ident')}`;
+                var value = input_elem.value;
+                value += `|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="product_grid_gallery"]`).val()}`
+                value += `|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="product_grid_boarder"]`).is(":checked")}`
+                cur_url += `${name}=${value}&`
+            }
+        }
+        $('#preview').attr('src', cur_url)
+        $('#preview_url').val('{{base_url}}' + cur_url)
+        return cur_url
+
+    }
+    function rmBlock(elem) {
+        elem.parentElement.parentElement.parentElement.remove();
+        refresh();
+    }
+
+    function rmRow(ident) {
+        $(`div[ident=${ident}]`).remove();
+        refresh();
+    }
+
+    function addRow(ident) {
+        formData = new FormData();
+        formData.append('select_type', 'product_grid_row')
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('mail.digest') }}",
+            data: formData,
+            dataType: 'html',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function (response) {
+                $(`div[ident="${ident}block"]`).append(response)
+            },
+            error: function (error) {
+                console.log(error);
+            },
+        })
+    }
+
+    $('button[name="addEditArea"]').click(function () {
+        formData = new FormData();
+        formData.append('select_type', $('select[name="selectType"]').val())
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('mail.digest') }}",
+            data: formData,
+            dataType: 'html',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function (response) {
+                $('#editArea').append(response)
+            },
+            error: function (error) {
+                console.log(error);
+            },
+        })
+
+    })
+    function resizeIframe(obj) {
+        obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
+    }
+    function copyResult() {
+        var result_url = refresh();
+        $.get(result_url, function (data, status) {
+            navigator.clipboard.writeText(data);
+        });
+    }
+    function copyToClipboard(){
+        navigator.clipboard.writeText($('#preview_url').val());
+    }
+    refresh();
+</script>
+{% endblock %}
