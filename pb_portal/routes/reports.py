@@ -16,10 +16,14 @@ users = {
     os.environ.get('TD_ADMIN_LOGIN') or 'td_root': generate_password_hash(
         os.environ.get('TD_ADMIN_PASS') or 'td_pass'
     ),
+    os.environ.get('PB_ADMIN_LOGIN') or 'pb_root': generate_password_hash(
+        os.environ.get('PB_ADMIN_PASS') or 'pb_pass'
+    ),
 }
 user_roles = {
     os.environ.get('FLASK_LOGIN') or 'root': ['admin', 'td_admin'],
     os.environ.get('TD_ADMIN_LOGIN') or 'td_root': ['td_admin'],
+    os.environ.get('PB_ADMIN_LOGIN') or 'pb_root': ['pb_admin'],
 }
 
 
@@ -67,7 +71,7 @@ def pb_stat():
 
 @logger.catch
 @app_route.route('/PB-affiliates', methods=['GET'])
-@auth.login_required(role='admin')
+@auth.login_required(role=['admin', 'pb_admin'])
 def pb_affiliates():
     content = connectors.pb.get_affiliates()
     return render_template(
