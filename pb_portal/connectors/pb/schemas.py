@@ -29,8 +29,8 @@ class ProductInfo(BaseModel):
     main_img_url: str
     gallery_urls: list[str]
     exerpt: str
-    regular_price: Optional[int]
-    sale_regular_price: Optional[int]
+    regular_price: Optional[float]
+    sale_regular_price: Optional[float]
 
 
 class Affiliate(BaseModel):

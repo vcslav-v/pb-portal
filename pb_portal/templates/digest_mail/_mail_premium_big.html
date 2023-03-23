@@ -186,7 +186,7 @@ style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff;"
                                                 <p
                                                     style="margin: 0; text-align: left; mso-line-height-alt: 27px;">
                                                     <span
-                                                        style="font-size:18px;"><strong>${{content.regular_price}}</strong></span>
+                                                        style="font-size:18px;"><strong>${% if content.sale_regular_price %}{{ '%g' % content.sale_regular_price}}{% else %}{{ '%g' % content.regular_price}}{% endif %}</strong></span>
                                                 </p>
                                             </div>
                                         </div>
@@ -291,7 +291,7 @@ style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff;"
                                                 style="font-size: 14px; font-family: Helvetica Neue, Helvetica, Arial, sans-serif; mso-line-height-alt: 21px; color: #000000; line-height: 1.5;">
                                                 <p
                                                     style="margin: 0; mso-line-height-alt: 21px;">
-                                                    <strong><span style="font-size:16px;">{% if promocode %}Promo-code: {{promocode}}{%else%}Intro Sale: 30% Off{%endif%}</span></strong></p>
+                                                    <strong><span style="font-size:16px;">{% if promocode %}Promo-code: {{promocode}}{%elif content.sale_regular_price%}Intro Sale: 30% Off{%else%}{%endif%}</span></strong></p>
                                             </div>
                                         </div>
                                     </td>
