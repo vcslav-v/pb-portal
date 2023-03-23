@@ -43,7 +43,7 @@ def verify_password(username, password):
 
 @logger.catch
 @app_route.route('/digest', methods=['GET', 'POST'])
-@auth.login_required(role='admin')
+@auth.login_required(role=['admin', 'pb_admin'])
 def digest():
     ident = str(int(datetime.utcnow().timestamp())) + str(randint(0, int(datetime.utcnow().timestamp())))
     if request.method == 'POST':
@@ -77,7 +77,7 @@ def digest():
 
 @logger.catch
 @app_route.route('/make_digest', methods=['GET'])
-@auth.login_required(role='admin')
+@auth.login_required(role=['admin', 'pb_admin'])
 def make_digest():
     content = ''
     block_names = set()
