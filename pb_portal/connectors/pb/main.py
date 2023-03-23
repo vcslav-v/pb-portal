@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime
+from urllib.parse import urlparse
 
 import requests
 from loguru import logger
@@ -45,16 +46,16 @@ def get_top_products(start_date: str, end_date: str) -> schemas.PBStat:
         'from': '-'.join(_start_date),
         'to': '-'.join(_end_date),
     }
-    resp = requests.post(PB_STAT_API_URL.format(target='plus'), headers=headers, json=json_data)
+    resp = requests.post(PB_STAT_API_URL.format(target='top/plus'), headers=headers, json=json_data)
     plus_resp = json.loads(resp.text)
 
-    resp = requests.post(PB_STAT_API_URL.format(target='premium'), headers=headers, json=json_data)
+    resp = requests.post(PB_STAT_API_URL.format(target='top/premium'), headers=headers, json=json_data)
     prem_resp = json.loads(resp.text)
 
     plus = []
     for product in plus_resp:
         plus.append(schemas.PlusTop(
-            title=product['plus'],
+            title=product['title'],
             url=product['url'],
             downloads=product['count_downloads'],
         ))
@@ -62,7 +63,7 @@ def get_top_products(start_date: str, end_date: str) -> schemas.PBStat:
     prem_by_profit = []
     for product in prem_resp['sum']:
         prem_by_profit.append(schemas.PremTop(
-            title=product['plus'],
+            title=product['title'],
             url=product['url'],
             profit=product['sum'],
             sales=product['num_sale'],
@@ -71,7 +72,7 @@ def get_top_products(start_date: str, end_date: str) -> schemas.PBStat:
     prem_by_sales = []
     for product in prem_resp['num']:
         prem_by_sales.append(schemas.PremTop(
-            title=product['plus'],
+            title=product['title'],
             url=product['url'],
             profit=product['sum'],
             sales=product['num_sale'],
@@ -85,7 +86,21 @@ def get_top_products(start_date: str, end_date: str) -> schemas.PBStat:
 
 
 def get_product_info(url: str) -> schemas.ProductInfo:
-    pass
+    headers = {'Authorization': f'Bearer {TOKEN}'}
+    url_path = urlparse(url).path
+    data = {'slug': url_path.split('/')[-1]}
+    resp = requests.post(PB_STAT_API_URL.format(target=f'info'), headers=headers, json=data)
+    product_info = json.loads(resp.text)
+    return schemas.ProductInfo(
+        pr_type=product_info['product_type'],
+        url=url,
+        title=product_info['title'],
+        main_img_url=product_info['material_image'],
+        gallery_urls=product_info['gallery'],
+        exerpt=product_info['short_desc'],
+        regular_price=product_info.get('price'),
+        sale_regular_price=product_info.get('sale_price'),
+    )
 
 
 def get_affiliates() -> schemas.AffiliateInfo:
@@ -94,7 +109,7 @@ def get_affiliates() -> schemas.AffiliateInfo:
         'from': datetime.utcnow().strftime('%Y-%m-%d'),
         'to': datetime.utcnow().strftime('%Y-%m-%d'),
     }
-    resp = requests.post(PB_STAT_API_URL.format(target='ref'), headers=headers, json=json_data)
+    resp = requests.post(PB_STAT_API_URL.format(target='top/ref'), headers=headers, json=json_data)
     aff_resp = json.loads(resp.text)
     result = schemas.AffiliateInfo()
     idents = []
