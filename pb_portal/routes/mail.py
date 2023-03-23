@@ -22,10 +22,14 @@ users = {
     os.environ.get('TD_ADMIN_LOGIN') or 'td_root': generate_password_hash(
         os.environ.get('TD_ADMIN_PASS') or 'td_pass'
     ),
+    os.environ.get('PB_ADMIN_LOGIN') or 'pb_root': generate_password_hash(
+        os.environ.get('PB_ADMIN_PASS') or 'pb_pass'
+    ),
 }
 user_roles = {
     os.environ.get('FLASK_LOGIN') or 'root': ['admin', 'td_admin'],
     os.environ.get('TD_ADMIN_LOGIN') or 'td_root': ['td_admin'],
+    os.environ.get('PB_ADMIN_LOGIN') or 'pb_root': ['pb_admin'],
 }
 
 
