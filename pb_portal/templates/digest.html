@@ -18,11 +18,19 @@
                         <option selected value="premium_big">Premium Big</option>
                         <option value="common_big">Common big</option>
                         <option value="product_grid">Product grid</option>
+                        <option value="bee_free">BeeFree</option>
                     </select>
                 </div>
                 <div class="col-6">
                     <div class="d-grid gap-2">
                         <button type="button" class="btn btn-info" name="addEditArea">Add block</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-4">
+                <div class="col-12">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary" onclick="refresh()">Refresh</button>
                     </div>
                 </div>
             </div>
@@ -38,7 +46,7 @@
                 <div class="col-12">
                     <div class="input-group mb-3">
                         <button class="btn btn-outline-secondary" type="button" id="button-addon1" onclick="copyToClipboard()">Copy preview url</button>
-                        <input type="text" class="form-control" id="preview_url">
+                        <input type="text" class="form-control" id="preview_url" disabled>
                       </div>
                 </div>
             </div>
@@ -54,39 +62,68 @@
 {% block script %}
 <script>
     function refresh() {
-        var cur_url = "{{ url_for('mail.make_digest') }}?"
+        $('#preview').removeAttr('src')
+        $('#preview_url').val('')
+        formData = new FormData()
+        var cur_url;
         for (input_elem of $('input[id="pbUrl"]')) {
             if (input_elem.getAttribute('name') == 'premium_big') {
                 var name = `${input_elem.getAttribute('name')}|${input_elem.getAttribute('ident')}`;
-                var value = `${input_elem.value}|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_promocode"]`).val()}`;
-                value += `|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_main_boarder"]`).is(":checked")}`
-                value += `|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_gallery_0_boarder"]`).is(":checked")}`
-                value += `|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_gallery_1_boarder"]`).is(":checked")}`
-                value += `|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_gallery_2_boarder"]`).is(":checked")}`
+                var gallery = []
                 if (name.split('|')[0] == 'premium_big') {
                     for (gallery_num of $(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_gallery"]`)) {
-                        value += `|${gallery_num.value}`
+                        gallery.push(gallery_num.value)
                     }
 
                 }
-                cur_url += `${name}=${value}&`
+                formData.append(name, JSON.stringify({
+                    'url': input_elem.value,
+                    'promocode': $(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_promocode"]`).val(),
+                    'main_boarder': $(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_main_boarder"]`).is(":checked"),
+                    'gallery_0_boarder': $(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_gallery_0_boarder"]`).is(":checked"),
+                    'gallery_1_boarder': $(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_gallery_1_boarder"]`).is(":checked"),
+                    'gallery_2_boarder': $(`input[ident="${input_elem.getAttribute('ident')}"][name="premium_big_gallery_2_boarder"]`).is(":checked"),
+                    'gallery': gallery
+
+                }))
+                
             } else if (input_elem.getAttribute('name') == 'common_big') {
                 var name = `${input_elem.getAttribute('name')}|${input_elem.getAttribute('ident')}`;
-                var value = input_elem.value;
-                value += `|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="common_big_img"]`).val()}`
-                value += `|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="common_big_img_border"]`).is(":checked")}`
-                cur_url += `${name}=${value}&`
+                formData.append(name, JSON.stringify({
+                    'url': input_elem.value,
+                    'img': $(`input[ident="${input_elem.getAttribute('ident')}"][name="common_big_img"]`).val(),
+                    'img_border': $(`input[ident="${input_elem.getAttribute('ident')}"][name="common_big_img_border"]`).is(":checked"),
+                }))
             } else if (input_elem.getAttribute('name') == 'product_grid') {
                 var name = `${input_elem.getAttribute('name')}|${input_elem.parentElement.parentElement.getAttribute('ident')}|${input_elem.getAttribute('ident')}`;
-                var value = input_elem.value;
-                value += `|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="product_grid_gallery"]`).val()}`
-                value += `|${$(`input[ident="${input_elem.getAttribute('ident')}"][name="product_grid_boarder"]`).is(":checked")}`
-                cur_url += `${name}=${value}&`
+                formData.append(name, JSON.stringify({
+                    'url': input_elem.value,
+                    'img': $(`input[ident="${input_elem.getAttribute('ident')}"][name="product_grid_gallery"]`).val(),
+                    'img_border': $(`input[ident="${input_elem.getAttribute('ident')}"][name="product_grid_boarder"]`).is(":checked"),
+                }))
+            } else if (input_elem.getAttribute('name') == 'bee_free_html') {
+                var name = `${input_elem.getAttribute('name')}|${input_elem.getAttribute('ident')}`;
+                formData.append(name, JSON.stringify({'html': input_elem.value}))
             }
         }
-        $('#preview').attr('src', cur_url)
-        $('#preview_url').val('{{base_url}}' + cur_url)
-        return cur_url
+        
+        $.ajax({
+            type: 'POST',
+            url: "{{ url_for('mail.make_digest') }}",
+            data: formData,
+            dataType: 'text',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function (response) {
+                $('#preview').attr('src', response)
+                $('#preview_url').val('{{base_url}}' + response)
+            },
+            error: function (error) {
+                console.log(error);
+            },
+        })
 
     }
     function rmBlock(elem) {
@@ -153,6 +190,5 @@
     function copyToClipboard(){
         navigator.clipboard.writeText($('#preview_url').val());
     }
-    refresh();
 </script>
 {% endblock %}

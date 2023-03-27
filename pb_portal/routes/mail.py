@@ -1,15 +1,18 @@
+import json
 import os
 from datetime import datetime
 from random import randint
 
-from flask import Blueprint, render_template, request
+import cssutils
+from bs4 import BeautifulSoup
+from flask import Blueprint, render_template, request, url_for
 from flask_httpauth import HTTPBasicAuth
 from loguru import logger
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from pb_portal import connectors
+from pb_portal import connectors, mem
 
-STORAGE_URL = os.environ.get('STORAGE_URL', '')
+STORAGE_URL = os.environ.get('STORAGE_URL', 'https://pixelbuddha.net/storage/m')
 STATIC_URL = os.environ.get('STATIC_URL', 'http://127.0.0.1:5002')
 
 app_route = Blueprint('route', __name__, url_prefix='/mail')
@@ -72,6 +75,11 @@ def digest():
                 '_digest_field_grid_row.html',
                 ident=ident,
             )
+        elif select_type == 'bee_free':
+            return render_template(
+                '_digest_field_bee_free.html',
+                ident=ident,
+            )
 
     return render_template(
         'digest.html',
@@ -80,21 +88,24 @@ def digest():
 
 
 @logger.catch
-@app_route.route('/make_digest', methods=['GET'])
+@app_route.route('/make_digest', methods=['POST'])
 @auth.login_required(role=['admin', 'pb_admin'])
 def make_digest():
     content = ''
+    num_custom_row = 0
+    custom_styles = ''
     block_names = set()
     product_grid = []
     uniq_idents = set()
-    for name, data in request.args.to_dict().items():
+    for name, data in request.form.to_dict().items():
         block_type, ident, *_ = name.split('|')
         uniq_idents.add(ident)
     num_blocks = len(uniq_idents)
     last_ident = ''
     i = 0
-    for name, data in request.args.to_dict().items():
+    for name, json_data in request.form.to_dict().items():
         block_type, ident, *_ = name.split('|')
+        data = json.loads(json_data)
         if product_grid and last_ident != ident:
             is_only_plus = False not in [row[0].pr_type == 'plus' for row in product_grid]
             content += render_template(
@@ -110,57 +121,86 @@ def make_digest():
             product_grid = []
             block_names.add('product_grid')
         if block_type == 'premium_big':
-            url, promocode, *params = data.split('|')
-            galley_num = params[-4:]
-            boarders = [bch == 'true' for bch in params[:-3]]
-            promocode = promocode.strip()
-            if not url:
+            if not data.get('url'):
                 break
-            if False in [num.isdigit() for num in galley_num]:
+            if False in [num.isdigit() for num in data.get('gallery')]:
                 break
-            product = connectors.pb.get_product_info(url)
+            product = connectors.pb.get_product_info(data.get('url'))
             if product.pr_type != 'premium':
                 break
             block_names.add(block_type)
             content += render_template(
                 'digest_mail/_mail_premium_big.html',
                 content=product,
-                galley_num=[int(galley_num[0])] + [int(num)-1 for num in galley_num[1:]],
-                boarders=boarders,
-                promocode=promocode,
+                galley_num=[int(data.get('gallery')[0])] + [int(num)-1 for num in data.get('gallery')[1:]],
+                boarders=[
+                    data.get('main_boarder'),
+                    data.get('gallery_0_boarder'),
+                    data.get('gallery_1_boarder'),
+                    data.get('gallery_2_boarder'),
+                ],
+                promocode=data.get('promocode'),
             )
             _content, _block_names = add_space_or_affiliate(i, num_blocks)
             i += 1
             content += _content
             block_names = block_names.union(_block_names)
         elif block_type == 'common_big':
-            url, img_num, is_border = data.split('|')
-            if not url or not img_num.isdigit():
+            if not data.get('url'):
                 break
-            img_num = int(img_num)
-            is_border = is_border == 'true'
-            product = connectors.pb.get_product_info(url)
+            product = connectors.pb.get_product_info(data.get('url'))
             if product.pr_type not in ['freebie', 'plus', 'article']:
                 break
             block_names.add(block_type)
             content += render_template(
                 'digest_mail/_mail_common_big.html',
                 content=product,
-                img_num=img_num,
-                is_border=is_border,
+                img_num=int(data.get('img')),
+                is_border=data.get('img_border'),
             )
             _content, _block_names = add_space_or_affiliate(i, num_blocks)
             i += 1
             content += _content
             block_names = block_names.union(_block_names)
         elif block_type == 'product_grid':
-            url, img_num, is_border = data.split('|')
-            if not url or not img_num.isdigit():
+            if not data.get('url'):
                 break
-            img_num = int(img_num)
-            is_border = is_border == 'true'
-            product = connectors.pb.get_product_info(url)
-            product_grid.append((product, img_num, is_border))
+            product = connectors.pb.get_product_info(data.get('url'))
+            product_grid.append((product, int(data.get('img')), data.get('img_border')))
+        elif block_type == 'bee_free_html':
+            soup = BeautifulSoup(data.get('html'))
+            styles = {}
+            sheet = cssutils.parseString(soup.style.text.replace('\n', '').replace('\t', ''))
+
+            for rule in sheet:
+                if rule.typeString == 'MEDIA_RULE':
+                    for media_rule in rule.cssRules:
+                        selector_row = media_rule.selectorText
+                        selectors = selector_row.split(',')
+                        stl = media_rule.style.cssText
+                        for selector in selectors:
+                            styles[selector.strip()] = stl
+
+            rows = soup.find_all('table', attrs={'class': 'row'})
+            for row in rows:
+                filtered = list(filter(lambda x: 'row-' in x, row.attrs['class']))
+                if not filtered:
+                    continue
+                new_class_name = f'customRow-{num_custom_row}'
+                num_custom_row += 1
+                row_class = filtered[0]
+                for style in styles:
+                    if row_class not in style:
+                        continue
+                    custom_styles += style.replace(row_class, new_class_name) + styles[style].replace('\n', '').replace('\t', '')
+                row.attrs['class'] = ['row', new_class_name]
+                content += row.prettify().replace('\n', '').replace('\t', '')
+
+            _content, _block_names = add_space_or_affiliate(i, num_blocks)
+            i += 1
+            content += _content
+            block_names = block_names.union(_block_names)
+
         last_ident = ident
     if product_grid:
         is_only_plus = False not in [row[0].pr_type == 'plus' for row in product_grid]
@@ -181,13 +221,27 @@ def make_digest():
             style += render_template('digest_mail/_style_affiliate.html')
         elif block_name == 'common_big':
             style += render_template('digest_mail/_style_common_big.html')
-    return render_template(
-        'digest_mail/_mail_digest.html',
-        storage=STORAGE_URL,
-        style=style,
-        content=content,
-
+        style += custom_styles
+    page_ident = str(
+        int(datetime.utcnow().timestamp()) + randint(0, int(datetime.utcnow().timestamp()))
+        )
+    mem.set_digest(
+        page_ident,
+        render_template(
+            'digest_mail/_mail_digest.html',
+            storage=STORAGE_URL,
+            style=style,
+            content=content,
+        )
     )
+    return f'{url_for("mail.show_digest")}?ident={page_ident}'
+
+
+@logger.catch
+@app_route.route('/show_digest', methods=['GET'])
+@auth.login_required(role=['admin', 'pb_admin'])
+def show_digest():
+    return mem.get_digest(request.args.get('ident'))
 
 
 def add_space_or_affiliate(i: int, data_len: int):
