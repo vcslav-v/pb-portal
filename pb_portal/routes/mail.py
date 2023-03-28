@@ -192,9 +192,12 @@ def make_digest():
                 for style in styles:
                     if row_class not in style:
                         continue
-                    custom_styles += style.replace(row_class, new_class_name) + styles[style].replace('\n', '').replace('\t', '')
+                    custom_styles += '{selector}\n{{ {style} }}\n\n'.format(
+                        selector=style.replace(row_class, new_class_name),
+                        style=styles[style],
+                    )
                 row.attrs['class'] = ['row', new_class_name]
-                content += row.prettify().replace('\n', '').replace('\t', '')
+                content += row.prettify()
 
             _content, _block_names = add_space_or_affiliate(i, num_blocks)
             i += 1
@@ -221,7 +224,7 @@ def make_digest():
             style += render_template('digest_mail/_style_affiliate.html')
         elif block_name == 'common_big':
             style += render_template('digest_mail/_style_common_big.html')
-        style += custom_styles
+    style += custom_styles
     page_ident = str(
         int(datetime.utcnow().timestamp()) + randint(0, int(datetime.utcnow().timestamp()))
         )
