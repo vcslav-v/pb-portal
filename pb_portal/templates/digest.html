@@ -128,12 +128,10 @@
     }
     function rmBlock(elem) {
         elem.parentElement.parentElement.parentElement.remove();
-        refresh();
     }
 
     function rmRow(ident) {
         $(`div[ident=${ident}]`).remove();
-        refresh();
     }
 
     function addRow(ident) {
