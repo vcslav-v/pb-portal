@@ -44,6 +44,14 @@
             </div>
             <div class="row m-4">
                 <div class="col-12">
+                    <div class="form-floating">
+                        <textarea class="form-control" placeholder="HTML" id="resultArea" style="height: 100px"></textarea>
+                        <label for="floatingTextarea">Result</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-4">
+                <div class="col-12">
                     <div class="input-group mb-3">
                         <button class="btn btn-outline-secondary" type="button" id="button-addon1" onclick="copyToClipboard()">Copy preview url</button>
                         <input type="text" class="form-control" id="preview_url" disabled>
@@ -64,6 +72,7 @@
     function refresh() {
         $('#preview').removeAttr('src')
         $('#preview_url').val('')
+        $('#resultArea').val('')
         formData = new FormData()
         var cur_url;
         for (input_elem of $('input[id="pbUrl"]')) {
@@ -119,6 +128,10 @@
             success: function (response) {
                 $('#preview').attr('src', response)
                 $('#preview_url').val('{{base_url}}' + response)
+                $.get(response, function (data, status) {
+                    $('#resultArea').val(data)
+                });
+                
             },
             error: function (error) {
                 console.log(error);
@@ -180,9 +193,7 @@
         obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
     }
     function copyResult() {
-        $.get($('#preview_url').val(), function (data, status) {
-            navigator.clipboard.writeText(data);
-        });
+        navigator.clipboard.writeText($('#resultArea').val());
     }
     function copyToClipboard(){
         navigator.clipboard.writeText($('#preview_url').val());

@@ -224,6 +224,8 @@ def make_digest():
             style += render_template('digest_mail/_style_affiliate.html')
         elif block_name == 'common_big':
             style += render_template('digest_mail/_style_common_big.html')
+        elif block_name == 'product_grid':
+            style += render_template('digest_mail/_style_product_grid.html')
     style += custom_styles
     page_ident = str(
         int(datetime.utcnow().timestamp()) + randint(0, int(datetime.utcnow().timestamp()))
