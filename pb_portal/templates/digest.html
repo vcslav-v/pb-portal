@@ -182,8 +182,7 @@
         obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 'px';
     }
     function copyResult() {
-        var result_url = refresh();
-        $.get(result_url, function (data, status) {
+        $.get($('#preview_url').val(), function (data, status) {
             navigator.clipboard.writeText(data);
         });
     }
