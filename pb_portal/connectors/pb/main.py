@@ -17,17 +17,16 @@ PB_USER_URL = os.environ.get('PB_USER_URL', '')
 
 @logger.catch()
 def get_site_info_of(type_info: str = 'category', _filter: list[str] = []) -> list[str]:
-    with requests.sessions.Session() as session:
-        session.auth = (NAME, TOKEN)
-        resp = session.get(f'{API_URL}/list/{type_info}',)
-        if resp.ok:
-            return list(filter(lambda x: x not in _filter, json.loads(resp.content)))
+    header = {'Authorization': f'Basic {TOKEN}'}
+    resp = requests.get(f'{API_URL}/list/{type_info}', headers=header)
+    if resp.ok:
+        return list(filter(lambda x: x not in _filter, json.loads(resp.content)))
     return []
 
 
 @logger.catch
 def get_correct_slug(slug: str, product_type: str):
-    header = {'Authorization': f'Bearer {TOKEN}'}
+    header = {'Authorization': f'Basic {TOKEN}'}
     data = {'slug': slug, 'type': product_type}
     resp = requests.post(f'{API_URL}/check', headers=header, data=data)
     if resp.ok:
@@ -37,7 +36,7 @@ def get_correct_slug(slug: str, product_type: str):
 
 @logger.catch
 def get_top_products(start_date: str, end_date: str) -> schemas.PBStat:
-    headers = {'Authorization': f'Bearer {TOKEN}'}
+    headers = {'Authorization': f'Basic {TOKEN}'}
     _start_date = start_date.split('-')
     _start_date.reverse()
     _end_date = end_date.split('-')
@@ -86,7 +85,7 @@ def get_top_products(start_date: str, end_date: str) -> schemas.PBStat:
 
 
 def get_product_info(url: str) -> schemas.ProductInfo:
-    headers = {'Authorization': f'Bearer {TOKEN}'}
+    headers = {'Authorization': f'Basic {TOKEN}'}
     url_path = urlparse(url).path
     data = {'slug': url_path.split('/')[-1]}
     resp = requests.post(PB_STAT_API_URL.format(target=f'info'), headers=headers, json=data)
@@ -104,7 +103,7 @@ def get_product_info(url: str) -> schemas.ProductInfo:
 
 
 def get_affiliates() -> schemas.AffiliateInfo:
-    headers = {'Authorization': f'Bearer {TOKEN}'}
+    headers = {'Authorization': f'Basic {TOKEN}'}
     json_data = {
         'from': datetime.utcnow().strftime('%Y-%m-%d'),
         'to': datetime.utcnow().strftime('%Y-%m-%d'),
