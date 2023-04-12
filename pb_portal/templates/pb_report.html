@@ -16,6 +16,9 @@
         <div class="col-3">
             <input type="text" class="form-control" name="endDate" placeholder="Date" style="background-color: #fff;">
         </div>
+        <div class="col-3">
+            <input type="number" class="form-control" name="limit" placeholder="Top" style="background-color: #fff;">
+        </div>
     </div>
     <div class="row m-4" name="dataTables">
     </div>
@@ -39,12 +42,14 @@
     };
     $('input[name="startDate"]').flatpickr(startDate_config);
     $('input[name="endDate"]').flatpickr(endDate_config);
+    $('input[name="limit"]').val(10);
 </script>
 <script>
     function refresh() {
         var formData = new FormData();
         formData.append('fromDate', $('input[name="startDate"]').val())
         formData.append('toDate', $('input[name="endDate"]').val())
+        formData.append('limit', $('input[name="limit"]').val())
         $.ajax({
             type: 'POST',
             url: "{{ url_for('reports.pb_stat') }}",
@@ -67,6 +72,7 @@
         refresh();
         $('input[name="startDate"]').change(function(){refresh()})
         $('input[name="endDate"]').change(function(){refresh()})
+        $('input[name="limit"]').change(function(){refresh()})
     }
     );
 

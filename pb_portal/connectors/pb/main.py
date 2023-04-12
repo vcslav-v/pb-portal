@@ -35,7 +35,7 @@ def get_correct_slug(slug: str, product_type: str):
 
 
 @logger.catch
-def get_top_products(start_date: str, end_date: str) -> schemas.PBStat:
+def get_top_products(start_date: str, end_date: str, limit: int) -> schemas.PBStat:
     headers = {'Authorization': f'Basic {TOKEN}'}
     _start_date = start_date.split('-')
     _start_date.reverse()
@@ -44,6 +44,7 @@ def get_top_products(start_date: str, end_date: str) -> schemas.PBStat:
     json_data = {
         'from': '-'.join(_start_date),
         'to': '-'.join(_end_date),
+        'limit': limit,
     }
     resp = requests.post(PB_STAT_API_URL.format(target='top/plus'), headers=headers, json=json_data)
     plus_resp = json.loads(resp.text)
@@ -88,7 +89,7 @@ def get_product_info(url: str) -> schemas.ProductInfo:
     headers = {'Authorization': f'Basic {TOKEN}'}
     url_path = urlparse(url).path
     data = {'slug': url_path.split('/')[-1]}
-    resp = requests.post(PB_STAT_API_URL.format(target=f'info'), headers=headers, json=data)
+    resp = requests.post(PB_STAT_API_URL.format(target='info'), headers=headers, json=data)
     product_info = json.loads(resp.text)
     return schemas.ProductInfo(
         pr_type=product_info['product_type'],

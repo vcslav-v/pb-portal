@@ -56,9 +56,15 @@ def fin_stat():
 @auth.login_required(role='admin')
 def pb_stat():
     if request.method == 'POST':
+        limit = request.form.get('limit')
+        if limit and limit.isdigit():
+            limit = int(limit)
+        else:
+            limit = 10
         page_data = connectors.pb.get_top_products(
             start_date=request.form.get('fromDate'),
             end_date=request.form.get('toDate'),
+            limit=limit,
         )
         return render_template(
             '_pb_report.html',
