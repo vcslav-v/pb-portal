@@ -1,5 +1,5 @@
 from . import (contracts, dm_parser, drbl_like, finam, graphic, link_dealer,
-               neuro, products, tag_board, video, pb)
+               neuro, products, tag_board, video, pb, mailer)
 
 __all__ = [
     'tag_board',
@@ -13,4 +13,5 @@ __all__ = [
     'neuro',
     'products',
     'pb',
+    'mailer',
 ]
