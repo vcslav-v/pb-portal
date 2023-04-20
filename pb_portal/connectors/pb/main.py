@@ -1,7 +1,6 @@
 import json
 import os
 from datetime import datetime
-from urllib.parse import urlparse
 
 import requests
 from loguru import logger
@@ -87,8 +86,7 @@ def get_top_products(start_date: str, end_date: str, limit: int) -> schemas.PBSt
 
 def get_product_info(url: str) -> schemas.ProductInfo:
     headers = {'Authorization': f'Basic {TOKEN}'}
-    url_path = urlparse(url).path
-    data = {'slug': url_path.split('/')[-1]}
+    data = {'url': url}
     resp = requests.post(PB_STAT_API_URL.format(target='info'), headers=headers, json=data)
     product_info = json.loads(resp.text)
     return schemas.ProductInfo(

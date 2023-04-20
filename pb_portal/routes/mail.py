@@ -9,7 +9,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from pb_portal import connectors, mem
 
-STORAGE_URL = os.environ.get('STORAGE_URL', 'https://pixelbuddha.net/storage/m')
+STORAGE_URL = os.environ.get('STORAGE_URL', '')
 STATIC_URL = os.environ.get('STATIC_URL', 'http://127.0.0.1:5002')
 
 app_route = Blueprint('route', __name__, url_prefix='/mail')
