@@ -46,7 +46,7 @@ def verify_password(username, password):
 @logger.catch
 @app_route.route('/list', methods=['GET', 'POST'])
 @auth.login_required(role='admin')
-def list():
+def product_list():
     if request.method == 'POST':
         page_data = connectors.products.schemas.FilterPage()
         page_data.page = int(request.form.get('page'))
