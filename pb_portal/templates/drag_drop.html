@@ -81,12 +81,12 @@
             </h3>
           </div>
         </div>
-        <div class="row mb-3">
+        <div class="row mb-3" id="cat_box">
           {% for i_category in range(0, upload_page_info.categories|length, upload_page_info.items_in_col) %}
           <div class="col-3">
             {% for category in upload_page_info.categories[i_category:i_category+upload_page_info.items_in_col]%}
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="category|{{category}}">
+              <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="category|{{category}}" onchange="refresh_tags(event)">
               <label class="form-check-label" for="flexSwitchCheckDefault">
                 {{ category }}
               </label>
@@ -94,6 +94,19 @@
             {% endfor %}
           </div>
           {% endfor %}
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="form-floating">
+              <input type="text" class="form-control" id="TagInput" placeholder="Tags" name="tags" pattern="" onchange="make_badges()" required>
+              <label for="TagInput">Tags</label>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-12" id="bages_box">
+
+          </div>
         </div>
         <div class="row">
           <div class="col-12">
@@ -639,5 +652,34 @@
     //   },
     // });
   };
+</script>
+<script>
+var tags = {{ upload_page_info.tags|safe }};
+var posible_tags = new Set();
+function refresh_tags(event){
+  posible_tags.clear();
+  $('#cat_box input').each(function(i){
+    var inp = $('#cat_box input')[i]
+    if (inp.checked){
+      tags[inp.name.split('|')[1]].forEach(element => {
+        posible_tags.add(element)
+      });
+    }
+  })
+    
+  $('#TagInput').attr('pattern', `(${Array.from(posible_tags).join('|')}|,| )*`)
+}
+function make_badges(){
+var written_tags = $('#TagInput').val().split(',')
+$('#bages_box').empty()
+written_tags.forEach(function(tag){
+  var _tag = tag.trim()
+  var tag_style = 'badge rounded-pill bg-danger m-1'
+  if (posible_tags.has(_tag)){
+    tag_style = 'badge rounded-pill bg-info m-1'
+  }
+  $('#bages_box').append(`<span class="${tag_style}">${_tag}</span>`)
+})
+}
 </script>
 {% endblock %}

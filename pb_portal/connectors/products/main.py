@@ -30,6 +30,7 @@ FILTER_CATS = [
 ]
 
 FILTER_FORMATS = ['RTF', 'DOCX', 'IconJar', 'JPEG', 'PSD (vector based logos)', 'VFB', 'DOC', 'SVG. PNG', 'JS', 'OTF & TTF', 'idml', 'PSD (vector-based logos)', 'AEP', 'GLIF', 'WOOF', 'SVG and PNG', 'OTF. TTF', 'AIA', 'KEY', 'SKETCH', 'ACV', 'XMP', 'LRTEMPLATE', 'PPTX', 'JPG (3000x3000px)', 'INDD', 'Lightroom Template', 'PPT', 'EPS. PNG', 'WOFF2', 'CSH', 'PSB', 'PSD (5616x3744px)', 'InDesign', 'MS Word', 'CSS', 'OTF. WOFF', 'TIF']
+FILTER_TAGS = []
 
 
 def get_all(page_data: schemas.FilterPage) -> schemas.ProductPage:
@@ -77,6 +78,7 @@ def get_upload_page_data() -> schemas.UploadProductPageInfo:
         categories=pb.get_site_info_of('category', FILTER_CATS),
         formats=pb.get_site_info_of('format', FILTER_FORMATS),
         compatibilities=pb.get_site_info_of('compatibility'),
+        tags=pb.get_site_info_of_tags(FILTER_TAGS),
     )
     return result
 

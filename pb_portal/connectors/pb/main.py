@@ -23,6 +23,16 @@ def get_site_info_of(type_info: str = 'category', _filter: list[str] = []) -> li
     return []
 
 
+@logger.catch()
+def get_site_info_of_tags(_filter: list[str] = []) -> dict:
+    header = {'Authorization': f'Basic {TOKEN}'}
+    resp = requests.get(f'{API_URL}/tag', headers=header)
+    if resp.ok:
+        result = json.loads(resp.content)
+        return {k: v for k, v in result.items() if v not in _filter}
+    return {'Actions': [f'tag_{i}' for i in range(20)], 'Graphics': [f'tag_{i}' for i in range(10)] + [f'Gtag_{i}' for i in range(10)]}
+
+
 @logger.catch
 def get_correct_slug(slug: str, product_type: str):
     header = {'Authorization': f'Basic {TOKEN}'}

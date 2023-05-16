@@ -112,7 +112,8 @@ def uploader():
             description=request.form.get('description'),
             categories=get_form_list(request.form.to_dict(), 'category'),
             formats=get_form_list(request.form.to_dict(), 'format'),
-            date_upload=datetime.strptime(request.form.get('date'), '%d-%m-%Y %H:%M') - timedelta(hours=3) if request.form.get('date') else datetime.utcnow()
+            date_upload=datetime.strptime(request.form.get('date'), '%d-%m-%Y %H:%M') - timedelta(hours=3) if request.form.get('date') else datetime.utcnow(),
+            tags=list(map(lambda x: x.strip(), request.form.get('tags').split(','))),
         )
         if request.form.get('schedule_date'):
             product_schema.schedule_date = datetime.strptime(request.form.get('schedule_date'), '%d-%m-%Y %H:%M') - timedelta(hours=3)

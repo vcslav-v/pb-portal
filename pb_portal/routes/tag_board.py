@@ -22,6 +22,7 @@ user_roles = {
     os.environ.get('TD_ADMIN_LOGIN') or 'td_root': ['td_admin'],
 }
 
+
 @auth.get_user_roles
 def get_user_roles(user):
     return user_roles[user]
