@@ -3,250 +3,278 @@
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/dd.css') }}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+  span.clickable:hover {
+    cursor: pointer;
+  }
+</style>
 {% endblock %}
 {% block app_content %}
 <div class="container">
   <form id="productForm" action="#" method="post" enctype="multipart/form-data">
-  <div class="row m-4">
-    <div class="col-4">
-      <h3>Upload products to PB</h3>
-    </div>
-    <div class="col-4 offset-md-2">
-      <input type="text" class="form-control" name="schedule_date" placeholder="Publish date"
-        style="background-color: #fff;">
-    </div>
-  </div>
-  <fieldset id="Fieldset">
     <div class="row m-4">
-      <div class="col-8 offset-md-1">
-        <div class="row mb-3">
-          <div class="col-8">
-            <select class="form-select" aria-label="Default select example" name="product_type">
-              <option selected value="Freebie">Freebie</option>
-              <option value="Plus">Plus</option>
-              <option value="Premium">Premium</option>
-            </select>
-          </div>
-          <div class="col-4">
-            <input type="text" class="form-control" name="date" placeholder="Date" style="background-color: #fff;">
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-12">
-            <div class="form-floating">
-              <input type="text" class="form-control" id="TitleInput" placeholder="Title" name="title" required>
-              <label for="TitleInput">Title</label>
+      <div class="col-4">
+        <h3>Upload products to PB</h3>
+      </div>
+      <div class="col-4 offset-md-2">
+        <input type="text" class="form-control" name="schedule_date" placeholder="Publish date"
+          style="background-color: #fff;">
+      </div>
+    </div>
+    <fieldset id="Fieldset">
+      <div class="row m-4">
+        <div class="col-8 offset-md-1">
+          <div class="row mb-3">
+            <div class="col-8">
+              <select class="form-select" aria-label="Default select example" name="product_type">
+                <option selected value="Freebie">Freebie</option>
+                <option value="Plus">Plus</option>
+                <option value="Premium">Premium</option>
+              </select>
+            </div>
+            <div class="col-4">
+              <input type="text" class="form-control" name="date" placeholder="Date" style="background-color: #fff;">
             </div>
           </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-12">
-            <div class="form-floating">
-              <input type="text" class="form-control" id="SlugInput" placeholder="Slug" name="slug" required>
-              <label for="TitleInput">Slug</label>
-            </div>
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-12">
-            <textarea rows="2" class="form-control" id="ExcerptInput" placeholder="Excerpt" name="excerpt"
-              required></textarea>
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-12">
-            <textarea rows="5" class="form-control" id="DescriptionInput" placeholder="Description" name="description"
-              required></textarea>
-          </div>
-        </div>
-        <div class="row mb-3" id="guest_authors">
-          <div class="col-6">
-            <div class="form-floating">
-              <input type="text" class="form-control" id="AuthorInput" placeholder="Invited author" name="guest_author">
-              <label for="AuthorInput">Guest author</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating">
-              <input type="text" class="form-control" id="AuthorUrlInput" placeholder="Invited author link"
-                name="guest_author_link">
-              <label for="AuthorUrlInput">Guest author link</label>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-            <h3>
-              <small class="text-muted">Cattegory</small>
-            </h3>
-          </div>
-        </div>
-        <div class="row mb-3" id="cat_box">
-          {% for i_category in range(0, upload_page_info.categories|length, upload_page_info.items_in_col) %}
-          <div class="col-3">
-            {% for category in upload_page_info.categories[i_category:i_category+upload_page_info.items_in_col]%}
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="category|{{category}}" onchange="refresh_tags(event)">
-              <label class="form-check-label" for="flexSwitchCheckDefault">
-                {{ category }}
-              </label>
-            </div>
-            {% endfor %}
-          </div>
-          {% endfor %}
-        </div>
-        <div class="row">
-          <div class="col-12">
-            <div class="form-floating">
-              <input type="text" class="form-control" id="TagInput" placeholder="Tags" name="tags" pattern="" onchange="make_badges()" required>
-              <label for="TagInput">Tags</label>
-            </div>
-          </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-12" id="bages_box">
-
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-            <h3>
-              <small class="text-muted">Format</small>
-            </h3>
-          </div>
-        </div>
-        <div class="row mb-3">
-          {% for i_format in range(0, upload_page_info.formats|length, upload_page_info.items_in_col) %}
-          <div class="col-2">
-            {% for format in upload_page_info.formats[i_format:i_format+upload_page_info.items_in_col]%}
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="format|{{format}}">
-              <label class="form-check-label" for="flexSwitchCheckDefault">
-                {{ format }}
-              </label>
-            </div>
-            {% endfor %}
-          </div>
-          {% endfor %}
-        </div>
-        <div class="row mb-3">
-          <div class="col-12" id="freebie_options">
-            <div class="row">
-              <div class="col-12">
-                <h3>
-                  <small class="text-muted">Freebies options</small>
-                </h3>
+          <div class="row mb-3">
+            <div class="col-12">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="TitleInput" placeholder="Title" name="title" required>
+                <label for="TitleInput">Title</label>
               </div>
             </div>
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
-                name="download_by_email">
-              <label class="form-check-label" for="flexSwitchCheckDefault">Download by email</label>
+          </div>
+          <div class="row mb-3">
+            <div class="col-12">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="SlugInput" placeholder="Slug" name="slug" required>
+                <label for="TitleInput">Slug</label>
+              </div>
             </div>
           </div>
-          <div class="col-12" id="premium_options">
-            <div class="row mb-3">
-              <div class="input-group">
-                <span class="input-group-text" id="basic-addon2">Standard price</span>
-                <input type="number" class="form-control" placeholder="0" aria-label="Standard price"
-                  aria-describedby="basic-addon2" name="standart_price" required>
-                <span class="input-group-text" id="basic-addon2">Extended price</span>
-                <input type="number" class="form-control" placeholder="0" aria-label="Extended price"
-                  aria-describedby="basic-addon2" name="extended_price" required>
+          <div class="row mb-3">
+            <div class="col-12">
+              <textarea rows="2" class="form-control" id="ExcerptInput" placeholder="Excerpt" name="excerpt"
+                required></textarea>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-12">
+              <textarea rows="5" class="form-control" id="DescriptionInput" placeholder="Description" name="description"
+                required></textarea>
+            </div>
+          </div>
+          <div class="row mb-3" id="guest_authors">
+            <div class="col-6">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="AuthorInput" placeholder="Invited author"
+                  name="guest_author">
+                <label for="AuthorInput">Guest author</label>
               </div>
             </div>
-            <div class="row mb-3">
-              <div class="input-group">
-                <span class="input-group-text" id="basic-addon2">Sale standard price</span>
-                <input type="number" class="form-control" aria-label="Sale standard price"
-                  aria-describedby="basic-addon2" name="sale_standart_price">
-                <span class="input-group-text" id="basic-addon2">Sale extended price</span>
-                <input type="number" class="form-control" aria-label="Sale extended price"
-                  aria-describedby="basic-addon2" name="sale_extended_price">
+            <div class="col-6">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="AuthorUrlInput" placeholder="Invited author link"
+                  name="guest_author_link">
+                <label for="AuthorUrlInput">Guest author link</label>
               </div>
             </div>
-            <div class="row">
-              <div class="col-12">
-                <h3>
-                  <small class="text-muted">Compatibilities</small>
-                </h3>
-              </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <h3>
+                <small class="text-muted">Cattegory</small>
+              </h3>
             </div>
-            <div class="row mb-3">
-              {% for i_compatibility in range(0, upload_page_info.compatibilities|length, upload_page_info.items_in_col)
-              %}
-              <div class="col-6">
-                {% for compatibility in
-                upload_page_info.compatibilities[i_compatibility:i_compatibility+upload_page_info.items_in_col]%}
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
-                    name="compatibility|{{compatibility}}">
-                  <label class="form-check-label" for="flexSwitchCheckDefault">
-                    {{ compatibility }}
-                  </label>
-                </div>
-                {% endfor %}
+          </div>
+          <div class="row mb-3" id="cat_box">
+            {% for i_category in range(0, upload_page_info.categories|length, upload_page_info.items_in_col) %}
+            <div class="col-3">
+              {% for category in upload_page_info.categories[i_category:i_category+upload_page_info.items_in_col]%}
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="category|{{category}}"
+                  onchange="refresh_tags(event)">
+                <label class="form-check-label" for="flexSwitchCheckDefault">
+                  {{ category }}
+                </label>
               </div>
               {% endfor %}
             </div>
+            {% endfor %}
           </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-12">
-            <label for="formFile" class="form-label">Product file</label>
-            <input class="form-control" type="file" id="product_file" name="product_file" required>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-            <h3>
-              <small class="text-muted">Images</small>
-            </h3>
-          </div>
-        </div>
-        <div class="col-12" id="premium_img">
-          <div class="row mb-3">
-            <div class="col-12">
-              <label for="formFile" class="form-label">Thumbnail for premium</label>
-              <input class="form-control" type="file" id="prem_thumbnail" name="prem_thumbnail" required>
+          <div class="row">
+            <div class="col-6">
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-floating">
+                    <input type="text" class="form-control" id="TagInput" placeholder="Tags" name="tags" pattern=""
+                      onchange="make_badges()" required>
+                    <label for="TagInput">Tags</label>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-12" id="bages_box">
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="row">
+                <div class="col-12">
+              <div class="form-floating">
+                <input type="text" class="form-control" id="tag_search" placeholder="Find tag">
+                <label for="form-control">Find tag</label>
+              </div>
+            </div>
+            </div>
+            <div class="row">
+              <div class="col-12" id="search_bages_box" style="max-height: 200px; overflow: auto;">
+
+              </div>
+            </div>
+              
             </div>
           </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-6">
-            <label for="formFile" class="form-label">Thumbnail</label>
-            <input class="form-control" type="file" id="thumbnail" name="thumbnail" required>
+          <div class="row">
+            <div class="col-12">
+              <h3>
+                <small class="text-muted">Format</small>
+              </h3>
+            </div>
           </div>
-          <div class="col-6">
-            <label for="formFile" class="form-label">Image for push</label>
-            <input class="form-control" type="file" id="image_for_push" name="image_for_push">
+          <div class="row mb-3">
+            {% for i_format in range(0, upload_page_info.formats|length, upload_page_info.items_in_col) %}
+            <div class="col-2">
+              {% for format in upload_page_info.formats[i_format:i_format+upload_page_info.items_in_col]%}
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" name="format|{{format}}">
+                <label class="form-check-label" for="flexSwitchCheckDefault">
+                  {{ format }}
+                </label>
+              </div>
+              {% endfor %}
+            </div>
+            {% endfor %}
           </div>
-        </div>
-        <div class="row mb-3">
-          <div class="file-upload col-12" id="upload_area">
-            <div class="image-upload-wrap">
-              <input class="file-upload-input" type="file" id="gallery" onchange="readURL(this);" accept="image/*"
-                multiple required />
-              <div class="drag-text">
-                <h3>Drag and drop a file or select add Image</h3>
+          <div class="row mb-3">
+            <div class="col-12" id="freebie_options">
+              <div class="row">
+                <div class="col-12">
+                  <h3>
+                    <small class="text-muted">Freebies options</small>
+                  </h3>
+                </div>
+              </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
+                  name="download_by_email">
+                <label class="form-check-label" for="flexSwitchCheckDefault">Download by email</label>
+              </div>
+            </div>
+            <div class="col-12" id="premium_options">
+              <div class="row mb-3">
+                <div class="input-group">
+                  <span class="input-group-text" id="basic-addon2">Standard price</span>
+                  <input type="number" class="form-control" placeholder="0" aria-label="Standard price"
+                    aria-describedby="basic-addon2" name="standart_price" required>
+                  <span class="input-group-text" id="basic-addon2">Extended price</span>
+                  <input type="number" class="form-control" placeholder="0" aria-label="Extended price"
+                    aria-describedby="basic-addon2" name="extended_price" required>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="input-group">
+                  <span class="input-group-text" id="basic-addon2">Sale standard price</span>
+                  <input type="number" class="form-control" aria-label="Sale standard price"
+                    aria-describedby="basic-addon2" name="sale_standart_price">
+                  <span class="input-group-text" id="basic-addon2">Sale extended price</span>
+                  <input type="number" class="form-control" aria-label="Sale extended price"
+                    aria-describedby="basic-addon2" name="sale_extended_price">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <h3>
+                    <small class="text-muted">Compatibilities</small>
+                  </h3>
+                </div>
+              </div>
+              <div class="row mb-3">
+                {% for i_compatibility in range(0, upload_page_info.compatibilities|length,
+                upload_page_info.items_in_col)
+                %}
+                <div class="col-6">
+                  {% for compatibility in
+                  upload_page_info.compatibilities[i_compatibility:i_compatibility+upload_page_info.items_in_col]%}
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault"
+                      name="compatibility|{{compatibility}}">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">
+                      {{ compatibility }}
+                    </label>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% endfor %}
               </div>
             </div>
           </div>
-        </div>
-        <div class="row mb-3">
-          <div class="col-12" id="show_img_area">
-            <div id="file-upload-content" class="text-center">
+          <div class="row mb-3">
+            <div class="col-12">
+              <label for="formFile" class="form-label">Product file</label>
+              <input class="form-control" type="file" id="product_file" name="product_file" required>
             </div>
           </div>
-        </div>
-        <div class="row mb-3">
-          <button type="submit" class="btn btn-primary">Publish</button>
-        </div>
-  </fieldset>
-  <div class="progress" role="progressbar" aria-label="Example with label" aria-valuemin="0" aria-valuemax="100"
-    id="progress_bar" style="height: 30px">
-    <div class="progress-bar" style="width: 10%">25%</div>
-  </div>
+          <div class="row">
+            <div class="col-12">
+              <h3>
+                <small class="text-muted">Images</small>
+              </h3>
+            </div>
+          </div>
+          <div class="col-12" id="premium_img">
+            <div class="row mb-3">
+              <div class="col-12">
+                <label for="formFile" class="form-label">Thumbnail for premium</label>
+                <input class="form-control" type="file" id="prem_thumbnail" name="prem_thumbnail" required>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-6">
+              <label for="formFile" class="form-label">Thumbnail</label>
+              <input class="form-control" type="file" id="thumbnail" name="thumbnail" required>
+            </div>
+            <div class="col-6">
+              <label for="formFile" class="form-label">Image for push</label>
+              <input class="form-control" type="file" id="image_for_push" name="image_for_push">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="file-upload col-12" id="upload_area">
+              <div class="image-upload-wrap">
+                <input class="file-upload-input" type="file" id="gallery" onchange="readURL(this);" accept="image/*"
+                  multiple required />
+                <div class="drag-text">
+                  <h3>Drag and drop a file or select add Image</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-12" id="show_img_area">
+              <div id="file-upload-content" class="text-center">
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <button type="submit" class="btn btn-primary">Publish</button>
+          </div>
+    </fieldset>
+    <div class="progress" role="progressbar" aria-label="Example with label" aria-valuemin="0" aria-valuemax="100"
+      id="progress_bar" style="height: 30px">
+      <div class="progress-bar" style="width: 10%">25%</div>
+    </div>
 </div>
 </div>
 </form>
@@ -654,32 +682,64 @@
   };
 </script>
 <script>
-var tags = {{ upload_page_info.tags|safe }};
-var posible_tags = new Set();
-function refresh_tags(event){
-  posible_tags.clear();
-  $('#cat_box input').each(function(i){
-    var inp = $('#cat_box input')[i]
-    if (inp.checked){
-      tags[inp.name.split('|')[1]].forEach(element => {
-        posible_tags.add(element)
-      });
-    }
-  })
-    
-  $('#TagInput').attr('pattern', `(${Array.from(posible_tags).join('|')}|,| )*`)
-}
-function make_badges(){
-var written_tags = $('#TagInput').val().split(',')
-$('#bages_box').empty()
-written_tags.forEach(function(tag){
-  var _tag = tag.trim()
-  var tag_style = 'badge rounded-pill bg-danger m-1'
-  if (posible_tags.has(_tag)){
-    tag_style = 'badge rounded-pill bg-info m-1'
+  var tags = {{ upload_page_info.tags| safe }};
+  var posible_tags = new Set();
+  function search_tags(){
+    var query = $('#tag_search').val()
+    var tags_box = $('#search_bages_box')
+    tags_box.empty()
+    posible_tags.forEach(function (tag) {
+      if (tag.includes(query)) {
+        tags_box.append(`<span class="badge rounded-pill bg-secondary clickable m-1" onmouseover="bage_hover()" onmouseout="bage_hover_off()" onclick="add_tag()">${tag}</span>`)
+      }
+    })
   }
-  $('#bages_box').append(`<span class="${tag_style}">${_tag}</span>`)
-})
-}
+function bage_hover() {
+    $(event.target).removeClass('bg-secondary')
+    $(event.target).addClass('bg-dark')
+  }
+  function bage_hover_off() {
+    $(event.target).removeClass('bg-dark')
+    $(event.target).addClass('bg-secondary')
+  }
+  function add_tag(){
+    var tag = $(event.target).text()
+    if ($('#TagInput').val().trim().endsWith(',')){
+      tag = tag + ', '
+    } else if ($('#TagInput').val().trim().length > 0){
+      tag = ', ' + tag + ', '
+    } else {
+      tag = tag + ', '
+    }
+    $('#TagInput').val($('#TagInput').val() + tag)
+    make_badges();
+  }
+  function refresh_tags(event) {
+    posible_tags.clear();
+    $('#cat_box input').each(function (i) {
+      var inp = $('#cat_box input')[i]
+      if (inp.checked) {
+        tags[inp.name.split('|')[1]].forEach(element => {
+          posible_tags.add(element)
+        });
+      }
+    })
+
+    $('#TagInput').attr('pattern', `(${Array.from(posible_tags).join('|')}|,| )*`)
+    search_tags();
+  }
+$('#tag_search').on('input', search_tags)
+  function make_badges() {
+    var written_tags = $('#TagInput').val().split(',')
+    $('#bages_box').empty()
+    written_tags.forEach(function (tag) {
+      var _tag = tag.trim()
+      var tag_style = 'badge rounded-pill bg-danger m-1'
+      if (posible_tags.has(_tag)) {
+        tag_style = 'badge rounded-pill bg-info m-1'
+      }
+      $('#bages_box').append(`<span class="${tag_style}">${_tag}</span>`)
+    })
+  }
 </script>
 {% endblock %}
