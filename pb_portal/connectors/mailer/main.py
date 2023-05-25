@@ -5,7 +5,7 @@ import requests
 from pb_portal.connectors.mailer import schemas
 
 
-URL = os.environ.get('MAILER_URL', 'http://127.0.0.1:8000')
+URL = os.environ.get('MAILER_URL', 'http://127.0.0.1:8000/api')
 TOKEN = os.environ.get('MAILER_TOKEN', 'pass')
 
 
@@ -20,3 +20,15 @@ def make_digest(digest: schemas.PbDigest) -> str:
             logger.debug(resp.content)
             return result.result
         return 'error'
+
+
+@logger.catch
+def make_featured(featured: schemas.PbFeatured) -> schemas.PbFeatured:
+    """Make featured."""
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        resp = session.post(f'{URL}/make_featured', data=featured.json())
+        if resp.ok:
+            result = schemas.PbFeatured.parse_raw(resp.text)
+            return result
+        return schemas.PbFeatured(product_url=featured.product_url)

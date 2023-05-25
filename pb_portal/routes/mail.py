@@ -8,6 +8,7 @@ from loguru import logger
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from pb_portal import connectors, mem
+import json
 
 STORAGE_URL = os.environ.get('STORAGE_URL', '')
 STATIC_URL = os.environ.get('STATIC_URL', 'http://127.0.0.1:5002')
@@ -85,6 +86,108 @@ def digest():
 
 
 @logger.catch
+@app_route.route('/featured_source', methods=['GET', 'POST'])
+@auth.login_required(role=['admin', 'pb_admin'])
+def featured_source():
+    if request.method == 'POST':
+        if request.form.get('first_try') == 'true':
+            data = connectors.mailer.schemas.PbFeatured(**request.form.to_dict())
+        else:
+            gallery_rows = []
+            if request.form.get('gallery_rows'):
+                for gallery_row in json.loads(request.form.get('gallery_rows')):
+                    if not gallery_row.get('left_img_num') or not gallery_row.get('right_img_num') or not gallery_row.get('left_img_num').isdigit() or not gallery_row.get('right_img_num').isdigit():
+                        continue
+                    gallery_rows.append(
+                        connectors.mailer.schemas.GalleryRow(
+                            left_img_num=int(gallery_row.get('left_img_num')),
+                            right_img_num=int(gallery_row.get('right_img_num')),
+                        )
+                    )
+
+            data = connectors.mailer.schemas.PbFeatured(
+                product_url=request.form.get('product_url'),
+                first_try=request.form.get('first_try'),
+                num_cover_img=request.form.get('num_cover_img'),
+                main_gallery_img_num=request.form.get('main_gallery_img_num'),
+                last_gallery_img_num=request.form.get('last_gallery_img_num'),
+                gallery_rows=gallery_rows,
+                exerpt=request.form.get('exerpt'),
+                label=request.form.get('label'),
+                description=request.form.get('description'),
+                details=json.loads(request.form.get('details')) if request.form.get('details') else [],
+                video=connectors.mailer.schemas.Video.parse_raw(request.form.get('video')) if request.form.get('video') else None,
+                bundle=connectors.mailer.schemas.Bundle.parse_raw(request.form.get('bundle')) if request.form.get('bundle') else None,
+                popular=json.loads(request.form.get('popular')) if request.form.get('popular') else [],
+            )
+        result = connectors.mailer.make_featured(data)
+        page_ident = str(
+            int(datetime.utcnow().timestamp()) + randint(0, int(datetime.utcnow().timestamp()))
+        )
+        mem.set_digest(
+            page_ident,
+            result.html,
+        )
+        result.preview_url = f'{url_for("mail.show_digest")}?ident={page_ident}'
+        return connectors.mailer.schemas.PbFeaturedPage(
+            data=result,
+            controls=render_template('_featured_control.html', result=result)
+        ).json()
+    return render_template(
+        'featured_source.html',
+        base_url=STATIC_URL,
+    )
+
+
+@logger.catch
+@app_route.route('/get_featured_gallery_row', methods=['POST'])
+def get_featured_gallery_row():
+    return render_template(
+        '_featured_gallery_row.html',
+    )
+
+
+@logger.catch
+@app_route.route('/get_featured_detail_row', methods=['POST'])
+def get_featured_detail_row():
+    return render_template(
+        '_featured_detail.html',
+    )
+
+
+@logger.catch
+@app_route.route('/get_featured_video', methods=['POST'])
+def get_featured_video():
+    return render_template(
+        '_featured_video.html',
+    )
+
+
+@logger.catch
+@app_route.route('/get_featured_bundle', methods=['POST'])
+def get_featured_bundle():
+    return render_template(
+        '_featured_bundle.html',
+    )
+
+
+@logger.catch
+@app_route.route('/get_featured_bundle_row', methods=['POST'])
+def get_featured_bundle_row():
+    return render_template(
+        '_featured_bundle_row.html',
+    )
+
+
+@logger.catch
+@app_route.route('/get_featured_similar', methods=['POST'])
+def get_featured_similar():
+    return render_template(
+        '_featured_similar.html',
+    )
+
+
+@logger.catch
 @app_route.route('/make_digest', methods=['POST'])
 @auth.login_required(role=['admin', 'pb_admin'])
 def make_digest():
@@ -105,24 +208,3 @@ def make_digest():
 @auth.login_required(role=['admin', 'pb_admin'])
 def show_digest():
     return mem.get_digest(request.args.get('ident'))
-
-
-def add_space_or_affiliate(i: int, data_len: int):
-    result = ''
-    block_names = set()
-    if (i + 2) == data_len:
-        result += render_template(
-            'digest_mail/_mail_space.html'
-        )
-        block_names.add('space')
-        result += render_template(
-            'digest_mail/_mail_affiliate.html',
-            storage=STORAGE_URL,
-        )
-        block_names.add('affiliate')
-    if (i + 1) < data_len:
-        result += render_template(
-            'digest_mail/_mail_space.html'
-        )
-        block_names.add('space')
-    return result, block_names

@@ -1,0 +1,256 @@
+<div class="row mx-4">
+    <div class="col-12">
+        <h5>Gallery</h5>
+    </div>
+</div>
+<div class="row mx-4">
+    <div class="col-12" id="gallery">
+        <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text" id="inputGroup-sizing-sm">Cover img</span>
+            <input type="number" class="form-control" name="num_cover_img" value="{{result.num_cover_img}}">
+            <span class="input-group-text" id="inputGroup-sizing-sm">Main gallery img</span>
+            <input type="number" class="form-control" name="main_gallery_img_num"
+                value="{{result.main_gallery_img_num}}">
+            <span class="input-group-text" id="inputGroup-sizing-sm">Last big img</span>
+            <input type="number" class="form-control" name="last_gallery_img_num"
+                value="{{result.last_gallery_img_num}}">
+        </div>
+        <div class="d-grid gap-2 mb-3">
+            <button class="btn btn-outline-success btn-sm" type="button" onclick="addGalleryRow()">Add row</button>
+        </div>
+        {% for i in range(result.gallery_rows|length) %}
+        <div class="input-group input-group-sm mb-3" name="gallery_row">
+            <span class="input-group-text">Gallery row</span>
+            <input type="number" class="form-control" name="left_img_num"
+                value="{{result.gallery_rows[i].left_img_num}}">
+            <input type="number" class="form-control" name="right_img_num"
+                value="{{result.gallery_rows[i].right_img_num}}">
+            <button class="btn btn-outline-secondary" type="button" onclick="rmGalleryRow(event)">⨯</button>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="row mt-4 mx-4">
+    <div class="col-12">
+        <h5>Exerpt</h5>
+    </div>
+</div>
+<div class="row mx-4 mb-2">
+    <textarea class="form-control" aria-label="Excerpt" name="exerpt"
+        style="min-height: 150px;">{{result.exerpt}}</textarea>
+</div>
+
+<div class="row mx-4">
+    <div class="input-group">
+        <span class="input-group-text">Label</span>
+        <input type="text" class="form-control" placeholder="Label" name="label" value="{{result.label}}">
+    </div>
+</div>
+
+<div class="row mt-4 mx-4">
+    <div class="col-12">
+        <h5>Description</h5>
+    </div>
+</div>
+<div class="row mx-4 mb-2">
+    <textarea class="form-control" aria-label="Excerpt" name="description"
+        style="min-height: 350px;">{{result.description}}</textarea>
+</div>
+
+<div class="row mx-4">
+    <div class="col-12">
+        <h5>Details</h5>
+    </div>
+</div>
+<div class="row mx-4">
+    <div class="col-12" id="details">
+        <div class="d-grid gap-2 mb-3">
+            <button class="btn btn-outline-success btn-sm" type="button" onclick="addDetail()">Add row</button>
+        </div>
+        {% for detail in result.details %}
+        <div class="input-group input-group-sm mb-3">
+            <input type="text" class="form-control" name="detail" value="{{detail}}">
+            <button class="btn btn-outline-secondary" type="button" onclick="rmGalleryRow(event)">⨯</button>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% if result.video %}
+<div class="row mx-4">
+    <div class="col-12">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="video_switch" onchange="video()" checked>
+            <label class="form-check-label" for="video_switch">
+                <h5>Video</h5>
+            </label>
+        </div>
+    </div>
+</div>
+
+<div id="video">
+    <div class="row mx-4 mb-2">
+        <div class="input-group">
+            <span class="input-group-text">Youtube url</span>
+            <input type="text" class="form-control" placeholder="Youtube url" name="youtube_url"
+                value="{{result.video.url}}">
+        </div>
+    </div>
+    <div class="row mx-4 mb-2">
+        <div class="input-group">
+            <span class="input-group-text">Title</span>
+            <input type="text" class="form-control" placeholder="Title" name="youtube_title"
+                value="{{result.video.title}}">
+        </div>
+    </div>
+    <div class="row mx-4 mb-2">
+        <div class="input-group">
+            <span class="input-group-text">Duration</span>
+            <input type="text" class="form-control" placeholder="1:23" name="youtube_duration"
+                value="{{result.video.duration}}">
+        </div>
+    </div>
+    <div class="row mx-4 mb-2">
+        <div class="input-group">
+            <span class="input-group-text">Label</span>
+            <input type="text" class="form-control" placeholder="Process video" name="youtube_label"
+                value="{{result.video.lable}}">
+        </div>
+    </div>
+    <div class="row mt-4 mx-4">
+        <h6>Description</h6>
+    </div>
+    <div class="row mx-4 mb-2">
+        <textarea class="form-control" aria-label="description" name="youtube_description"
+            style="min-height: 150px;">{{result.video.description}}</textarea>
+    </div>
+    <div class="row mx-4 mb-2">
+        <div class="input-group">
+            <span class="input-group-text">Button text</span>
+            <input type="text" class="form-control" placeholder="Watch Tutorial" name="youtube_button"
+                value="{{result.video.button_text}}">
+        </div>
+    </div>
+</div>
+{% else%}
+<div class="row mx-4">
+    <div class="col-12">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="video_switch" onchange="video()">
+            <label class="form-check-label" for="video_switch">
+                <h5>Video</h5>
+            </label>
+        </div>
+    </div>
+</div>
+
+<div id="video">
+</div>
+
+{% endif %}
+{% if result.bundle %}
+<div class="row mx-4">
+    <div class="col-12">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="bundle_switch" onchange="bundle()"
+                checked>
+            <label class="form-check-label" for="bundle_switch">
+                <h5>Bundle</h5>
+            </label>
+        </div>
+    </div>
+</div>
+
+<div id="bundle">
+    <div class="row mx-4 mb-2">
+        <div class="input-group">
+            <span class="input-group-text">Number of products</span>
+            <input type="number" class="form-control" placeholder="0" name="bundle_num_products"
+                value="{{result.bundle.num_products}}">
+        </div>
+    </div>
+    <div class="row mx-4 mb-2">
+        <div class="input-group">
+            <span class="input-group-text">Total amount</span>
+            <input type="number" class="form-control" placeholder="0" name="bundle_sum" value="{{result.bundle.sum}}">
+        </div>
+    </div>
+    <div class="row mx-4 mb-2">
+        <div class="d-grid gap-2 mb-3">
+            <button class="btn btn-outline-success btn-sm" type="button" onclick="addBundleRow()">Add row</button>
+        </div>
+    </div>
+    <div class="row mx-4 mb-2" id="bundle_products">
+        {% for product in result.bundle.urls %}
+        <div class="input-group input-group-sm mb-3">
+            <input type="text" class="form-control" name="bundle_product" placeholder="Product url" value="{{product}}">
+            <button class="btn btn-outline-secondary" type="button" onclick="rmGalleryRow(event)">⨯</button>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% else%}
+<div class="row mx-4">
+    <div class="col-12">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="bundle_switch" onchange="bundle()">
+            <label class="form-check-label" for="bundle_switch">
+                <h5>Bundle</h5>
+            </label>
+        </div>
+    </div>
+</div>
+
+<div id="bundle">
+</div>
+{% endif %}
+
+{% if result.popular %}
+<div class="row mx-4">
+    <div class="col-12">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="similar_switch" onchange="similar()"
+                checked>
+            <label class="form-check-label" for="similar_switch">
+                <h5>Similar</h5>
+            </label>
+        </div>
+    </div>
+</div>
+
+<div id="similar">
+    <div class="row mx-4 mb-2">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Similar product url" name="similar_product"
+                value="{{result.popular[0]}}">
+            <input type="text" class="form-control" placeholder="Similar product url" name="similar_product"
+                value="{{result.popular[1]}}">
+        </div>
+    </div>
+    <div class="row mx-4 mb-2">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Similar product url" name="similar_product"
+                value="{{result.popular[2]}}">
+            <input type="text" class="form-control" placeholder="Similar product url" name="similar_product"
+                value="{{result.popular[3]}}">
+        </div>
+    </div>
+
+</div>
+{% else %}
+<div class="row mx-4">
+    <div class="col-12">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="similar_switch" onchange="similar()">
+            <label class="form-check-label" for="similar_switch">
+                <h5>Similar</h5>
+            </label>
+        </div>
+    </div>
+</div>
+
+<div id="similar">
+</div>
+{% endif %}
