@@ -17,7 +17,7 @@ class Bundle(BaseModel):
     """Pydantic's model for the bundle."""
     urls: list[str]
     num_products: int
-    sum: int
+    sum: str
 
 
 class Video(BaseModel):
