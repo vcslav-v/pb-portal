@@ -725,9 +725,13 @@ function bage_hover() {
     $('#cat_box input').each(function (i) {
       var inp = $('#cat_box input')[i]
       if (inp.checked) {
-        tags[inp.name.split('|')[1]].forEach(element => {
-          posible_tags.add(element)
-        });
+        if(tags[inp.name.split('|')[1]] == undefined){
+          console.log(inp.name.split('|')[1])
+        } else {
+          tags[inp.name.split('|')[1]].forEach(element => {
+            posible_tags.add(element)
+          });
+        }
       }
     })
 
