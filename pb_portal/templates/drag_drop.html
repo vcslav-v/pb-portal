@@ -593,6 +593,8 @@
   }
   function InintStatusBar() {
     $('button[type="submit"]').hide();
+    $('#progress_bar > div[class="progress-bar bg-danger"]').removeClass('bg-danger');
+    $('#progress_bar > div[class="progress-bar bg-success"]').removeClass('bg-success');
     $('#progress_bar').show();
   }
   function status_bar(loaded = 0, total = 0) {
