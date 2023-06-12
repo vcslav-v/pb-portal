@@ -632,7 +632,7 @@
       prem_thumbnail = formData.get('prem_thumbnail')
     };
 
-    formData.append('product_size_mb', Math.floor(product_file.size / 1000000))
+    formData.append('product_size_mb', Math.ceil(product_file.size / 1000000))
     InintStatusBar();
     getSignedRequest(product_file, prefix, safe_product_name, formData);
     getSignedRequest(thumbnail, prefix, `${safe_product_name}-by-pixelbuddha-thumbnail_x2`, formData);
