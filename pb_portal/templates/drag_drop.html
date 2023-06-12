@@ -485,12 +485,18 @@
   function SuccessUpload() {
     $('#progress_bar > div[class="progress-bar"]').text('DONE');
     $('#progress_bar > div[class="progress-bar"]').addClass('bg-success');
+    var Fieldset = document.getElementById("Fieldset");
+    Fieldset.disabled = false;
+    $('button[type="submit"]').show();
   };
 
   function UnsuccessUpload() {
-    $('#progress_bar > div[class="progress-bar"]').text('ERROR');
+    var curent_status = $('#progress_bar > div[class="progress-bar"]').text();
+    $('#progress_bar > div[class="progress-bar"]').text(`ERROR in ${curent_status}`);
     $('#progress_bar > div[class="progress-bar"]').addClass('bg-danger');
-
+    var Fieldset = document.getElementById("Fieldset");
+    Fieldset.disabled = false;
+    $('button[type="submit"]').show();
   };
 
   function SetStatus(status) {
