@@ -132,7 +132,7 @@
                     if(response.status === 'in work'){
                         if(attempts < max_attempts){
                             console.log(attempts)
-                            setTimeout(Checker, 5000, prefix, attempts + 1, cancel_func);
+                            setTimeout(Checker, 5000, prefix, attempts + 1, cancel_func, check_url);
                         } else {
                             cancel_func();
                         }
@@ -146,7 +146,7 @@
                 error: function(error) {
                     if(attempts < max_attempts){
                         console.log(attempts)
-                        setTimeout(Checker, 5000, prefix, attempts + 1, cancel_func);
+                        setTimeout(Checker, 5000, prefix, attempts + 1, cancel_func, check_url);
                     } else {
                         cancel_func();
                     }      
