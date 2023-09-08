@@ -18,23 +18,16 @@ DO_SPACE_BUCKET = os.environ.get('DO_SPACE_BUCKET', '')
 
 
 @logger.catch
-def get_tiny_zip(files_data, resize_width=None):
+def get_tiny_zip(prefix: str, resize_width=None):
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        files = []
-        for file_data in files_data:
-            files.append(
-                ('files', (file_data.filename, file_data.stream, file_data.content_type))
-            )
-        url = f'https://{NETLOC}/api/tinify'
-        url = url + f'?width={resize_width}' if resize_width else url
+        url = f'https://{NETLOC}/api/tinify?prefix={prefix}'
+        url = url + f'&width={resize_width}' if resize_width else url
         resp = session.post(
             url,
-            files=files,
         )
         resp.raise_for_status()
-        zip_file = io.BytesIO(resp.content)
-        return zip_file
+        return 200
 
 
 @logger.catch
@@ -167,6 +160,35 @@ def long_tile_check(prefix: str):
     else:
         s3_keys = []
     result_key = f'temp/{prefix}/result.jpg'
+    if result_key in s3_keys:
+        link = client.generate_presigned_url(
+            ClientMethod='get_object',
+            Params={
+                'Bucket': DO_SPACE_BUCKET,
+                'Key': result_key,
+            },
+            ExpiresIn=300
+        )
+        return json.dumps({'status': 'done', 'url': link})
+    return json.dumps({'status': 'in work'})
+
+
+@logger.catch
+def tiny_check(prefix: str):
+    local_session = s3_session.Session()
+    client = local_session.client(
+            's3',
+            region_name=DO_SPACE_REGION,
+            endpoint_url=DO_SPACE_ENDPOINT,
+            aws_access_key_id=DO_SPACE_KEY,
+            aws_secret_access_key=DO_SPACE_SECRET
+        )
+    s3_keys = client.list_objects_v2(Bucket=DO_SPACE_BUCKET, Prefix=f'temp/{prefix}/').get('Contents')
+    if s3_keys:
+        s3_keys = [s3_key['Key'] for s3_key in s3_keys]
+    else:
+        s3_keys = []
+    result_key = f'temp/{prefix}/result.zip'
     if result_key in s3_keys:
         link = client.generate_presigned_url(
             ClientMethod='get_object',

@@ -61,14 +61,14 @@ def neuro():
 @app_route.route('/tinify', methods=['POST'])
 def tinify():
     try:
-        zip_file = connectors.graphic.get_tiny_zip(
-            request.files.getlist('forTiny'),
+        connectors.graphic.get_tiny_zip(
+            request.form.get('prefix'),
             request.form.get('resize_width')
         )
     except Exception as e:
         logger.error(e.args)
         return
-    return send_file(zip_file, mimetype='application/x-zip-compressed')
+    return 'ok'
 
 
 @logger.catch
@@ -252,3 +252,13 @@ def long_tile_check():
         request.form.get('prefix'),
     )
     return long_jpg
+
+
+@logger.catch
+@app_route.route('/tiny_check', methods=['POST'])
+def tiny_check():
+    logger.debug('check tiny')
+    tiny_zip = connectors.graphic.tiny_check(
+        request.form.get('prefix'),
+    )
+    return tiny_zip

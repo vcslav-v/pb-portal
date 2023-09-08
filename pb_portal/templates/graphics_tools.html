@@ -116,12 +116,12 @@
     var num_files = 0;
     const max_attempts = 24;
 
-    function Checker(prefix, attempts, cancel_func){
+    function Checker(prefix, attempts, cancel_func, check_url){
         var formData = new FormData();
         formData.append('prefix', prefix);
         $.ajax({
                 type: 'POST',
-                url: "{{ url_for('tools.long_tile_check') }}",
+                url: check_url,
                 data: formData,
                 dataType: 'json',
                 contentType: false,
@@ -154,7 +154,7 @@
                 
             });
     }
-    function sendToWorker(prefix, formData, url, cancel_func){
+    function sendToWorker(prefix, formData, url, cancel_func, check_url){
         $.ajax({
             type: 'POST',
             url: url,
@@ -165,7 +165,7 @@
             mimeType: "multipart/form-data",
             processData: false,
             success: function(response) {
-                Checker(prefix, 0, cancel_func)
+                Checker(prefix, 0, cancel_func, check_url)
             },
             error: function(error) {
                 console.log(error);
@@ -174,7 +174,7 @@
         });
     }
 
-    function uploadFile(file, s3Data, url, prefix, formData, w_url, cancel_func){
+    function uploadFile(file, s3Data, url, prefix, formData, w_url, cancel_func, check_url){
       const xhr = new XMLHttpRequest();
       xhr.open('POST', s3Data.url);
       xhr.setRequestHeader('x-amz-acl', 'public-read');
@@ -190,7 +190,7 @@
           if(xhr.status === 200 || xhr.status === 204){
             num_files -= 1;
             if(num_files === 0){
-                sendToWorker(prefix, formData, w_url, cancel_func)
+                sendToWorker(prefix, formData, w_url, cancel_func, check_url)
             };
           }
           else{
@@ -201,14 +201,14 @@
       xhr.send(postData);
     }
 
-    function getSignedRequest(file, prefix, formData, url, cancel_func){
+    function getSignedRequest(file, prefix, formData, url, cancel_func, check_url){
       const xhr = new XMLHttpRequest();
       xhr.open('GET', `{{ url_for('tools.prepare_s3_url') }}?filename=${file.name}&content_type=${file.type}&prefix=${prefix}`);
       xhr.onreadystatechange = () => {
         if(xhr.readyState === 4){
           if(xhr.status === 200){
             const response = JSON.parse(xhr.responseText);
-            uploadFile(file, response.data, response.url, prefix, formData, url, cancel_func);
+            uploadFile(file, response.data, response.url, prefix, formData, url, cancel_func, check_url);
           }
           else{
             alert('Could not get signed URL.');
@@ -218,10 +218,10 @@
       xhr.send();
     }
 
-    function initUpload(prefix, files, formData, url, cancel_func){
+    function initUpload(prefix, files, formData, url, cancel_func, check_url){
       num_files = files.length;
       for(let file of files){
-        getSignedRequest(file, prefix, formData, url, cancel_func);
+        getSignedRequest(file, prefix, formData, url, cancel_func, check_url);
       }
     }
 
@@ -229,34 +229,17 @@
         event.preventDefault();
         $('#tinyUpload').addClass('visually-hidden')
         $('#tinyLoading').removeClass('visually-hidden')
-        var files = myFile.files;
-        var formData = new FormData(myForm);
-        $.ajax({
-                type: 'POST',
-                url: "{{ url_for('tools.tinify') }}",
-                data: formData,
-                dataType: 'binary',
-                xhrFields: {
-                    'responseType': 'blob'
-                },
-                contentType: false,
-                cache: false,
-                mimeType: "multipart/form-data",
-                processData: false,
-                success: function(data, status, xhr) {
-                    $('#tinyLoading').addClass('visually-hidden')
-                    $('#tinyUpload').removeClass('visually-hidden')
-                    var blob = new Blob([data], {type: xhr.getResponseHeader('Content-Type')});
-                    var link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = 'tiny-result.zip';
-                    link.click();
-                },
-                error: function(error) {
-                    console.log(error);
-                },
-                
-            });
+        const files = myFile.files;
+        const prefix = 'tiny_' + Date.now()
+        var local_formData = new FormData(myForm);
+        var formData = new FormData();
+        formData.append('prefix', prefix);
+        formData.append('resize_width', local_formData.get('resize_width'))
+        var cancel_func = function(){
+            $('#tinyLoading').addClass('visually-hidden')
+            $('#tinyUpload').removeClass('visually-hidden')
+        }
+        initUpload(prefix, files, formData, '{{ url_for("tools.tinify") }}', cancel_func, '{{ url_for("tools.tiny_check") }}')
     };
     longForm.onsubmit = function(event) {
         event.preventDefault();
@@ -328,7 +311,7 @@
             $('#longTileLoading').addClass('visually-hidden')
             $('#longTileUpload').removeClass('visually-hidden')
         }
-        initUpload(prefix, files, formData, '{{ url_for("tools.long_tile") }}', cancel_func)
+        initUpload(prefix, files, formData, '{{ url_for("tools.long_tile") }}', cancel_func, '{{ url_for("tools.long_tile_check") }}')
     };
 </script>
 {% endblock %}
