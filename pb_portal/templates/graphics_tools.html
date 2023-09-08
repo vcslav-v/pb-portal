@@ -258,7 +258,7 @@
             $('#longLoading').addClass('visually-hidden')
             $('#longUpload').removeClass('visually-hidden')
         }
-        initUpload(prefix, files, formData, '{{ url_for("tools.longy") }}', cancel_func)
+        initUpload(prefix, files, formData, '{{ url_for("tools.longy") }}', cancel_func, '{{ url_for("tools.long_tile_check") }}')
     };
     gifForm.onsubmit = function(event) {
         event.preventDefault();
