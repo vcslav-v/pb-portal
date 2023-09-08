@@ -1,5 +1,5 @@
 from .main import (get_gif, get_long_jpg, get_long_tile_jpg, get_tiny_zip,
-                   make_s3_url, long_tile_check)
+                   make_s3_url, long_tile_check, tiny_check)
 
 __all__ = [
     'get_tiny_zip',
@@ -7,5 +7,6 @@ __all__ = [
     'get_gif',
     'get_long_tile_jpg',
     'make_s3_url',
-    'long_tile_check'
+    'long_tile_check',
+    'tiny_check',
 ]
