@@ -18,14 +18,17 @@ DO_SPACE_BUCKET = os.environ.get('DO_SPACE_BUCKET', '')
 
 
 @logger.catch
-def get_tiny_zip(prefix: str, resize_width=None):
+def get_tiny_zip(prefix: str, resize_width=None, is_tinify=False):
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        url = f'https://{NETLOC}/api/tinify?prefix={prefix}'
-        url = url + f'&width={resize_width}' if resize_width else url
-        resp = session.post(
-            url,
-        )
+        params = {
+            'prefix': prefix,
+            'is_tinify': is_tinify,
+        }
+        if resize_width:
+            params['width'] = resize_width
+        url = f'https://{NETLOC}/api/tinify'
+        resp = session.post(url, params=params)
         resp.raise_for_status()
         return 200
 

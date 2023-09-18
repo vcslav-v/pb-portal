@@ -63,7 +63,8 @@ def tinify():
     try:
         connectors.graphic.get_tiny_zip(
             request.form.get('prefix'),
-            request.form.get('resize_width')
+            request.form.get('resize_width'),
+            request.form.get('is_tinify'),
         )
     except Exception as e:
         logger.error(e.args)

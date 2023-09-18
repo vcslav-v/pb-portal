@@ -12,6 +12,10 @@
             <div class="input-group">
                     <input class="form-control w-25" type="file" name="forTiny" id="forTiny" multiple>
                     <input type="text" class="form-control" placeholder="Width" name="resize_width">
+                    <span class="input-group-text" id="basic-addon1">Tinify?</span>
+                    <div class="input-group-text">
+                        <input class="form-check-input mt-0" name="is_tinify" type="checkbox" value="" aria-label="Checkbox for following text input">
+                      </div>                
                     <button class="btn btn-outline-secondary" type="submit" id="tinyUpload" name="btn" value="tinyUpload">Upload</button>
                     <button class="btn btn-outline-secondary visually-hidden" type="button" id="tinyLoading">
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -235,6 +239,7 @@
         var formData = new FormData();
         formData.append('prefix', prefix);
         formData.append('resize_width', local_formData.get('resize_width'))
+        formData.append('is_tinify', local_formData.get('is_tinify'))
         var cancel_func = function(){
             $('#tinyLoading').addClass('visually-hidden')
             $('#tinyUpload').removeClass('visually-hidden')
