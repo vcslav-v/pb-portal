@@ -23,7 +23,7 @@ def get_tiny_zip(prefix: str, resize_width=None, is_tinify=False):
         session.auth = ('api', TOKEN)
         params = {
             'prefix': prefix,
-            'is_tinify': is_tinify,
+            'is_tinify': 'true' if is_tinify else 'false',
         }
         if resize_width:
             params['width'] = resize_width
