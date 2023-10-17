@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-datepicker3.min.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 {% endblock %}
 {% block app_content %}
 <div class="container">
@@ -26,14 +27,12 @@
                 {% endfor %}
             </select>
         </div>
-        <div class="col-3">
-            <div id="end_design_date_datepicker">
-                <div class="input-daterange input-group input-group-sm" id="datepicker">
-                    <span class="input-group-text">End design date</span>
-                    <input type="text" class="input-sm form-control" name="start" />
-                    <span class="input-group-text">to</span>
-                    <input type="text" class="input-sm form-control" name="end" />
-                </div>
+        <div class="col-5">
+            <div class="input-group input-group-sm">
+                <span class="input-group-text">End design date</span>
+                <input type="text" class="input-sm form-control" name="start_date" >
+                <span class="input-group-text">to</span>
+                <input type="text" class="input-sm form-control" name="end_date" >
             </div>
         </div>
         <div class="col-1">
@@ -51,22 +50,24 @@
 </div>
 {% endblock %}
 {% block script %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-datepicker.en.min.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-    var today = new Date();
-    var last_month = new Date();
-    last_month.setMonth(last_month.getMonth()-1)
-    $('#end_design_date_datepicker .input-daterange').datepicker({
-        format: "mm-yyyy",
-        weekStart: 0,
-        startView: 1,
-        minViewMode: 1,
-        autoclose: true,
-        todayHighlight: true,
-    });
-    // $('#end_design_date_datepicker .input-daterange [name="start"]').datepicker('update', last_month);
-    // $('#end_design_date_datepicker .input-daterange [name="end"]').datepicker('update', last_month);
+    const today = new Date();
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1); 
+var start_config = {
+    altInput: true,
+    altFormat: "d-m-Y",
+    dateFormat: "Y-m-d",
+    defaultDate: firstDayOfMonth,
+}
+  var end_config = {
+    altInput: true,
+    altFormat: "d-m-Y",
+    dateFormat: "Y-m-d",
+    defaultDate: today,
+  };
+  $('input[name="start_date"]').flatpickr(start_config);
+  $('input[name="end_date"]').flatpickr(end_config);
 </script>
 <script>
     refresh_products = function(page){
@@ -74,11 +75,11 @@
         formData.append('page', page)
         formData.append('designer', $('#designer_filter').val())
         formData.append('category', $('#category_filter').val())
-        formData.append('end_design_date_datepicker_start', $('#end_design_date_datepicker .input-daterange [name="start"]').val())
-        formData.append('end_design_date_datepicker_end', $('#end_design_date_datepicker .input-daterange [name="end"]').val())
+        formData.append('end_design_date_datepicker_start', $('input[name="start_date"]').val())
+        formData.append('end_design_date_datepicker_end', $('input[name="end_date"]').val())
         $.ajax({
             type: 'POST',
-            url: "{{ url_for('products.list') }}",
+            url: "{{ url_for('products.product_list') }}",
             data: formData,
             dataType: 'html',
             contentType: false,

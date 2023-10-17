@@ -14,6 +14,7 @@ DO_SPACE_ENDPOINT = os.environ.get('DO_SPACE_ENDPOINT', '')
 DO_SPACE_KEY = os.environ.get('DO_SPACE_KEY', '')
 DO_SPACE_SECRET = os.environ.get('DO_SPACE_SECRET', '')
 DO_SPACE_BUCKET = os.environ.get('DO_SPACE_BUCKET', '')
+PRODUCTS_IMG_URL = os.environ.get('PRODUCTS_IMG_URL', '')
 
 FILTER_CATS = [
     'limited offer',

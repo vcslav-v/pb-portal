@@ -1,24 +1,27 @@
 """Pydantic's models."""
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from typing import Optional
 from datetime import date, datetime
 
 
 class ProductInPage(BaseModel):
-    ident: str
+    ident: int
     title: str
-    short_description: str
     designer_name: str
-    designer_id: int
     category: str
-    category_id: int
     trello_link: str
-    dropbox_link: str
-    children: list['ProductInPage'] = []
-    is_done: bool
     start_date: date
-    end_date: Optional[date]
-    end_designer_date: Optional[date]
+    end_production_date: Optional[date]
+    is_big: bool = False
+    days_in_work: int = 0
+
+    @validator('days_in_work', pre=True, always=True)
+    def calc_days_in_work(cls, v, values):
+        if values.get('start_date') and values.get('end_production_date'):
+            return (values.get('end_production_date') - values.get('start_date')).days
+        return 0
+
+
 
 
 class Designer(BaseModel):
@@ -30,7 +33,8 @@ class ProductPage(BaseModel):
     products: list[ProductInPage] = []
     page: int = 1
     number_pages: int = 1
-    number_products: int = 1
+    number_products: int = 0
+    number_big_products: int = 0
 
 
 class Category(BaseModel):

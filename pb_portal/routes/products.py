@@ -56,19 +56,12 @@ def product_list():
         ) and request.form.get(
             'end_design_date_datepicker_end'
         ):
-            end_date_start_mon, end_date_start_year = request.form.get(
+            page_data.end_design_date_start = date.fromisoformat(request.form.get(
                 'end_design_date_datepicker_start'
-            ).split('-')
-            page_data.end_design_date_start = date.fromisoformat(
-                f'{end_date_start_year}-{end_date_start_mon}-01'
-            )
-            end_date_end_mon, end_date_end_year = request.form.get(
+            ))
+            page_data.end_design_date_end = date.fromisoformat(request.form.get(
                 'end_design_date_datepicker_end'
-            ).split('-')
-            _, end_days_month = calendar.monthrange(int(end_date_end_year), int(end_date_end_mon))
-            page_data.end_design_date_end = date.fromisoformat(
-                f'{end_date_end_year}-{end_date_end_mon}-{end_days_month}'
-            )
+            ))
 
         if request.form.get('designer').isdecimal():
             page_data.designer_id = int(request.form.get('designer'))
@@ -78,6 +71,7 @@ def product_list():
         return render_template(
             '_product_page.html',
             pbd=pbd,
+            products_img_url=connectors.products.PRODUCTS_IMG_URL,
         )
     else:
         page_data = connectors.products.get_page_data()
