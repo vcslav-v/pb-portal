@@ -13,6 +13,7 @@ class ProductInPage(BaseModel):
     start_date: date
     end_production_date: Optional[date]
     is_big: bool = False
+    adobe_count: int = 0
     days_in_work: int = 0
 
     @validator('days_in_work', pre=True, always=True)
@@ -20,8 +21,6 @@ class ProductInPage(BaseModel):
         if values.get('start_date') and values.get('end_production_date'):
             return (values.get('end_production_date') - values.get('start_date')).days
         return 0
-
-
 
 
 class Designer(BaseModel):
@@ -35,6 +34,7 @@ class ProductPage(BaseModel):
     number_pages: int = 1
     number_products: int = 0
     number_big_products: int = 0
+    total_adobe_count: int = 0
 
 
 class Category(BaseModel):
