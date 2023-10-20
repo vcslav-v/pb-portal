@@ -231,14 +231,6 @@
               </h3>
             </div>
           </div>
-          <div class="col-12" id="premium_img">
-            <div class="row mb-3">
-              <div class="col-12">
-                <label for="formFile" class="form-label">Thumbnail for premium</label>
-                <input class="form-control" type="file" id="prem_thumbnail" name="prem_thumbnail" required>
-              </div>
-            </div>
-          </div>
           <div class="row mb-3">
             <div class="col-6">
               <label for="formFile" class="form-label">Thumbnail</label>
@@ -405,26 +397,20 @@
       $('#freebie_options').show();
       $('input[name="standart_price"]').prop('required', false);
       $('input[name="extended_price"]').prop('required', false);
-      $('input[name="prem_thumbnail"]').prop('required', false);
       $('#guest_authors').show();
       $('#premium_options').hide();
-      $('#premium_img').hide();
     } else if ($('select[name="product_type"]').val() == 'Plus') {
       $('#freebie_options').hide();
       $('input[name="standart_price"]').prop('required', false);
       $('input[name="extended_price"]').prop('required', false);
-      $('input[name="prem_thumbnail"]').prop('required', false);
       $('#guest_authors').show();
       $('#premium_options').hide();
-      $('#premium_img').hide();
     } else if ($('select[name="product_type"]').val() == 'Premium') {
       $('#freebie_options').hide();
       $('input[name="standart_price"]').prop('required', true);
       $('input[name="extended_price"]').prop('required', true);
-      $('input[name="prem_thumbnail"]').prop('required', true);
       $('#guest_authors').hide();
       $('#premium_options').show();
-      $('#premium_img').show();
 
     }
   }
@@ -628,15 +614,10 @@
     var product_file = formData.get('product_file');
     var thumbnail = formData.get('thumbnail');
     var image_for_push;
-    var prem_thumbnail;
 
     if (formData.get('image_for_push') && formData.get('image_for_push').size > 0) {
       num_uploads++;
       image_for_push = formData.get('image_for_push')
-    };
-    if (formData.get('prem_thumbnail') && formData.get('prem_thumbnail').size > 0) {
-      num_uploads++;
-      prem_thumbnail = formData.get('prem_thumbnail')
     };
 
     formData.append('product_size_mb', Math.ceil(product_file.size / 1000000))
@@ -645,9 +626,6 @@
     getSignedRequest(thumbnail, prefix, `${safe_product_name}-by-pixelbuddha-thumbnail_x2`, formData);
     if (image_for_push) {
       getSignedRequest(image_for_push, prefix, `${safe_product_name}-by-pixelbuddha-image_for_push`, formData);
-    }
-    if (prem_thumbnail) {
-      getSignedRequest(prem_thumbnail, prefix, `${safe_product_name}-by-pixelbuddha-prem_thumbnail_x2`, formData);
     }
     getSignedRequest(gallery[0], prefix, `${safe_product_name}-by-pixelbuddha-main_x2`, formData);
     for (let i_img = 1; i_img < files.length; i_img++) {
