@@ -106,7 +106,7 @@
               <div class="row">
                 <div class="col-12">
                   <div class="form-floating">
-                    <input type="text" class="form-control" id="TagInput" placeholder="Tags" name="tags" pattern=""
+                    <input type="text" class="form-control" id="TagInput" placeholder="Tags" name="tags"
                       onchange="make_badges()" required>
                     <label for="TagInput">Tags</label>
                   </div>
@@ -714,7 +714,6 @@ function bage_hover() {
       }
     })
 
-    $('#TagInput').attr('pattern', `(${Array.from(posible_tags).join('|')}|,| )*`)
     search_tags();
   }
 $('#tag_search').on('input', search_tags)
