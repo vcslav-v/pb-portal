@@ -4,6 +4,7 @@ from datetime import datetime
 
 import requests
 from loguru import logger
+import pb_admin
 
 from pb_portal.connectors.pb import schemas
 
@@ -12,6 +13,10 @@ TOKEN = os.environ.get('PB_API_TOKEN', '')
 NAME = os.environ.get('PB_API_NAME', '')
 PB_STAT_API_URL = os.environ.get('PB_STAT_API_URL', '')
 PB_USER_URL = os.environ.get('PB_USER_URL', '')
+
+SITE_URL = os.environ.get('SITE_URL', '')
+PB_LOGIN = os.environ.get('PB_LOGIN', '')
+PB_PASSWORD = os.environ.get('PB_PASSWORD', '')
 
 
 @logger.catch()
@@ -147,4 +152,32 @@ def get_affiliates() -> schemas.AffiliateInfo:
         result.profit_sum += affilate.profit
         result.to_pay_sum += affilate.to_pay
     result.affilates.sort(key=lambda x: x.profit, reverse=True)
+    return result
+
+
+def get_categories() -> list[schemas.Category]:
+    pb_session = pb_admin.PbSession(SITE_URL, PB_LOGIN, PB_PASSWORD)
+    categories = pb_session.categories.get_list()
+    categories = sorted(categories, key=lambda x: x.weight, reverse=True)
+    return categories
+
+
+def get_products(keyword, category_id, category_name) -> schemas.ProductPage:
+    products_page = schemas.ProductPage()
+    pb_session = pb_admin.PbSession(SITE_URL, PB_LOGIN, PB_PASSWORD)
+    products = pb_session.products.get_list(search=keyword, category_id=int(category_id))
+    products = sorted(products, key=lambda x: x.created_at, reverse=True)
+    products_page.products = products
+    products_page.category_name = category_name
+    products_page.category_id = int(category_id)
+    return products_page
+
+
+def get_full_products(products: list[schemas.Product]) -> list[schemas.Product]:
+    pb_session = pb_admin.PbSession(SITE_URL, PB_LOGIN, PB_PASSWORD)
+    result = []
+    for product in products:
+        result.append(
+            pb_session.products.get(product.ident, product_type=product.product_type, is_lite=True)
+        )
     return result

@@ -1,0 +1,19 @@
+.small-card-title {
+    font-size: 0.75rem;
+    margin-bottom: 0rem;
+    padding: 0rem;
+}
+.btn-close-small {
+    width: 0.7em; /* Установите ширину и высоту в половину от исходного размера */
+    height: 0.7em;
+    background-size: 0.7em 0.7em; /* Установите размер фонового изображения (крестика) также в половину */
+}
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+  }

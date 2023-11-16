@@ -38,4 +38,4 @@ class Contract(BaseModel):
     id_sevice: int
     additional_service_desc: Optional[list[str]] = []
     ammount: int
-    contract_date: Optional[date]
+    contract_date: Optional[date] = None

@@ -1,8 +1,8 @@
 """Pydantic's models."""
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator, ValidationInfo
 from typing import Optional
 from datetime import date, datetime
-
+from pb_admin import schemas as pb_schemas
 
 class ProductInPage(BaseModel):
     ident: int
@@ -11,13 +11,15 @@ class ProductInPage(BaseModel):
     category: str
     trello_link: str
     start_date: date
-    end_production_date: Optional[date]
+    end_production_date: Optional[date] = None
     is_big: bool = False
     adobe_count: int = 0
     days_in_work: int = 0
 
-    @validator('days_in_work', pre=True, always=True)
-    def calc_days_in_work(cls, v, values):
+    @field_validator('days_in_work', mode='wrap')
+    @classmethod
+    def calc_days_in_work(cls, v, info: ValidationInfo):
+        values = info.data
         if values.get('start_date') and values.get('end_production_date'):
             return (values.get('end_production_date') - values.get('start_date')).days
         return 0
@@ -49,10 +51,10 @@ class ProductPageData(BaseModel):
 
 class FilterPage(BaseModel):
     page: int = 1
-    designer_id: Optional[int]
-    category_id: Optional[int]
-    end_design_date_start: Optional[date]
-    end_design_date_end: Optional[date]
+    designer_id: Optional[int] = None
+    category_id: Optional[int] = None
+    end_design_date_start: Optional[date] = None
+    end_design_date_end: Optional[date] = None
 
 
 class Features(BaseModel):
@@ -83,9 +85,9 @@ class UploadProduct(BaseModel):
     size: str
     description: str
     date_upload: datetime
-    schedule_date: Optional[datetime]
-    guest_author: Optional[str]
-    guest_author_link: Optional[str]
+    schedule_date: Optional[datetime] = None
+    guest_author: Optional[str] = None
+    guest_author_link: Optional[str] = None
     categories: list[str] = []
     formats: list[str] = []
     tags: list[str] = []
@@ -100,10 +102,10 @@ class UploadPlus(UploadProduct):
 
 
 class UploadPrem(UploadProduct):
-    standart_price: Optional[int]
-    extended_price: Optional[int]
-    sale_standart_price: Optional[int]
-    sale_extended_price: Optional[int]
+    standart_price: Optional[int] = None
+    extended_price: Optional[int] = None
+    sale_standart_price: Optional[int] = None
+    sale_extended_price: Optional[int] = None
     compatibilities: list[str] = []
 
 
@@ -119,3 +121,9 @@ class ProductsSchedule(ScheduleUpdate):
 
 class PageProductsSchedule(BaseModel):
     page: list[ProductsSchedule] = []
+
+
+class BulkTag(BaseModel):
+    tag: str
+    products: list[pb_schemas.Product]
+    category_id: int

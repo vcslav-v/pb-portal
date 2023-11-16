@@ -1,0 +1,240 @@
+const per_page = 18;
+
+var disable_cards = [];
+var all_products = [];
+var page_products = [];
+var cur_category_name;
+var cur_category_id;
+var _page = 1;
+var _img_url = '';
+var _page_html_url = '';
+var _add_tag_url = '';
+var _refresh_active_tasks_url = '';
+var _imgs = {};
+
+const darkenCard = function (event) {
+    var card = event.currentTarget.closest('.card');
+    var cardId = card.getAttribute('data-card-id'); // ID кнопки
+    if (disable_cards.includes(cardId)) {
+        return;
+    }
+    disable_cards.push(cardId);
+    console.log('Card ID: ' + cardId); // Логируем ID
+
+    // Добавляем затемнение
+    card.style.position = 'relative';
+    card.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    card.style.color = 'white';
+
+
+    // Добавляем кнопку "return"
+    const returnButton = document.createElement('button');
+    returnButton.innerText = 'Return';
+    returnButton.className = 'btn btn-primary position-absolute top-50 start-50 translate-middle';
+
+    returnButton.onclick = function () {
+        // Возвращаем исходное состояние карточки
+        card.style.backgroundColor = '';
+        card.style.color = '';
+        returnButton.remove();
+        disable_cards.splice(disable_cards.indexOf(cardId), 1);
+
+    };
+    card.appendChild(returnButton);
+}
+
+const show_page = function () {
+    var startIndex = (_page - 1) * per_page;
+    var endIndex = _page * per_page;
+    page_products = all_products.slice(startIndex, endIndex);
+    var formData = new FormData();
+    formData.append('products', JSON.stringify(page_products));
+    formData.append('category_name', cur_category_name);
+    $.ajax({
+        type: 'POST',
+        url: _page_html_url,
+        data: formData,
+        dataType: 'html',
+        contentType: false,
+        cache: false,
+        mimeType: "multipart/form-data",
+        processData: false,
+        success: function (response) {
+            var page = $('#products_list');
+            page.empty();
+            page.append(response);
+            document.querySelectorAll('.btn-close').forEach(function (button) {
+                button.addEventListener('click', darkenCard);
+            });
+            if (all_products.length <= per_page) {
+                $('#pagination_block').hide();
+            } else {
+                $('#pagination_block').show();
+                if (_page == 1) {
+                    $('#prev_button').addClass('disabled');
+                } else {
+                    $('#prev_button').removeClass('disabled');
+                }
+                if (_page * per_page >= all_products.length) {
+                    $('#next_button').addClass('disabled');
+                } else {
+                    $('#next_button').removeClass('disabled');
+                }
+            }
+            show_imgs();
+        },
+        error: function (error) {
+            console.log(error);
+        },
+    });
+
+
+}
+
+const show_imgs = function () {
+    var formData = new FormData();
+    formData.append(
+        'products', JSON.stringify(page_products),
+    );
+    $('img[name="product_img"]').each(function () {
+        var cardId = $(this).closest('div').attr('data-card-id');
+        if (_imgs[cardId]) {
+            $(this).attr('src', _imgs[cardId]);
+        }
+    });
+
+    var allDataPresent = $('img[name="product_img"]').toArray().every(function (img) {
+        var cardId = $(img).closest('div').attr('data-card-id');
+        return _imgs[cardId] !== undefined;
+    });
+    if (!allDataPresent) {
+        $.ajax({
+            type: 'POST',
+            url: _img_url,
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function (response) {
+                _imgs = Object.assign(_imgs, response);
+                $('img[name="product_img"]').each(function () {
+                    var cardId = $(this).closest('div').attr('data-card-id');
+                    if (_imgs[cardId]) {
+                        $(this).attr('src', _imgs[cardId]);
+                    }
+                });
+            },
+            error: function (error) {
+                console.log(error);
+            },
+        });
+    }
+};
+
+const changepage = function (delta) {
+    if (_page + delta < 1 || _page + delta > Math.ceil(all_products.length / per_page)) {
+        return;
+    }
+    _page += delta;
+    show_page();
+};
+
+const set_search = function (url, page_html_url, img_url, add_tag_url, refresh_active_tasks_url) {
+    var search_form = document.getElementById('search_form');
+    _add_tag_url = add_tag_url;
+    _refresh_active_tasks_url = refresh_active_tasks_url;
+    refresh_active_tasks();
+    search_form.onsubmit = function (e) {
+        e.preventDefault();
+        var formData = new FormData(search_form);
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            cache: false,
+            mimeType: "multipart/form-data",
+            processData: false,
+            success: function (response) {
+                $('#pagination_block').hide();
+                disable_cards = [];
+                all_products = response.products;
+                _page = 1;
+                _img_url = img_url;
+                _page_html_url = page_html_url;
+                cur_category_name = response.category_name;
+                cur_category_id = response.category_id;
+                show_page()
+            },
+
+            error: function (error) {
+                console.log(error);
+            },
+        });
+    }
+};
+
+const add_tag = function () {
+    console.log('add_tag');
+    $('#confirmModal').modal('hide');
+    $('<div id="overlay"></div>').appendTo(document.body);
+    var formData = new FormData();
+    formData.append(
+        'products', JSON.stringify(all_products),
+    );
+    formData.append('category_id', cur_category_id);
+    formData.append('disable_cards', JSON.stringify(disable_cards));
+    formData.append('tag', $('input[name="tag"]').val());
+    $.ajax({
+        type: 'POST',
+        url: _add_tag_url,
+        data: formData,
+        dataType: 'json',
+        contentType: false,
+        cache: false,
+        mimeType: "multipart/form-data",
+        processData: false,
+        success: function (response) {
+            $('#overlay').remove();
+            $('#resultBody').text(response.message);
+            $('#resultModal').modal('show');
+            $('input[name="tag"]').val('');
+            refresh_active_tasks();
+        },
+        error: function (error) {
+            $('#overlay').remove();
+            $('#resultBody').text(response.message);
+            $('#resultModal').modal('show');
+        },
+    });
+
+};
+
+const refresh_confirm_message = function () {
+    var count = all_products.length - disable_cards.length;
+    var message = 'Are you sure you want to add tag "' + $('input[name="tag"]').val() + '" to ' + count + ' products?';
+    $('#confirmBody').text(message);
+};
+
+const refresh_active_tasks = function () {
+    $.ajax({
+        type: 'GET',
+        url: _refresh_active_tasks_url,
+        dataType: 'json',
+        contentType: false,
+        cache: false,
+        mimeType: "multipart/form-data",
+        processData: false,
+        success: function (response) {
+            $('#active_task').empty();
+            $('#active_task').append(response.count);
+        },
+
+        error: function (error) {
+            console.log(error);
+        },
+    });
+};

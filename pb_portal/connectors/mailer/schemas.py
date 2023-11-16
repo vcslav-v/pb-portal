@@ -44,14 +44,14 @@ class PbFeatured(BaseModel):
     preview_url: str = ''
     num_cover_img: int = 0
     label: str = 'New'
-    exerpt: Optional[str]
+    exerpt: Optional[str] = None
     main_gallery_img_num: int = 1
     last_gallery_img_num: int = 2
     gallery_rows: list[GalleryRow] = []
     details: list[str] = []
     description: str = ''
-    video: Optional[Video]
-    bundle: Optional[Bundle]
+    video: Optional[Video] = None
+    bundle: Optional[Bundle] = None
     popular: list[str] = []
 
 

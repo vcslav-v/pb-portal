@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bulk_tagging.css') }}">
+{% endblock %}
+
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Панель поиска -->
+    <div class="row mb-3">
+        <div class="col-3">
+            <input type="text" class="form-control" placeholder="Tag" aria-label="Tag" name="tag">
+        </div>
+        <div class="col-auto">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmModal" onclick="refresh_confirm_message()">
+                Add tag
+            </button>
+
+        </div>
+        <div class="col-3 d-flex align-items-center">
+            <h5 class="mb-0">Active tasks: <span id="active_task"></span></h5>
+        </div>
+    </div>
+    <form action="#" id="search_form">
+        <div class="row mb-3">
+            <div class="col-3">
+                <input type="text" class="form-control" placeholder="Keyword" aria-label="Keyword" name="keyword">
+            </div>
+            <div class="col-3">
+                <select class="form-select" aria-label="Category" name="category">
+                    <option selected>Choose category</option>
+                    {% for category in categories %}
+                    <option value="{{ category.ident }}||{{ category.title }}">{{ category.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary mb-3">Search</button>
+            </div>
+        </div>
+    </form>
+
+
+    <!-- Плитки изображений -->
+    <div class="row" id="products_list">
+    </div>
+
+    <!-- Пагинация -->
+    <nav aria-label="Page navigation example" class="mt-4" id="pagination_block">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" id="prev_button"><a class="page-link" href="#" onclick="changepage(-1)">Previous</a>
+            </li>
+            <li class="page-item" id="next_button"><a class="page-link" href="#" onclick="changepage(1)">Next</a></li>
+        </ul>
+    </nav>
+
+    <!-- Модальное окно -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Bulk tagging</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        id="close_modal_btn_cross"></button>
+                </div>
+                <div class="modal-body" id="confirmBody">
+                    Add tag to all products?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        id="close_modal_btn">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="add_tag()" id="add_modal_btn">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="resultModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="resultModalLabel">Operation Result</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        id="close_result_modal_btn_cross"></button>
+                </div>
+                <div class="modal-body" id="resultBody">
+                    SSSS
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                        id="ok_result_modal_btn">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+{% block script %}
+<script src="{{ url_for('static', filename='js/bulk_tagging.js') }}"></script>
+<script>
+    var all_products = [];
+    // Первая загрузка страницы
+    document.addEventListener('DOMContentLoaded', (event) => {
+        $('#pagination_block').hide();
+        set_search(
+            '{{ url_for("products.bulk_tagging") }}',
+            '{{ url_for("products.bulk_tagging_get_html") }}',
+            '{{ url_for("products.bulk_tagging_get_imgs") }}',
+            '{{ url_for("products.bulk_tagging_set_tag") }}',
+            '{{ url_for("products.count_active_bulk_task") }}',
+        )
+    });
+
+
+
+</script>
+{% endblock %}

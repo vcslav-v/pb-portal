@@ -1,0 +1,14 @@
+{% for product in products %}
+<div class="col-md-2 col-sm-6 mb-3">
+    <div class="card" data-card-id="{{ product.ident }}">
+        <a href="https://pixelbuddha.net{% if product.product_type == 'premium' %}/premium{% endif %}/{{category}}/{{product.slug}}" target="_blank">
+            <img src="" name="product_img" class="card-img-top" alt="{{ product.title }}">
+        </a>
+        <div class="card-body position-relative">
+            <h5 class="card-title small-card-title">{{ product.title }}</h5>
+            <button type="button" class="btn-close position-absolute top-0 end-0 m-1 btn-close-small"
+                aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+{% endfor %}

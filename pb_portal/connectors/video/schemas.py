@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator, ValidationError
+from pydantic import BaseModel, field_validator, ValidationError, ValidationInfo
 import re
 from datetime import datetime
 from typing import Optional
@@ -17,31 +17,31 @@ class Template1(BaseModel):
     time_final: float
     music: str
 
-    @validator('text_colour', 'background_color', pre=True)
-    def must_be_color_like(cls, field):
-        matches = re.match(RE_COLOUR, field, re.IGNORECASE)
+    @field_validator('text_colour', 'background_color', mode='before')
+    def must_be_color_like(cls, value, info: ValidationInfo):
+        matches = re.match(RE_COLOUR, value, re.IGNORECASE)
         if matches:
             return matches.group(0)
         else:
             raise ValidationError('background color is wrong')
 
-    @validator('final_text', 'title', pre=True)
-    def must_be_raws_list(cls, field):
-        if '\r\n' in field:
-            return field.split('\r\n')
+    @field_validator('final_text', 'title',  mode='before')
+    def must_be_raws_list(cls, value, info: ValidationInfo):
+        if '\r\n' in value:
+            return value.split('\r\n')
         else:
-            return field.split('\n')
+            return value.split('\n')
 
-    @validator('time_cover', 'time_shot', 'time_final', pre=True)
-    def must_be_float(cls, field):
-        return float(field)
+    @field_validator('time_cover', 'time_shot', 'time_final',  mode='before')
+    def must_be_float(cls, value, info: ValidationInfo):
+        return float(value)
 
 
 class Item(BaseModel):
     uid: int
     name: str
     date: datetime
-    link: Optional[str]
+    link: Optional[str] = None
     in_working: bool
 
 

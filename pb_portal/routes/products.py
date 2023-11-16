@@ -1,4 +1,3 @@
-import calendar
 import json
 import os
 from datetime import date, datetime, timedelta
@@ -81,6 +80,84 @@ def product_list():
         )
 
 
+@logger.catch
+@app_route.route('/bulk_tagging', methods=['GET', 'POST'])
+@auth.login_required(role=['admin', 'pb_admin'])
+def bulk_tagging():
+    if request.method == 'POST':
+        category_id, category_name = request.form.get('category').split('||')
+        products_page = connectors.pb.get_products(
+            request.form.get('keyword'),
+            category_id,
+            category_name,
+        )
+        return products_page.model_dump_json()
+    categories = connectors.pb.get_categories()
+    return render_template(
+            'tag_adder.html',
+            categories=categories,
+            images=[],
+            total_pages=10,
+        )
+
+
+@logger.catch
+@app_route.route('/count_active_bulk_task', methods=['get'])
+@auth.login_required(role=['admin', 'pb_admin'])
+def count_active_bulk_task():
+    return json.dumps({'count': connectors.products.count_active_bulk_task()})
+
+
+@logger.catch
+@app_route.route('/bulk_tagging_get_html', methods=['POST'])
+@auth.login_required(role=['admin', 'pb_admin'])
+def bulk_tagging_get_html():
+    products = json.loads(request.form.get('products'))
+    products = [connectors.pb.schemas.Product(**product) for product in products]
+
+    return render_template(
+        '_product_cards.html',
+        products=products,
+        category=request.form.get('category'),
+    )
+
+
+@logger.catch
+@app_route.route('/bulk_tagging_set_tag', methods=['POST'])
+@auth.login_required(role=['admin', 'pb_admin'])
+def bulk_tagging_set_tag():
+    disable_cards = request.form.get('disable_cards')
+    products = request.form.get('products')
+    tag = request.form.get('tag')
+    category_id = request.form.get('category_id')
+    if not products or not tag or not category_id:
+        return '{"message": "Every field must be filled"}'
+    try:
+        disable_cards = [int(i) for i in json.loads(disable_cards)]
+        products = json.loads(products)
+        products = [connectors.pb.schemas.Product(**product) for product in products if product['ident'] not in disable_cards]
+        category_id = int(category_id)
+    except Exception as e:
+        logger.error(e.args)
+        return '{"message": "type error"}'
+    connectors.products.set_bulk_tag(products, tag, category_id)
+    return json.dumps(
+        {'message': f'Started the process of adding "{tag}" tag to {len(products)} products'}
+    )
+
+
+@logger.catch
+@app_route.route('/bulk_tagging_get_imgs', methods=['POST'])
+@auth.login_required(role=['admin', 'pb_admin'])
+def bulk_tagging_get_imgs():
+    products = json.loads(request.form.get('products'))
+    products = [connectors.pb.schemas.Product(**product) for product in products]
+    products = connectors.pb.get_full_products(
+        products,
+    )
+    return json.dumps({product.ident: product.thumbnail.original_url for product in products})
+
+
 def get_form_list(form_data: dict, key_word: str):
     result = []
     for key in form_data:
@@ -115,14 +192,14 @@ def uploader():
             product_schema.guest_author = request.form.get('guest_author')
             product_schema.guest_author_link = request.form.get('guest_author_link')
         if request.form.get('product_type') == 'Freebie':
-            freebie_schema = connectors.products.schemas.UploadFreebie.parse_obj(product_schema)
+            freebie_schema = connectors.products.schemas.UploadFreebie.model_validate(product_schema.model_dump())
             freebie_schema.download_by_email = True if request.form.get('download_by_email') else False
             connectors.products.upload_freebie(freebie_schema)
         elif request.form.get('product_type') == 'Plus':
-            plus_schema = connectors.products.schemas.UploadPlus.parse_obj(product_schema)
+            plus_schema = connectors.products.schemas.UploadPlus.model_validate(product_schema.model_dump())
             connectors.products.upload_plus(plus_schema)
         elif request.form.get('product_type') == 'Premium':
-            prem_schema = connectors.products.schemas.UploadPrem.parse_obj(product_schema)
+            prem_schema = connectors.products.schemas.UploadPrem.model_validate(product_schema.model_dump())
             prem_schema.standart_price = int(request.form.get('standart_price'))
             prem_schema.extended_price = int(request.form.get('extended_price'))
             if request.form.get('sale_standart_price'):

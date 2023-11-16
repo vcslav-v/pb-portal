@@ -6,7 +6,7 @@ from typing import Optional
 
 
 class Node(BaseModel):
-    id: Optional[int]
+    id: Optional[int] = None
     name: str
     children: list[Node] = []
 
@@ -21,13 +21,13 @@ class Settings(BaseModel):
 
 
 class Transaction(BaseModel):
-    id: Optional[int]
+    id: Optional[int] = None
     date: date_type
     value: int
     comment: str
     currency_id: int
     category_id: int
-    category_id_path: Optional[list[int]]
+    category_id_path: Optional[list[int]] = []
 
 
 class PageTransaction(BaseModel):
@@ -45,16 +45,16 @@ class TransactionPage(BaseModel):
 
 class GetTransactionPage(BaseModel):
     from_date: date_type
-    page: Optional[int]
-    req_str: Optional[str]
+    page: Optional[int] = None
+    req_str: Optional[str] = None
 
 
 class ShortStat(BaseModel):
     frm: date_type
     to: date_type
-    income: Optional[int]
-    expense: Optional[int]
-    profit: Optional[int]
+    income: Optional[int] = None
+    expense: Optional[int] = None
+    profit: Optional[int] = None
 
 
 class Item(BaseModel):

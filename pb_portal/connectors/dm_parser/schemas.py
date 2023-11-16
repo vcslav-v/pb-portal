@@ -24,12 +24,12 @@ class market_places(BaseModel):
 class item(BaseModel):
     url: str
     account_id: int
-    personal_price: Optional[int]
-    commercial_price: Optional[int]
-    extended_price: Optional[int]
-    name: Optional[str]
-    cattegories: Optional[list[str]]
-    ident: Optional[int]
+    personal_price: Optional[int] = None
+    commercial_price: Optional[int] = None
+    extended_price: Optional[int] = None
+    name: Optional[str] = None
+    cattegories: Optional[list[str]] = []
+    ident: Optional[int] = None
 
 
 class product(BaseModel):

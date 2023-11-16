@@ -6,6 +6,7 @@ from pb_portal.connectors import pb
 from boto3 import session as s3_session
 from loguru import logger
 import json
+from pb_admin import schemas as pb_schemas
 
 API_URL = os.environ.get('PRODUCTS_URL', '')
 TOKEN = os.environ.get('PRODUCTS_TOKEN', '')
@@ -154,3 +155,22 @@ def update_task(ident: int, update: schemas.ScheduleUpdate):
         session.auth = ('api', TOKEN)
         resp = session.post(f'{API_URL}/api/update_date_task/{ident}', data=update.json())
         resp.raise_for_status()
+
+
+@logger.catch
+def set_bulk_tag(products: list[pb_schemas.Product], tag: str, category_id: int):
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        data = schemas.BulkTag(tag=tag, products=[], category_id=category_id)
+        data.products = products
+        resp = session.post(f'{API_URL}/api/set_bulk_tag', data=data.model_dump_json())
+        resp.raise_for_status()
+
+
+@logger.catch
+def count_active_bulk_task():
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        resp = session.get(f'{API_URL}/api/bulk_tag_count_tasks')
+        resp.raise_for_status()
+        return resp.text
