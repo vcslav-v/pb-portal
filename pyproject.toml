@@ -5,23 +5,27 @@ description = ""
 authors = ["vaclav-v"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.11"
 Flask = "^2.0.2"
 Flask-HTTPAuth = "^4.5.0"
-loguru = "^0.5.3"
 requests = "^2.26.0"
-pydantic = "^1.8.2"
 gunicorn = "^20.1.0"
 boto3 = "^1.26.35"
 redis = "^4.5.3"
 types-redis = "^4.5.3.0"
 bs4 = "^0.0.1"
 cssutils = "^2.6.0"
+pydantic = "^2.4.2"
+loguru = "^0.7.2"
+pb-admin = {git = "https://github.com/vcslav-v/pb_admin.git", rev = "main"}
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"
 mypy = "^0.910"
 types-requests = "^2.26.0"
+
+[tool.poetry.group.dev.dependencies]
+bump-pydantic = "^0.7.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
