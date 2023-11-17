@@ -10,14 +10,18 @@ var _img_url = '';
 var _page_html_url = '';
 var _add_tag_url = '';
 var _refresh_active_tasks_url = '';
-var _imgs = {};
+var _imgs = JSON.parse(localStorage.getItem('_imgs'));
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
 const darkenCard = function (event) {
     var card = event.currentTarget.closest('.card');
-    var cardId = card.getAttribute('data-card-id'); // ID кнопки
     if (disable_cards.includes(cardId)) {
         return;
     }
+    var cardId = card.getAttribute('data-card-id'); // ID кнопки
     disable_cards.push(cardId);
     console.log('Card ID: ' + cardId); // Логируем ID
 
@@ -66,6 +70,31 @@ const show_page = function () {
             document.querySelectorAll('.btn-close').forEach(function (button) {
                 button.addEventListener('click', darkenCard);
             });
+            for (var i = 0; i < disable_cards.length; i++) {
+                card = document.querySelector('[data-card-id="' + disable_cards[i] + '"]');
+                if (!card) {
+                    continue;
+                }
+                cardId = card.getAttribute('data-card-id'); // ID кнопки
+                card.style.position = 'relative';
+                card.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+                card.style.color = 'white';
+
+
+                // Добавляем кнопку "return"
+                const returnButton = document.createElement('button');
+                returnButton.innerText = 'Return';
+                returnButton.className = 'btn btn-primary position-absolute top-50 start-50 translate-middle';
+
+                returnButton.onclick = function () {
+                    // Возвращаем исходное состояние карточки
+                    card.style.backgroundColor = '';
+                    card.style.color = '';
+                    returnButton.remove();
+                    disable_cards.splice(disable_cards.indexOf(cardId), 1);
+                }
+                card.appendChild(returnButton);
+            }
             if (all_products.length <= per_page) {
                 $('#pagination_block').hide();
             } else {
@@ -92,22 +121,23 @@ const show_page = function () {
 }
 
 const show_imgs = function () {
-    var formData = new FormData();
-    formData.append(
-        'products', JSON.stringify(page_products),
-    );
     $('img[name="product_img"]').each(function () {
         var cardId = $(this).closest('div').attr('data-card-id');
         if (_imgs[cardId]) {
             $(this).attr('src', _imgs[cardId]);
         }
     });
+};
 
-    var allDataPresent = $('img[name="product_img"]').toArray().every(function (img) {
-        var cardId = $(img).closest('div').attr('data-card-id');
-        return _imgs[cardId] !== undefined;
-    });
-    if (!allDataPresent) {
+const load_imgs = function () {
+    for (var i = 0; i < all_products.length; i++) {
+        if (_imgs[all_products[i].id]) {
+            continue;
+        }
+        var formData = new FormData();
+        formData.append(
+            'products', JSON.stringify([all_products[i]]),
+        );
         $.ajax({
             type: 'POST',
             url: _img_url,
@@ -119,12 +149,8 @@ const show_imgs = function () {
             processData: false,
             success: function (response) {
                 _imgs = Object.assign(_imgs, response);
-                $('img[name="product_img"]').each(function () {
-                    var cardId = $(this).closest('div').attr('data-card-id');
-                    if (_imgs[cardId]) {
-                        $(this).attr('src', _imgs[cardId]);
-                    }
-                });
+                localStorage.setItem('_imgs', JSON.stringify(_imgs));
+                show_imgs();
             },
             error: function (error) {
                 console.log(error);
@@ -168,6 +194,7 @@ const set_search = function (url, page_html_url, img_url, add_tag_url, refresh_a
                 cur_category_name = response.category_name;
                 cur_category_id = response.category_id;
                 show_page()
+                load_imgs();
             },
 
             error: function (error) {
