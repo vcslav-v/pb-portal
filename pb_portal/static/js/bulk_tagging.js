@@ -10,7 +10,7 @@ var _img_url = '';
 var _page_html_url = '';
 var _add_tag_url = '';
 var _refresh_active_tasks_url = '';
-var _imgs = JSON.parse(localStorage.getItem('_imgs'));
+var _imgs = JSON.parse(localStorage.getItem('_imgs')) || {};
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
