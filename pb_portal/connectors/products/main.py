@@ -58,19 +58,25 @@ def get_page_data() -> schemas.ProductPageData:
 def upload_freebie(freebie: schemas.UploadFreebie):
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        session.post(f'{API_URL}/api/pb_freebie_upload', data=freebie.json())
+        data = freebie.model_dump_json()
+        data = rf'{data}'.replace('\\n', '').replace('\\r', '').replace("\'", "")
+        session.post(f'{API_URL}/api/pb_freebie_upload', data=data)
 
 
 def upload_plus(plus: schemas.UploadPlus):
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        session.post(f'{API_URL}/api/pb_plus_upload', data=plus.json())
+        data = plus.model_dump_json()
+        data = rf'{data}'.replace('\\n', '').replace('\\r', '').replace("\'", "")
+        session.post(f'{API_URL}/api/pb_plus_upload', data=data)
 
 
 def upload_prem(prem: schemas.UploadPrem):
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        resp = session.post(f'{API_URL}/api/pb_prem_upload', data=prem.json())
+        data = prem.model_dump_json()
+        data = rf'{data}'.replace('\\n', '').replace('\\r', '').replace("\'", "")
+        resp = session.post(f'{API_URL}/api/pb_prem_upload', data=data)
         logger.debug(resp.content)
 
 
