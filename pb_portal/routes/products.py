@@ -231,19 +231,21 @@ def product_schedule():
 
 
 @logger.catch
-@app_route.route('/prepare_s3_url', methods=['GET'])
+@app_route.route('/prepare_s3_url', methods=['POST'])
 def prepare_s3_url():
-    filename = request.args.get('filename')
-    cur_filename = request.args.get('cur_filename')
+    logger.debug(request.args)
+    filename = request.form.get('filename')
+    cur_filename = request.form.get('cur_filename')
     right_filename = f'{filename}.{cur_filename.split(".")[-1]}'
     content_type = 'application/octet-stream'
-    prefix = request.args.get('prefix')
+    prefix = request.form.get('prefix')
     try:
         result = connectors.products.make_s3_url(
             right_filename,
             content_type,
             prefix,
         )
+        logger.debug(result)
     except Exception as e:
         logger.error(e.args)
         return

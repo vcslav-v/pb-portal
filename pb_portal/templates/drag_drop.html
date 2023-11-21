@@ -594,7 +594,12 @@
   function getSignedRequest(file, prefix, filename, formData) {
     console.log(`sending ${filename}`)
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', `{{ url_for('products.prepare_s3_url') }}?cur_filename=${file.name}&content_type=${file.type}&prefix=${prefix}&filename=${filename}`);
+    var local_form_data = new FormData();
+    local_form_data.append('cur_filename', file.name)
+    local_form_data.append('content_type', file.type)
+    local_form_data.append('prefix', prefix)
+    local_form_data.append('filename', filename)
+    xhr.open('POST', "{{ url_for('products.prepare_s3_url') }}");
     xhr.onreadystatechange = () => {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
@@ -607,7 +612,7 @@
         }
       }
     };
-    xhr.send();
+    xhr.send(local_form_data);
   }
   function initUpload(prefix, formData, gallery, safe_product_name) {
     num_uploads = 2 + gallery.length;
