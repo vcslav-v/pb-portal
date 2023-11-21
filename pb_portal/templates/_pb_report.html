@@ -32,7 +32,7 @@
             <tr>
                 <td><a href="{{prem.url}}">{{prem.title}}</a></td>
                 <td>{{prem.sales}}</td>
-                <td>${{prem.profit}}</td>
+                <td>${{prem.profit|int}}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -53,7 +53,7 @@
             <tr>
                 <td><a href="{{prem.url}}">{{prem.title}}</a></td>
                 <td>{{prem.sales}}</td>
-                <td>${{prem.profit}}</td>
+                <td>${{prem.profit|int}}</td>
             </tr>
             {% endfor %}
         </tbody>

@@ -8,7 +8,7 @@ from datetime import datetime
 class PremTop(BaseModel):
     title: str
     url: str
-    profit: int
+    profit: float
     sales: int
 
 
