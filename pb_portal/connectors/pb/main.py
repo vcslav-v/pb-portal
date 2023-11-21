@@ -126,27 +126,17 @@ def get_affiliates() -> schemas.AffiliateInfo:
     aff_resp = json.loads(resp.text)
     result = schemas.AffiliateInfo()
     idents = []
-    for affiliate in aff_resp:
-        if affiliate['currency'] != 'usd':
-            continue
-        if affiliate['id'] not in idents:
-            result.affilates.append(schemas.Affiliate(
-                ident=affiliate['id'],
-                name=affiliate['name'],
-                url=PB_USER_URL.format(ident=affiliate['id']),
-                ref_num=affiliate['num_ref'],
-                profit=int(affiliate['sum'] - affiliate['to_pay']),
-                to_pay=int(affiliate['to_pay'] if affiliate['accrued'] == 0 else 0),
-            ))
-            result.ref_num += affiliate['num_ref']
-            idents.append(affiliate['id'])
-        else:
-            for aff in result.affilates:
-                if aff.ident != affiliate['id']:
-                    continue
-                aff.profit -= int(affiliate['to_pay'])
-                aff.to_pay += int(affiliate['to_pay'] if affiliate['accrued'] == 0 else 0)
-                break
+    for _, affiliate in aff_resp.items():
+        result.affilates.append(schemas.Affiliate(
+            ident=affiliate['id'],
+            name=affiliate['name'],
+            url=PB_USER_URL.format(ident=affiliate['id']),
+            ref_num=affiliate['num_ref'],
+            profit=int(affiliate['sum'] - affiliate['to_pay']),
+            to_pay=int(affiliate['to_pay']),
+        ))
+        result.ref_num += affiliate['num_ref']
+        idents.append(affiliate['id'])
     result.aff_num = len(result.affilates)
     for affilate in result.affilates:
         result.profit_sum += affilate.profit
