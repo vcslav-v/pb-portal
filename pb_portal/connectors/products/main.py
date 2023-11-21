@@ -38,7 +38,7 @@ FILTER_TAGS = []
 def get_all(page_data: schemas.FilterPage) -> schemas.ProductPage:
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        resp = session.post(f'{API_URL}/api/products', data=page_data.model_dump())
+        resp = session.post(f'{API_URL}/api/products', data=page_data.model_dump_json().encode('utf-8'))
         logger.debug(resp.content)
         if resp.ok:
             return schemas.ProductPage.parse_raw(resp.content)
@@ -58,19 +58,19 @@ def get_page_data() -> schemas.ProductPageData:
 def upload_freebie(freebie: schemas.UploadFreebie):
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        session.post(f'{API_URL}/api/pb_freebie_upload', json=freebie.model_dump())
+        session.post(f'{API_URL}/api/pb_freebie_upload', data=freebie.model_dump_json().encode('utf-8'))
 
 
 def upload_plus(plus: schemas.UploadPlus):
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        session.post(f'{API_URL}/api/pb_plus_upload', json=plus.model_dump())
+        session.post(f'{API_URL}/api/pb_plus_upload', data=plus.model_dump_json().encode('utf-8'))
 
 
 def upload_prem(prem: schemas.UploadPrem):
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        resp = session.post(f'{API_URL}/api/pb_prem_upload', json=prem.model_dump())
+        resp = session.post(f'{API_URL}/api/pb_prem_upload', data=prem.model_dump_json().encode('utf-8'))
         logger.debug(resp.content)
 
 
@@ -153,7 +153,7 @@ def rm_task(ident: int):
 def update_task(ident: int, update: schemas.ScheduleUpdate):
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        resp = session.post(f'{API_URL}/api/update_date_task/{ident}', json=update.model_dump())
+        resp = session.post(f'{API_URL}/api/update_date_task/{ident}', data=update.model_dump_json().encode('utf-8'))
         resp.raise_for_status()
 
 
@@ -163,7 +163,7 @@ def set_bulk_tag(products: list[pb_schemas.Product], tag: str, category_id: int)
         session.auth = ('api', TOKEN)
         data = schemas.BulkTag(tag=tag, products=[], category_id=category_id)
         data.products = products
-        resp = session.post(f'{API_URL}/api/set_bulk_tag', json=data.model_dump())
+        resp = session.post(f'{API_URL}/api/set_bulk_tag', data=data.model_dump_json().encode('utf-8'))
         resp.raise_for_status()
 
 

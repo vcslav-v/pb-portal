@@ -82,7 +82,7 @@ def add_contract(new_contract: schemas.Contract):
         session.auth = ('api', TOKEN)
         session.post(
             f'{API_URL}/api/make-contract',
-            json=new_contract.model_dump(),
+            data=new_contract.model_dump_json().encode('utf-8'),
         )
 
 
@@ -91,5 +91,5 @@ def gen_contracts(new_contract: schemas.Contract):
         session.auth = ('api', TOKEN)
         session.post(
             f'{API_URL}/api/make-contracts',
-            json=new_contract.model_dump(),
+            data=new_contract.model_dump_json().encode('utf-8'),
         )

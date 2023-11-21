@@ -14,7 +14,7 @@ def make_digest(digest: schemas.PbDigest) -> str:
     """Make digest."""
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        resp = session.post(f'{URL}/make_digest', json=digest.model_dump())
+        resp = session.post(f'{URL}/make_digest', data=digest.model_dump_json().encode('utf-8'))
         if resp.ok:
             result = schemas.HTML.parse_raw(resp.text)
             logger.debug(resp.content)
@@ -27,7 +27,7 @@ def make_featured(featured: schemas.PbFeatured) -> schemas.PbFeatured:
     """Make featured."""
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        resp = session.post(f'{URL}/make_featured', json=featured.model_dump())
+        resp = session.post(f'{URL}/make_featured', data=featured.model_dump_json().encode('utf-8'))
         if resp.ok:
             result = schemas.PbFeatured.parse_raw(resp.text)
             return result

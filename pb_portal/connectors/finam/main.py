@@ -39,14 +39,14 @@ def rm_transaction(trans_id):
 def post_transaction(transaction: schemas.Transaction):
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        resp = session.post(f'{NETLOC}/api/transaction', json=transaction.model_dump())
+        resp = session.post(f'{NETLOC}/api/transaction', data=transaction.model_dump_json().encode('utf-8'))
         logger.debug(resp.content)
 
 
 def get_page_transactions(data: schemas.GetTransactionPage) -> schemas.TransactionPage:
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        resp = session.get(f'{NETLOC}/api/transactions', json=data.model_dump())
+        resp = session.get(f'{NETLOC}/api/transactions', data=data.model_dump_json().encode('utf-8'))
         if resp.ok:
             logger.debug(resp.content)
         return schemas.TransactionPage.parse_raw(resp.content)
@@ -64,7 +64,7 @@ def get_page_transaction(trans_id) -> schemas.Transaction:
 def get_get_short_stat(fr_to: schemas.ShortStat) -> schemas.ShortStat:
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        resp = session.get(f'{NETLOC}/api/short-stat', json=fr_to.model_dump())
+        resp = session.get(f'{NETLOC}/api/short-stat', data=fr_to.model_dump_json().encode('utf-8'))
         if resp.ok:
             logger.debug(resp.content)
         return schemas.ShortStat.parse_raw(resp.content)

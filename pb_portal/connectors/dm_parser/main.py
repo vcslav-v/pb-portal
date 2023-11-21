@@ -32,7 +32,7 @@ def get_markets() -> schemas.market_places:
 def post_product(product_info: schemas.product) -> schemas.result:
     with requests.sessions.Session() as session:
         session.auth = ('api', TOKEN)
-        resp = session.post(f'{URL}/api/post_product', json=product_info.model_dump())
+        resp = session.post(f'{URL}/api/post_product', data=product_info.model_dump_json().encode('utf-8'))
         if resp.ok:
             logger.debug(resp.content)
             return schemas.result.parse_raw(resp.content)

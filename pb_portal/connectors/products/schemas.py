@@ -4,6 +4,7 @@ from typing import Optional
 from datetime import date, datetime
 from pb_admin import schemas as pb_schemas
 
+
 class ProductInPage(BaseModel):
     ident: int
     title: str
