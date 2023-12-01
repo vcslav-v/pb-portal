@@ -5,6 +5,7 @@ from datetime import datetime
 import requests
 from loguru import logger
 import pb_admin
+from pb_admin import schemas as pb_schemas
 
 from pb_portal.connectors.pb import schemas
 
