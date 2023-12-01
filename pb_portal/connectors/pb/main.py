@@ -177,5 +177,5 @@ def get_full_products(products: list[schemas.Product]) -> list[schemas.Product]:
 def search_tag(tag: str) -> pb_schemas.Tag | None:
     pb_session = pb_admin.PbSession(SITE_URL, PB_LOGIN, PB_PASSWORD)
     tags = pb_session.tags.get_list(search=tag)
-    if tags and tags[0].name == tag.lower():
+    if tags and tag.lower() in [t.name for t in tags]:
         return tags[0]

@@ -1,7 +1,7 @@
 from . import schemas
 from .main import (get_affiliates, get_correct_slug, get_product_info,
                    get_site_info_of, get_site_info_of_tags, get_top_products, get_categories,
-                   get_products, get_full_products)
+                   get_products, get_full_products, search_tag)
 
 __all__ = [
     'get_site_info_of',
@@ -14,4 +14,5 @@ __all__ = [
     'get_categories',
     'get_products',
     'get_full_products',
+    'search_tag',
 ]
