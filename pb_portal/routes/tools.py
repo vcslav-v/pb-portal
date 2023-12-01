@@ -24,6 +24,7 @@ def graphics():
 @logger.catch
 @app_route.route('/utm', methods=['GET'])
 def utm():
+    
     return render_template(
         'utm_tools.html',
     )
@@ -105,9 +106,34 @@ def gify():
 
 
 @logger.catch
+@app_route.route('/get_utm_info', methods=['GET'])
+def get_utm_info():
+    return connectors.link_dealer.get_info().model_dump_json()
+
+
+@logger.catch
 @app_route.route('/get_utm', methods=['POST'])
 def get_utm():
-    return connectors.link_dealer.get_utm(**request.form.to_dict()).json()
+    data = connectors.link_dealer.schemas.LinkCreate(
+        target_url=request.form.get('target_url'),
+        source=int(request.form.get('source')),
+        medium=int(request.form.get('medium')),
+        campaign_project=int(request.form.get('campaign_project')),
+        term_material=int(request.form.get('term_material')),
+        term_page=int(request.form.get('term_page')),
+        user=int(request.form.get('user')),
+    )
+    if request.form.get('campaning_dop'):
+        data.campaning_dop = request.form.get('campaning_dop')
+    if request.form.get('content'):
+        data.content = int(request.form.get('content'))
+    return connectors.link_dealer.get_utm(data).model_dump_json()
+
+
+@logger.catch
+@app_route.route('/get_last_utms', methods=['GET'])
+def get_last_utms():
+    return connectors.link_dealer.get_last_utms().model_dump_json()
 
 
 @logger.catch

@@ -7,18 +7,23 @@
 {% block content %}
 <div class="container mt-4">
     <!-- Панель поиска -->
-    <div class="row mb-3">
+    <div class="row mb-1">
         <div class="col-3">
-            <input type="text" class="form-control" placeholder="Tag" aria-label="Tag" name="tag">
+            <input type="text" class="form-control" placeholder="Tag" aria-label="Tag" name="tag" id="tag_input">
         </div>
         <div class="col-auto">
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmModal" onclick="refresh_confirm_message()">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmModal"
+                onclick="refresh_confirm_message()">
                 Add tag
             </button>
-
         </div>
         <div class="col-3 d-flex align-items-center">
             <h5 class="mb-0">Active tasks: <span id="active_task"></span></h5>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-auto">
+            <small><a href="" id="tag_url" target="_blank"></a></small>
         </div>
     </div>
     <form action="#" id="search_form">
@@ -64,7 +69,12 @@
                         id="close_modal_btn_cross"></button>
                 </div>
                 <div class="modal-body" id="confirmBody">
-                    Add tag to all products?
+                    <div class="spinner-border" role="status" id="modal_loader">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+
+                    <span id="confirmation_text">Add tag to all products?</span>
+                    
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
@@ -109,6 +119,8 @@
             '{{ url_for("products.bulk_tagging_get_imgs") }}',
             '{{ url_for("products.bulk_tagging_set_tag") }}',
             '{{ url_for("products.count_active_bulk_task") }}',
+            '{{ url_for("products.check_tag") }}',
+            '{{ site_url }}'
         )
     });
 

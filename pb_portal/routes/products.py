@@ -9,6 +9,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from pb_portal import connectors
 
+SITE_URL = os.environ.get('SITE_URL', '')
+
 app_route = Blueprint('route', __name__, url_prefix='/products')
 
 auth = HTTPBasicAuth()
@@ -98,6 +100,7 @@ def bulk_tagging():
             categories=categories,
             images=[],
             total_pages=10,
+            site_url=SITE_URL
         )
 
 
@@ -106,6 +109,16 @@ def bulk_tagging():
 @auth.login_required(role=['admin', 'pb_admin'])
 def count_active_bulk_task():
     return json.dumps({'count': connectors.products.count_active_bulk_task()})
+
+
+@logger.catch
+@app_route.route('/check_tag', methods=['post'])
+@auth.login_required(role=['admin', 'pb_admin'])
+def check_tag():
+    exist_tag = connectors.pb.search_tag(request.form.get('tag'))
+    if exist_tag:
+        return exist_tag.model_dump_json()
+    return '{}'
 
 
 @logger.catch

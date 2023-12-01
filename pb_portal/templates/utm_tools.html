@@ -1,89 +1,292 @@
 {% extends "base.html" %}
 {% block app_content %}
 <div class="container">
-    <div class="row m-4">
-        <div class="col-4">
+    <div class="row mb-3">
+        <div class="col-12">
             <h3>Link dealer</h3>
         </div>
-    </div>
-    <div class="row m-4">
-        <div class="col-10">
-            <form id="get_utm" action="#" method="post" enctype="multipart/form-data">
-                <div class="input-group mb-3">
-                    <input name="link" type="text" class="form-control w-25" placeholder="URL" aria-describedby="addon-wrapping">
-                    <select name="item_type" class="form-select" id="inputGroupSelect01">
-                        <option value="plus">Plus</option>
-                        <option value="premium">Premium</option>
-                        <option value="freebie">Freebie</option>
-                    </select>
-                    <input name="project" type="text" class="form-control" placeholder="Optional company" aria-describedby="addon-wrapping">
-                    <select name="source" class="form-select" id="inputGroupSelect01">
-                        <option value="dribbble">Dribbble</option>
-                        <option value="behance">Behance</option>
-                        <option value="pinterest">Pinterest</option>
-                        <option value="youtube">Youtube</option>
-                        <option value="facebook">Facebook</option>
-                        <option value="twitter">Twitter</option>
-                        <option value="instagram">Instagram</option>
-                        <option value="pixelbuddha_article">PB article</option>
-                        <option value="pixelbuddha_push">PB push</option>
-                        <option value="email_digest">Email digest</option>
-                        <option value="email_exclusive">Email exclusive</option>
-                        <option value="thedesignest_email">TD email</option>
-                        <option value="thedesignest_article">TD article</option>
-                    </select>
-                    <button class="btn btn-outline-secondary" type="submit" id="inputGroupFileAddon04">Get utm</button>
-                </div> 
-            </form>             
+        <div class="col-6 offset-3">
+            <div class="form-floating">
+                <select class="form-select" id="user" aria-label="User">
+                    <option selected></option>
+                </select>
+                <label for="user">User</label>
+            </div>
         </div>
     </div>
-    <div class="row m-4">
-        <div class="col-10">
-            <table id="link_table" class="table table-striped visually-hidden">
-                <thead>
-                  <tr>
-                    <th scope="col">to</th>
-                    <th scope="col">Link</th>
-                  </tr>
-                </thead>
-                <tbody name="body_link_table">
-                  
-                </tbody>
-              </table>
+    <div class="row mb-3" id="page_content">
+        <div class="col-6">
+            <div class="row mb-2">
+                <div class="col-12">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="target_url">
+                        <label for="target_url">Target url</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-4">
+                    <div class="form-floating">
+                        <select class="form-select" id="project" aria-label="Project">
+                        </select>
+                        <label for="project">Project</label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-floating">
+                        <select class="form-select" id="product_type" aria-label="Product type">
+                        </select>
+                        <label for="product_type">Product type</label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="form-floating">
+                        <select class="form-select" id="page_type" aria-label="Page type">
+                        </select>
+                        <label for="page_type">Page type</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-6">
+                    <div class="form-floating">
+                        <select class="form-select" id="medium" aria-label="Channel">
+                        </select>
+                        <label for="medium">Channel</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-floating">
+                        <select class="form-select" id="source" aria-label="Source">
+                        </select>
+                        <label for="source">Source</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-12">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-info btn-sm" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#for_adv_block" aria-controls="collapseExample" id="check_adv">
+                            For an advertising company
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-2 collapse" id="for_adv_block">
+                <div class="col-6">
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="campaign_name">
+                            <label for="target_url">Campany name</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-floating">
+                        <select class="form-select" id="content" aria-label="Adv.type">
+                        </select>
+                        <label for="content">Adv.type</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-2">
+                <div class="col-12 d-grid gap-2">
+                    <button type="button" class="btn btn-primary" id="get_utm" data-bs-toggle="modal" data-bs-target="#done_link">Get link</button>
+                </div>
+            </div>
         </div>
+        <div class="col-5 offset-1">
+            <div id="desc_product_type">
+                <h4>Тип продукта</h4>
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td>freebie</td>
+                            <td>Ссылка ведёт на freebie продукт или раздел freebie</td>
+                        </tr>
+                        <tr>
+                            <td>plus</td>
+                            <td>Ссылка ведёт на plus продукт или раздел plus</td>
+                        </tr>
+                        <tr>
+                            <td>premium</td>
+                            <td>Ссылка ведёт на premium продукт или раздел premium</td>
+                        </tr>
+                        <tr>
+                            <td>index</td>
+                            <td>Ссылка ведёт на https://pixelbuddha.net</td>
+                        </tr>
+                        <tr>
+                            <td>article</td>
+                            <td>Ссылка ведёт на статью или раздел article</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="desc_page_type">
+                <h4>Тип страницы</h4>
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td>item</td>
+                            <td>Ссылка ведёт на продукт</td>
+                        </tr>
+                        <tr>
+                            <td>subscription</td>
+                            <td>Ссылка ведёт на plus подписку</td>
+                        </tr>
+                        <tr>
+                            <td>site</td>
+                            <td>Ссылка ведет на сайт (не продукт и не подписка)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="desc_medium">
+                <h4>Канал привлечения трафика</h4>
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td>social</td>
+                            <td>Соц сети:
+                                <ul>
+                                    <li>dribbble.com</li>
+                                    <li>behance.net</li>
+                                    <li>pinterest.com</li>
+                                    <li>youtube.com</li>
+                                    <li>facebook.com</li>
+                                    <li>twitter.com</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>market</td>
+                            <td>Маркеты:
+                                <ul>
+                                    <li>creativemarket.com</li>
+                                    <li>elements.envato.com</li>
+                                    <li>designcuts.com</li>
+                                    <li>etc</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>email_digest</td>
+                            <td>Дайджест рассылка</td>
+                        </tr>
+                        <tr>
+                            <td>email_exclusive</td>
+                            <td>Эксклюзивная рассылка</td>
+                        </tr>
+                        <tr>
+                            <td>push</td>
+                            <td>Пуш уведомления</td>
+                        </tr>
+                        <tr>
+                            <td>article</td>
+                            <td>Статья</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="desc_source">
+                <h4>Источник траффика</h4>
+                <p>Уточните источник трафика</p>
+            </div>
+            <div id="desc_project">
+                <h4>Проект</h4>
+                <p>Выберете для какого проекта ссылка</p>
+            </div>
+            <div id="desc_campaign">
+                <h4>Метка рекламной компании</h4>
+                <p>Содержит идентификатор рекламной компании:</p>
+                    <ul>
+                        <li>open_new_pb_site</li>
+                        <li>black_friday_2020</li>
+                        <li>etc</li>
+                    </ul>
+                <p>Или другую важную для вас информацию, все слова в этом поле должны быть отделены _ (нижним подчеркиванием). Пробелы и другие знаки не допускаются</p>
+            </div>
+            <div id="desc_content">
+                <h4>Тип размещения</h4>
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td>text</td>
+                            <td>Текстовая ссылка</td>
+                        </tr>
+                        <tr>
+                            <td>button</td>
+                            <td>Ссылка в кнопке</td>
+                        </tr>
+                        <tr>
+                            <td>img</td>
+                            <td>Ссылка в изображении</td>
+                        </tr>
+                        <tr>
+                            <td>profile</td>
+                            <td>Ссылка в профиле</td>
+                        </tr>
+                        <tr>
+                            <td>push</td>
+                            <td>Ссылка в пуш уведомлении</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-12">
+            <h3>Last 10 links</h3>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">User</th>
+                <th scope="col">Link</th>
+              </tr>
+            </thead>
+            <tbody id="table_body">
+
+            </tbody>
+          </table>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="done_link" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5">Your link is ready!</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <a id="result_url" href=""></a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
 {% endblock %}
 {% block script %}
+<script src="{{ url_for('static', filename='js/utm.js') }}"></script>
 <script>
-    var utm_form = document.getElementById('get_utm');
-    var body_link_table = $('tbody[name=body_link_table]')
-    utm_form.onsubmit = function(event) {
-        event.preventDefault();
-        var formData = new FormData(utm_form);
-        $.ajax({
-                type: 'POST',
-                url: "{{ url_for('tools.get_utm') }}",
-                data: formData,
-                data: formData,
-                dataType: 'json',
-                contentType: false,
-                cache: false,
-                mimeType: "multipart/form-data",
-                processData: false,
-                success: function(data, status, xhr) {
-                    
-                    $('#link_table').removeClass("visually-hidden");
-                    body_link_table.empty();
-                    for(utm of data.utms){
-                        body_link_table.append('<tr><td>' + utm.desc + '</td><td><a target="_blank" href="' + utm.link + '">'+ utm.link +'</a></td></tr>');
-                    }
-                },
-                error: function(error) {
-                    console.log(error);
-                },
-                
-            });
-    };
+    document.addEventListener('DOMContentLoaded', (event) => {
+        set_default(
+            '{{ url_for("tools.get_utm_info") }}',
+            '{{ url_for("tools.get_utm") }}',
+            '{{ url_for("tools.get_last_utms") }}',
+        );
+    });
+
+
+
 </script>
 {% endblock %}
