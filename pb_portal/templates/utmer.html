@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block app_content %}
+<div class="container">
+    <div class="row m-4">
+        <div class="col-4">
+            <h3>HTML to UTM-HTML</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <div class="row m-4">
+                <div class="col-12">
+                    <label for="HTML_area" class="form-label">HTML</label>
+                    <textarea class="form-control" id="HTML_area" rows="10"></textarea>
+                </div>
+            </div>
+            <div class="row m-4">
+                <div class="col-6">
+                    <div class="form-floating">
+                        <select class="form-select" id="project" aria-label="Project">
+                        </select>
+                        <label for="project">Project</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="campaign_name">
+                        <label for="campaign_name">Campanign name</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-4">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" type="button" id="add_utm">Add UTM</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="row m-4">
+                <div class="col-12">
+                    <label for="result_area" class="form-label">Result</label>
+                    <textarea class="form-control" id="result_area" rows="10" disabled></textarea>
+                </div>
+            </div>
+            <div class="row m-4">
+                <div class="col-12">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-secondary" type="button" id="copy_to_clipboard">Copy to
+                            clipboard</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    var companyNameRegex = /^[a-z0-9_]+$/;
+    $.ajax({
+        url: '{{ url_for("tools.get_utm_info") }}',
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            _info = data;
+            for (let prj of data.campaign_projects) {
+                $('#project').append(new Option(prj.value, prj.ident));
+            }
+
+        },
+        error: function (data) {
+            console.log(data);
+        }
+    });
+    $('#add_utm').click(function () {
+        get_html();
+    });
+    $('#copy_to_clipboard').click(function () {
+        copyToClipboard();
+    });
+    $('#campaign_name').change(function () {
+        validate_campaign_name();
+    });
+
+    const validate_campaign_name = function () {
+        $('#campaign_name').removeClass('is-invalid');
+        $('#campaign_name').removeClass('is-valid');
+
+        let campaign_name = $('#campaign_name').val();
+        if (campaign_name == '') {
+            $('#campaign_name').addClass('is-valid');
+            return true;
+        } else {
+            if (companyNameRegex.test(campaign_name)) {
+                $('#campaign_name').addClass('is-valid');
+                return true;
+            } else {
+                $('#campaign_name').addClass('is-invalid');
+                return false;
+            }
+        }
+    };
+
+    const get_html = function () {
+        if (!validate_campaign_name()) {
+            return;
+        }
+        $('#result_area').val('Working...');
+        formData = new FormData()
+        formData.append('campaign_name', $('#campaign_name').val())
+        formData.append('project', $('#project').val())
+        formData.append('html', $('#HTML_area').val())
+        $.ajax({
+            url: '{{ url_for("tools.get_utm_html") }}',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function (data) {
+                $('#result_area').val(data.result);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+
+    }
+    const copyToClipboard = function () {
+        navigator.clipboard.writeText($('#result_area').val());
+    }
+</script>
+{% endblock %}

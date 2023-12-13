@@ -119,6 +119,7 @@ def featured_source():
                 video=connectors.mailer.schemas.Video.parse_raw(request.form.get('video')) if request.form.get('video') else None,
                 bundle=connectors.mailer.schemas.Bundle.parse_raw(request.form.get('bundle')) if request.form.get('bundle') else None,
                 popular=json.loads(request.form.get('popular')) if request.form.get('popular') else [],
+                campaign_name=request.form.get('campaign_name'),
             )
         result = connectors.mailer.make_featured(data)
         page_ident = str(
@@ -191,7 +192,9 @@ def get_featured_similar():
 @app_route.route('/make_digest', methods=['POST'])
 @auth.login_required(role=['admin', 'pb_admin'])
 def make_digest():
-    data = connectors.mailer.schemas.PbDigest(data=request.form.to_dict())
+    data = request.form.to_dict()
+    data.pop('campaign_name')
+    data = connectors.mailer.schemas.PbDigest(data=data, campaign_name=request.form.get('campaign_name'))
     result = connectors.mailer.make_digest(data)
     page_ident = str(
         int(datetime.utcnow().timestamp()) + randint(0, int(datetime.utcnow().timestamp()))

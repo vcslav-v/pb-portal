@@ -32,3 +32,15 @@ def make_featured(featured: schemas.PbFeatured) -> schemas.PbFeatured:
             result = schemas.PbFeatured.parse_raw(resp.text)
             return result
         return schemas.PbFeatured(product_url=featured.product_url)
+
+
+@logger.catch
+def html_with_utm(data: schemas.HTML_with_UTM) -> schemas.HTML:
+    """Make html with utm."""
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        resp = session.post(f'{URL}/html_with_utm', data=data.model_dump_json().encode('utf-8'))
+        if resp.ok:
+            result = schemas.HTML.model_validate_json(resp.text)
+            return result
+        return schemas.HTML(result='error')

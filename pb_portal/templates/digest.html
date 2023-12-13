@@ -29,6 +29,14 @@
             </div>
             <div class="row m-4">
                 <div class="col-12">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="campaign_name">
+                        <label for="campaign_name">Campanign name</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-4">
+                <div class="col-12">
                     <div class="d-grid gap-2">
                         <button type="button" class="btn btn-outline-primary" onclick="refresh()">Refresh</button>
                     </div>
@@ -45,7 +53,8 @@
             <div class="row m-4">
                 <div class="col-12">
                     <div class="form-floating">
-                        <textarea class="form-control" placeholder="HTML" id="resultArea" style="height: 100px"></textarea>
+                        <textarea class="form-control" placeholder="HTML" id="resultArea"
+                            style="height: 100px"></textarea>
                         <label for="floatingTextarea">Result</label>
                     </div>
                 </div>
@@ -53,9 +62,10 @@
             <div class="row m-4">
                 <div class="col-12">
                     <div class="input-group mb-3">
-                        <button class="btn btn-outline-secondary" type="button" id="button-addon1" onclick="copyToClipboard()">Copy preview url</button>
+                        <button class="btn btn-outline-secondary" type="button" id="button-addon1"
+                            onclick="copyToClipboard()">Copy preview url</button>
                         <input type="text" class="form-control" id="preview_url" disabled>
-                      </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -69,11 +79,41 @@
 {% endblock %}
 {% block script %}
 <script>
+var companyNameRegex = /^[a-z0-9_]+$/;
+
+document.addEventListener('DOMContentLoaded', (event) => {
+        $('#campaign_name').on('change', function () {
+            validate_campaign_name();
+        });
+    });
+    const validate_campaign_name = function () {
+        $('#campaign_name').removeClass('is-invalid');
+        $('#campaign_name').removeClass('is-valid');
+
+        let campaign_name = $('#campaign_name').val();
+        if (campaign_name == '') {
+            $('#campaign_name').addClass('is-valid');
+            return true;
+        } else {
+            if (companyNameRegex.test(campaign_name)) {
+                $('#campaign_name').addClass('is-valid');
+                return true;
+            } else {
+                $('#campaign_name').addClass('is-invalid');
+                return false;
+            }
+        }
+    };
+
     function refresh() {
+        if (!validate_campaign_name()) {
+            return;
+        }
         $('#preview').removeAttr('src')
         $('#preview_url').val('')
         $('#resultArea').val('')
         formData = new FormData()
+        formData.append('campaign_name', $('#campaign_name').val())
         var cur_url;
         for (input_elem of $('input[id="pbUrl"]')) {
             if (input_elem.getAttribute('name') == 'premium_big') {
@@ -95,7 +135,7 @@
                     'gallery': gallery
 
                 }))
-                
+
             } else if (input_elem.getAttribute('name') == 'common_big') {
                 var name = `${input_elem.getAttribute('name')}|${input_elem.getAttribute('ident')}`;
                 formData.append(name, JSON.stringify({
@@ -112,10 +152,10 @@
                 }))
             } else if (input_elem.getAttribute('name') == 'bee_free_html') {
                 var name = `${input_elem.getAttribute('name')}|${input_elem.getAttribute('ident')}`;
-                formData.append(name, JSON.stringify({'html': input_elem.value}))
+                formData.append(name, JSON.stringify({ 'html': input_elem.value }))
             }
         }
-        
+
         $.ajax({
             type: 'POST',
             url: "{{ url_for('mail.make_digest') }}",
@@ -131,7 +171,7 @@
                 $.get(response, function (data, status) {
                     $('#resultArea').val(data)
                 });
-                
+
             },
             error: function (error) {
                 console.log(error);
@@ -195,8 +235,12 @@
     function copyResult() {
         navigator.clipboard.writeText($('#resultArea').val());
     }
-    function copyToClipboard(){
+    function copyToClipboard() {
         navigator.clipboard.writeText($('#preview_url').val());
     }
+
+    $('#campaign_name').on('change', function () {
+        validate_campaign_name();
+    });
 </script>
 {% endblock %}

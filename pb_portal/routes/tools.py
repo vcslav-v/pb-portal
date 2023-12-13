@@ -289,3 +289,23 @@ def tiny_check():
         request.form.get('prefix'),
     )
     return tiny_zip
+
+
+@logger.catch
+@app_route.route('/utmer', methods=['GET', 'POST'])
+def utmer():
+    return render_template(
+            'utmer.html',
+        )
+
+
+@logger.catch
+@app_route.route('/get_utm_html', methods=['POST'])
+def get_utm_html():
+    data = connectors.mailer.schemas.HTML_with_UTM(
+        html=request.form.get('html'),
+        campaign_project=int(request.form.get('project')),
+        campaning_dop=request.form.get('campaign_name'),
+    )
+    result = connectors.mailer.html_with_utm(data)
+    return result.model_dump_json()

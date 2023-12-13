@@ -6,6 +6,7 @@ from typing import Optional
 class PbDigest(BaseModel):
     """Pydantic's model for the pb digest."""
     data: dict
+    campaign_name: str | None = None
 
 
 class HTML(BaseModel):
@@ -53,9 +54,17 @@ class PbFeatured(BaseModel):
     video: Optional[Video] = None
     bundle: Optional[Bundle] = None
     popular: list[str] = []
+    campaign_name: str | None = None
 
 
 class PbFeaturedPage(BaseModel):
     """Pydantic's model for the pb featured page."""
     data: PbFeatured
     controls: str
+
+
+class HTML_with_UTM(BaseModel):
+    html: str
+    chanel: str = 'email_custom'
+    campaign_project: str | int = 'pb'
+    campaning_dop: str | None = None
