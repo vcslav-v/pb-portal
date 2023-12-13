@@ -198,7 +198,7 @@
                 <h4>Проект</h4>
                 <p>Выберете для какого проекта ссылка</p>
             </div>
-            <div id="desc_campaign">
+            <div id="desc_campaign_name">
                 <h4>Метка рекламной компании</h4>
                 <p>Содержит идентификатор рекламной компании:</p>
                     <ul>
@@ -267,7 +267,10 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <a id="result_url" href=""></a>
+                <div class="input-group mb-3">
+                    <button class="btn btn-outline-secondary" type="button" id="button-addon1" onclick="copyToClipboard()">Copy</button>
+                    <input type="text" class="form-control" id="result_url" disabled>
+                  </div>
         </div>
       </div>
     </div>
@@ -285,7 +288,6 @@
             '{{ url_for("tools.get_last_utms") }}',
         );
     });
-
 
 
 </script>

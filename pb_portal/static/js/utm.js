@@ -34,8 +34,8 @@ const set_default = function (url_utm_info, url_get_utm, url_last_10_utms) {
     $('#source').on('focus', function () {
         decs_manage('source');
     });
-    $('#campaign').on('focus', function () {
-        decs_manage('campaign');
+    $('#campaign_name').on('focus', function () {
+        decs_manage('campaign_name');
     });
     $('#content').on('focus', function () {
         decs_manage('content');
@@ -107,6 +107,7 @@ const decs_manage = function (focus_id) {
     $('#desc_campaign').hide();
     $('#desc_content').hide();
     $('#desc_project').hide();
+    $('#desc_campaign_name').hide();
     $(`#desc_${focus_id}`).show();
 }
 
@@ -186,10 +187,8 @@ const refresh_table = function () {
     });
 }
 
-
 const get_utm = function () {
-    $('#result_url').attr('href', '');
-    $('#result_url').text('');
+    $('#result_url').val('');
     if (!validate_url()) {
         $('#done_link').modal('hide');
         return;
@@ -220,12 +219,15 @@ const get_utm = function () {
         contentType: false,
         dataType: 'json',
         success: function (data) {
-            $('#result_url').attr('href', data.full_url);
-            $('#result_url').text(data.full_url);
+            $('#result_url').val(data.full_url);
             refresh_table();
         },
         error: function (data) {
             console.log(data);
         }
     });
+}
+
+const copyToClipboard = function (){
+    navigator.clipboard.writeText($('#result_url').val());
 }
