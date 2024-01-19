@@ -164,7 +164,6 @@ def set_bulk_tag(products: list[pb_schemas.Product], tag: str, category_id: int)
         data = schemas.BulkTag(
             tag=tag,
             products=[],
-            category_id=category_id
         )
         data.products = products
         resp = session.post(f'{API_URL}/api/set_bulk_tag', data=data.model_dump_json().encode('utf-8'))
