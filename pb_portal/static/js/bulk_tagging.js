@@ -1,4 +1,4 @@
-const per_page = 1000;
+const per_page = 30;
 
 var disable_cards = [];
 var all_products = [];
