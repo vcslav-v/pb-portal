@@ -58,6 +58,24 @@ def get_long_jpg(num_files: int, raw_width: str, raw_height: str, raw_n_cols: st
 
 
 @logger.catch
+def cut_pics(left: int, top: int, right: int, bottom: int, prefix: str):
+    with requests.sessions.Session() as session:
+        session.auth = ('api', TOKEN)
+        params = [
+            ('left', left),
+            ('top', top),
+            ('right', right),
+            ('bottom', bottom),
+            ('prefix', prefix),
+        ]
+        # TODO: make https
+        url = f'http://{NETLOC}/api/cut_pics'
+        resp = session.get(url, params=params)
+        resp.raise_for_status()
+        return 200
+
+
+@logger.catch
 def get_gif(seq_prefix: str, frames_per_sec: int, files_data):
     frame_duration = 1000 // frames_per_sec if frames_per_sec else None
     with requests.sessions.Session() as session:
@@ -174,6 +192,36 @@ def long_tile_check(prefix: str):
         )
         return json.dumps({'status': 'done', 'url': link})
     return json.dumps({'status': 'in work'})
+
+
+@logger.catch
+def cutter_check(prefix: str):
+    local_session = s3_session.Session()
+    client = local_session.client(
+        's3',
+        region_name=DO_SPACE_REGION,
+        endpoint_url=DO_SPACE_ENDPOINT,
+        aws_access_key_id=DO_SPACE_KEY,
+        aws_secret_access_key=DO_SPACE_SECRET
+    )
+    s3_keys = client.list_objects_v2(Bucket=DO_SPACE_BUCKET, Prefix=f'temp/{prefix}/').get('Contents')
+    if s3_keys:
+        s3_keys = [s3_key['Key'] for s3_key in s3_keys]
+    else:
+        s3_keys = []
+    result_key = f'temp/{prefix}/result.zip'
+    if result_key in s3_keys:
+        link = client.generate_presigned_url(
+            ClientMethod='get_object',
+            Params={
+                'Bucket': DO_SPACE_BUCKET,
+                'Key': result_key,
+            },
+            ExpiresIn=300
+        )
+        return json.dumps({'status': 'done', 'url': link})
+    return json.dumps({'status': 'in work'})
+
 
 
 @logger.catch

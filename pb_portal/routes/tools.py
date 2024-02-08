@@ -91,6 +91,23 @@ def longy():
 
 
 @logger.catch
+@app_route.route('/cutter', methods=['POST'])
+def cutter():
+    try:
+        connectors.graphic.cut_pics(
+            int(request.form.get('left')) if request.form.get('left') else 0,
+            int(request.form.get('top')) if request.form.get('top') else 0,
+            int(request.form.get('right')) if request.form.get('right') else 0,
+            int(request.form.get('bottom')) if request.form.get('bottom') else 0,
+            request.form.get('prefix'),
+        )
+    except Exception as e:
+        logger.error(e.args)
+        return
+    return 'ok'
+
+
+@logger.catch
 @app_route.route('/gify', methods=['POST'])
 def gify():
     try:
@@ -279,6 +296,16 @@ def long_tile_check():
         request.form.get('prefix'),
     )
     return long_jpg
+
+
+@logger.catch
+@app_route.route('/cutter_check', methods=['POST'])
+def cutter_check():
+    logger.debug('check long tile')
+    pic_zip = connectors.graphic.cutter_check(
+        request.form.get('prefix'),
+    )
+    return pic_zip
 
 
 @logger.catch

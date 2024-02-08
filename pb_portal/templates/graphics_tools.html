@@ -25,6 +25,31 @@
         </div>
     </div>
     </form>
+    <div class="row m-4">
+        <div class="col-4">
+            <h3>Bulk Cut</h3>
+        </div>
+    </div>
+    <form id="bulkCut" action="#" method="post" enctype="multipart/form-data">
+        <div class="row m-4">
+            <div class="col-8">
+                <div class="input-group">
+                        <span class="input-group-text" id="basic-addon1">Cut</span>
+                        <input type="number" class="form-control" placeholder="left px" aria-label="left" aria-describedby="basic-addon1" name="cut_left" value="0">
+                        <input type="number" class="form-control" placeholder="right px" aria-label="right" aria-describedby="basic-addon1" name="cut_right" value="0">
+                        <input type="number" class="form-control" placeholder="top px" aria-label="top" aria-describedby="basic-addon1" name="cut_top" value="0">
+                        <input type="number" class="form-control" placeholder="bottom px" aria-label="bottom" aria-describedby="basic-addon1" name="cut_bottom" value="0">
+
+                        <input class="form-control" type="file" name="forCut" id="forCut" multiple>
+                        <button class="btn btn-outline-secondary" type="submit" id="bulkCut" name="btn" value="bulkCutUpload">Upload</button>
+                        <button class="btn btn-outline-secondary visually-hidden" type="button" id="bulkCutLoading">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Loading...
+                        </button>
+                </div>
+            </div>
+        </div>
+    </form>
     <div class="row m-4 "></div>
     <div class="row m-4 ">
         <div class="col-4">
@@ -112,6 +137,8 @@
     var myFile = document.getElementById('forTiny');
     var longForm = document.getElementById('uploadLong');
     var longFile = document.getElementById('forLong');
+    var cutForm = document.getElementById('bulkCut');
+    var cutFile = document.getElementById('forCut');
     var longTileForm = document.getElementById('uploadLongTile');
     var longTileFile = document.getElementById('forLongTile');
     var gifForm = document.getElementById('uploadForGif');
@@ -264,6 +291,25 @@
             $('#longUpload').removeClass('visually-hidden')
         }
         initUpload(prefix, files, formData, '{{ url_for("tools.longy") }}', cancel_func, '{{ url_for("tools.long_tile_check") }}')
+    };
+    cutForm.onsubmit = function(event) {
+        event.preventDefault();
+        $('#bulkCutUpload').addClass('visually-hidden')
+        $('#bulkCutLoading').removeClass('visually-hidden')
+        const prefix = 'cut_' + Date.now()
+        const files = cutFile.files;
+        var local_formData = new FormData(cutForm);
+        var formData = new FormData();
+        formData.append('prefix', prefix);
+        formData.append('left', local_formData.get('cut_left'))
+        formData.append('right', local_formData.get('cut_right'))
+        formData.append('top', local_formData.get('cut_top'))
+        formData.append('bottom', local_formData.get('cut_bottom'))
+        var cancel_func = function(){
+            $('#bulkCutLoading').addClass('visually-hidden')
+            $('#bulkCutUpload').removeClass('visually-hidden')
+        }
+        initUpload(prefix, files, formData, '{{ url_for("tools.cutter") }}', cancel_func, '{{ url_for("tools.cutter_check") }}')
     };
     gifForm.onsubmit = function(event) {
         event.preventDefault();
