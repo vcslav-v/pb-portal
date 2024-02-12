@@ -4,3 +4,5 @@
 __pycache__
 .python-version
 setup.cfg
+.DS_Store
+pb_portal/.env
