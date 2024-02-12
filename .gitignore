@@ -1,8 +1,9 @@
 .venv
+Makefile
+.env
 .vscode
 *_cache
 __pycache__
 .python-version
-setup.cfg
 .DS_Store
-pb_portal/.env
+setup.cfg
