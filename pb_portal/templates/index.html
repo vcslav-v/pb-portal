@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 {% block head %}
+    {{ super() }}
     <title>TEST</title>
+{% endblock %}
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', path='/index/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='/el_header/styles.css') }}">
+{% endblock %}
+{% block header %}
+    {% include "elements/header.html" %}
 {% endblock %}
 {% block content %}
     <h1>Welcome to the TEST</h1>

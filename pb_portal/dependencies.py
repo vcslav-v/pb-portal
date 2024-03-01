@@ -3,6 +3,7 @@ import secrets
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.templating import Jinja2Templates
+from datetime import datetime
 
 from pb_portal import config
 
@@ -13,7 +14,9 @@ password = config.API_PASSWORD
 
 
 def get_templates():
-    return Jinja2Templates(directory=config.TEMPLATES_DIR)
+    jinja_templates = Jinja2Templates(directory=config.TEMPLATES_DIR)
+    jinja_templates.env.globals['_current_year'] = datetime.now().year
+    return jinja_templates
 
 
 def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):

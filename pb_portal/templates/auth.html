@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block head %}
+{{ super() }}
+<title>Login</title>
+{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', path='/auth/styles.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', path='/el_login_form/styles.css') }}">
+
+{% endblock %}
+{% block content %}
+<div class="login">
+    <div class="login__left-side">
+        <div class="login__content">
+            <div class="login__logo">
+                <img src="{{ url_for('static', path='/auth/logo.svg') }}" alt="Pixelbuddha logo">
+            </div>
+            <div class="login__form">
+                {% include "elements/login_form.html" %}
+            </div>
+            <div class="login__copyright">
+                <p>&copy; {{ _current_year }} Pixelbuddha Studio FZCO, All rights reserved</p>
+            </div>
+        </div>
+    </div>
+    <div class="login__right-side">
+        <img class="login__big-img" src="{{ url_for('static', path='/auth/big-img.jpg') }}" alt="Promo image">
+    </div>
+</div>
+{% endblock %}

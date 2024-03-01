@@ -1,0 +1,35 @@
+:root {
+    --menu-color: #000;
+    --menu-link-color: #fff;
+    --menu-link-hover-color: #808080;
+
+    --background-color: red;
+    --main-content-background-color: #fff;
+    --accent-color: #9EC5FE;
+    --primiry-text-color: #000;
+    --secondary-text-color: #C9C9C9;
+    --input-background-color: #F2F2F2;
+    
+    --button-background-color: #000;
+    --button-text-color: #fff;
+;
+}
+
+body {
+    margin: 0;
+    color: var(--primiry-text-color);
+    background-color: var(--background-color);
+    font-family: "Roboto", sans-serif;
+}
+
+main {
+    background-color: var(--main-content-background-color);
+}
+
+a {
+    text-decoration: none;
+}
+
+input::placeholder{
+    color: var(--secondary-text-color);
+}
