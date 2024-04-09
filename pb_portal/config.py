@@ -20,3 +20,11 @@ API_USERNAME = os.environ.get('API_USERNAME', 'api')
 API_PASSWORD = os.environ.get('API_PASSWORD', 'pass')
 TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 STATIC_DIR = os.path.join(os.path.dirname(__file__), 'static')
+
+# Auth
+AUTH_SECRET = os.environ.get('AUTH_SECRET', 'auth_secret')
+USER_MANAGER_SECRET = os.environ.get('USER_MANAGER_SECRET', 'user_manager_secret')
+
+
+# Database
+DATABASE_URI = os.environ.get('DATABASE_URI', 'postgresql+asyncpg://postgres:mysecretpassword@0.0.0.0/postgres')
