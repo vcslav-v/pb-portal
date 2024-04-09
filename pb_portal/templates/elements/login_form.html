@@ -9,8 +9,17 @@
         <label for="email">Don’t forget about @ and . symbols</label>
     </div>
     <div class="login-form__password">
-        <input type="password" placeholder="Password">
-        <img src="{{ url_for('static', path='/el_login_form/open_eye.svg') }}" alt="Show password">
+        <input type="password" placeholder="Password" id="password">
+        <img
+            id="password-eye"
+            src="{{ url_for('static', path='/el_login_form/open_eye.svg') }}"
+            alt="Show password"
+            data-closed-eye-src="{{ url_for('static', path='/el_login_form/closed_eye.svg') }}"
+            data-open-eye-src="{{ url_for('static', path='/el_login_form/open_eye.svg') }}"
+            onmousedown="showPassword()"
+            onmouseup="hidePassword()" 
+            onmouseleave="hidePassword()"
+        >
     </div>
     <div class="login-form__control">
         <button type="submit">Sign in</button>
