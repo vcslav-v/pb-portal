@@ -1,15 +1,15 @@
-<form action="#" class="login-form">
+<form id="loginForm" action="#" class="login-form" method="post" data-auth-url="{{ url_for('auth:jwt.login') }}" data-success-url = "{{ url_for('index') }}" onsubmit="submitForm(event)">
     <div class="login-form__header">
         <h3>Pixelbuddha Creators</h3>
         <p>Welcome back! Please enter your details.</p>
     </div>
 
     <div class="login-form__username">
-        <input type="text" placeholder="Your Email" id="email">
+        <input type="text" placeholder="Your Email" id="email" name="username">
         <label for="email">Don’t forget about @ and . symbols</label>
     </div>
     <div class="login-form__password">
-        <input type="password" placeholder="Password" id="password">
+        <input type="password" placeholder="Password" id="password" name="password">
         <img
             id="password-eye"
             src="{{ url_for('static', path='/el_login_form/open_eye.svg') }}"
@@ -23,6 +23,6 @@
     </div>
     <div class="login-form__control">
         <button type="submit">Sign in</button>
-        <a href="#">Forgot password?</a>
+        <!-- <a href="#">Forgot password?</a> -->
     </div>
 </form>

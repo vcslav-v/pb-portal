@@ -16,3 +16,7 @@
     {{ super() }}
     <h1>Welcome to the TEST</h1>
 {% endblock %}
+{% block scripts %}
+{{ super() }}
+    <script src="{{ url_for('static', path='/el_header/script.js') }}"></script>
+{% endblock %}

@@ -8,10 +8,6 @@
     <link rel="stylesheet" href="{{ url_for('static', path='/auth/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='/el_login_form/styles.css') }}">
 {% endblock %}
-{% block headScripts %}
-    {{ super() }}
-    <script src="{{ url_for('static', path='/el_login_form/script.js') }}"></script>
-{% endblock %}
 
 {% block header %}
 {% endblock %}
@@ -35,4 +31,8 @@
         <img class="login__big-img" src="{{ url_for('static', path='/auth/big-img.jpg') }}" alt="Promo image">
     </div>
 </div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', path='/el_login_form/script.js') }}"></script>
 {% endblock %}

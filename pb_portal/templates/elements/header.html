@@ -15,7 +15,7 @@
             </ul>
         </nav>
         <div class="header_loggin">
-            <a href="{{ url_for('login') }}">Login</a>
+            <a id="logout" href="#" data-logout-url="{{ url_for('auth:jwt.logout') }}" data-login-url="{{ url_for('login') }}" onclick="logout(event)">Log out</a>
         </div>
     </div>
 </div>
