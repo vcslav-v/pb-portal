@@ -80,7 +80,7 @@ def get_upload_page_data() -> schemas.UploadProductPageInfo:
         categories=pb.get_site_info_of('category', FILTER_CATS),
         formats=pb.get_site_info_of('format', FILTER_FORMATS),
         compatibilities=pb.get_site_info_of('compatibility'),
-        tags=pb.get_site_info_of_tags(FILTER_TAGS),
+        # tags=pb.get_site_info_of_tags(FILTER_TAGS),
     )
     return result
 

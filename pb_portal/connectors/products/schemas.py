@@ -74,7 +74,7 @@ class UploadProductPageInfo(BaseModel):
     formats: list[str] = []
     compatibilities: list[str] = []
     items_in_col: int = 5
-    tags: dict
+    tags: dict = {}
 
 
 class UploadProduct(BaseModel):
