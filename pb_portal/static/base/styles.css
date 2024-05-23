@@ -8,7 +8,9 @@
     --accent-color: #9EC5FE;
     --primiry-text-color: #000;
     --secondary-text-color: #C9C9C9;
-    --input-background-color: #F2F2F2;
+    --error-color: #EE2B47;
+    --input-background-color: #FFF;
+    --input-border-color: #000;
     
     --button-background-color: #000;
     --button-text-color: #fff;

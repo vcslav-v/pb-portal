@@ -5,11 +5,10 @@
     </div>
 
     <div class="login-form__username">
-        <input type="text" placeholder="Your Email" id="email" name="username">
-        <label for="email">Don’t forget about @ and . symbols</label>
+        <input type="text" placeholder="Your Email" id="email" name="username" onfocus="toDefault(event)">
     </div>
     <div class="login-form__password">
-        <input type="password" placeholder="Password" id="password" name="password">
+        <input type="password" placeholder="Password" id="password" name="password" onfocus="toDefault(event)">
         <img
             id="password-eye"
             src="{{ url_for('static', path='/el_login_form/open_eye.svg') }}"
@@ -19,8 +18,14 @@
             onclick="switchVisiblePassword()"
         >
     </div>
+    <div class="login-form__info">
+        <a href="#">Forgot password?</a>
+        <div class="login-form__error">
+            <img src="{{ url_for('static', path='/el_login_form/attention_icon.svg') }}" alt="attention">
+            <span>Wrong email or password</span>
+        </div>
+    </div>
     <div class="login-form__control">
         <button type="submit">Sign in</button>
-        <!-- <a href="#">Forgot password?</a> -->
     </div>
 </form>

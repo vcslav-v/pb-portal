@@ -23,6 +23,14 @@
     justify-content: space-around;
 }
 
+.login__form {
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    flex-direction: column;
+}
+
 .login__copyright {
     font-family: "Roboto", sans-serif;
     font-size: 16px;
