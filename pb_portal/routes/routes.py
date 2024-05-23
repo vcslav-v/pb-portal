@@ -1,14 +1,15 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pb_portal.routes.pages import index
-from pb_portal.routes.user import auth
+from pb_portal.routes.user import user
 from pb_portal.auth.schemas import UserRead, UserCreate
 from pb_portal.auth.backend import auth_backend
-from pb_portal.auth.tools import fastapi_users
+from pb_portal.auth.tools import fastapi_users, current_superuser
+
 
 routes = APIRouter()
 
 routes.include_router(index.router, prefix='', tags=['pages'])
-routes.include_router(auth.router, prefix='/user', tags=['user'])
+routes.include_router(user.router, prefix='/user', tags=['user'])
 
 routes.include_router(
     fastapi_users.get_auth_router(auth_backend),
@@ -19,4 +20,5 @@ routes.include_router(
     fastapi_users.get_register_router(UserRead, UserCreate),
     prefix="/auth",
     tags=["auth"],
+    dependencies=[Depends(current_superuser)],  # Only superusers can create new users
 )

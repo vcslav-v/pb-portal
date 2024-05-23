@@ -4,7 +4,7 @@ from pb_portal.db.db import get_async_session
 from pb_portal.db.models import User, UserRole
 from sqlalchemy.ext.asyncio import AsyncSession
 from pb_portal.auth.schemas import UserRoles
-from sqlalchemy import text, select, insert
+from sqlalchemy import select, insert
 from pb_portal.config import logger
 
 

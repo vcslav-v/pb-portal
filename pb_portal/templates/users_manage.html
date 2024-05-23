@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block head %}
+    {{ super() }}
+    <title>TEST</title>
+{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', path='/el_header/styles.css') }}">
+{% endblock %}
+{% block header %}
+    {{ super() }}
+    {% include "elements/header.html" %}
+{% endblock %}
+{% block content %}
+    {{ super() }}
+    <h1>Welcome to the USER MANAGER</h1>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+    <script src="{{ url_for('static', path='/el_header/script.js') }}"></script>
+{% endblock %}

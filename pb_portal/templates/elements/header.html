@@ -1,12 +1,15 @@
 <div class="header">
     <div class="header__wrapper">
         <div class="header__logo">
-            <a href="#">
+            <a href="/">
                 <img src="{{ url_for('static', path='/el_header/logo.svg') }}" alt="Pixelbuddha logo">
             </a>
         </div>
         <nav>
             <ul class="menu">
+                {% if roles_schema.admin.value == user_role_id %}
+                    <li class="menu__item"><a href="{{url_for('manage')}}">Users</a></li>
+                {% endif %}
                 <li class="menu__item menu__item_alert"><a href="#">Products</a></li>
                 <li class="menu__item"><a href="#">Payouts</a></li>
                 <li class="menu__item"><a href="#">Account</a></li>

@@ -16,9 +16,7 @@
             alt="Show password"
             data-closed-eye-src="{{ url_for('static', path='/el_login_form/closed_eye.svg') }}"
             data-open-eye-src="{{ url_for('static', path='/el_login_form/open_eye.svg') }}"
-            onmousedown="showPassword()"
-            onmouseup="hidePassword()" 
-            onmouseleave="hidePassword()"
+            onclick="switchVisiblePassword()"
         >
     </div>
     <div class="login-form__control">
