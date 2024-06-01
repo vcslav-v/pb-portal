@@ -3,7 +3,7 @@
     --menu-link-color: #fff;
     --menu-link-hover-color: #808080;
 
-    --background-color: red;
+    --background-color: #fff;
     --main-content-background-color: #fff;
     --accent-color: #9EC5FE;
     --primiry-text-color: #000;
@@ -14,7 +14,8 @@
     
     --button-background-color: #000;
     --button-text-color: #fff;
-;
+
+    --header-height: 96px;
 }
 
 body {
@@ -26,6 +27,7 @@ body {
 
 main {
     background-color: var(--main-content-background-color);
+    height: calc(100vh - var(--header-height));
 }
 
 a {

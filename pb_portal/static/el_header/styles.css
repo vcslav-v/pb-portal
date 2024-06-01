@@ -11,7 +11,7 @@
 .header__wrapper {
     display: flex;
     max-width: 1520px;
-    min-height: 96px;
+    min-height: var(--header-height);
     padding: 0 40px;
     margin: 0 auto;
     display: flex;
