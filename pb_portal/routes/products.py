@@ -186,12 +186,13 @@ def get_form_list(form_data: dict, key_word: str):
 def uploader():
     # TODO research https://www.plupload.com/
     if request.method == 'POST':
+        size_mb = int(request.form.get("product_size_mb"))
         product_schema = connectors.products.schemas.UploadProduct(
             prefix=request.form.get('prefix'),
             product_file_name=request.form.get('product_file_name'),
             title=request.form.get('title'),
             slug=request.form.get('slug'),
-            size=f'{request.form.get("product_size_mb")} mb',
+            size=f'{size_mb} MB' if size_mb < 1024 else f'{size_mb / 1024:.2f} GB',
             excerpt=request.form.get('excerpt'),
             description=request.form.get('description'),
             categories=get_form_list(request.form.to_dict(), 'category'),
