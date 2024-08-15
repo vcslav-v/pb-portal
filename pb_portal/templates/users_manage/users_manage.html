@@ -1,0 +1,29 @@
+{% extends "base_content.html" %}
+{% block head %}
+    {{ super() }}
+    <title>TEST</title>
+{% endblock %}
+{% block content_in_wrapper %}
+    {{ super() }}
+            <h1 class="content__h1">TEST</h1>
+            <div class="content__table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Psw</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% include 'users_manage/users_list.html' %}
+                        <tr id="replaceMe">
+                            <td colspan="4">
+                                <button class='btn' hx-get="{{url_for('new_user_row')}}" hx-target="#replaceMe" hx-swap="outerHTML">Add User</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+{% endblock %}

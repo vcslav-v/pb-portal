@@ -1,0 +1,22 @@
+<form hx-post="{{url_for('edit_user', user_id=user.id)}}" hx-target="this" hx-swap="outerHTML">
+<tr>
+        <td><input type="email" value="{{ user.email }}" name="email"></td>
+        <td><input type="password" value="empty" name="password"></td>
+        <td><select name="role">
+                {% for role in roles_schema %}
+                    {% if role.value == user.role_id %}
+                        <option value="{{ role.value }}" selected>{{ role.name }}</option>
+                    {% else %}
+                        <option value="{{ role.value }}">{{ role.name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select> </td>
+        <td>
+            <select name="action">
+                <option value="edit" selected>Edit</option>
+                <option value="delete">Delete</option>
+            </select>
+            <button type="submit" name="button" value="edit">Go</button>
+        </td>
+</tr>
+</form>

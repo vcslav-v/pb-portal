@@ -1,0 +1,30 @@
+{% extends "base_content.html" %}
+{% block head %}
+    {{ super() }}
+    <title>TEST</title>
+{% endblock %}
+{% block content_in_wrapper %}
+    {{ super() }}
+    <h1 class="content__h1">Pixelbuddha Creators</h1>
+    <p class="content__subtitle">Terms & Conditions. Updated 2 September, 2023.</p>
+    <div class="content__info">
+        <p>Within these terms ‘we’, ‘us’, ‘our’ and ‘Design Cuts’ pertain to Design Cuts (designcuts.com) and Design Cuts Ltd, as the holding website/marketplace/company for your creative products.</p>
+        <p>Within these terms ‘you’, ‘your’ and ‘product provider’ pertain to your product(s), website(s) and organization(s).</p>
+    </div>
+    <h2 class="content__h2">General Store Owner Terms and Conditions:</h2>
+    <div class="content__common">
+        <p>By opening a marketplace store with Design Cuts you, as product provider, agree to the following terms and conditions:</p>
+        <ol>
+            <li>You, as product provider retain copyright for your product(s) at all times.</li>
+            <li>We have your permission to sell your design item(s) as part of our digital Marketplace. Should you wish to no longer sell your product(s) via our marketplace, you should provide us with a minimum of 14 days notice, so as to avoid any interruptions in our email and social marketing efforts.</li>
+            <li>You agree to a revenue split of 50% for all product(s) (excluding course products). For each product sale, you will receive 50% of earnings, paid out as per term 10 in this agreement. Revenue split for course products is covered in term 3.1 of this contract.</li>
+            <ol>
+                <li>Use a You agree to a revenue split of 40% for all course product(s), sold in the ‘courses’ section at Design Cuts. For each course product sale, you will receive 40% of earnings, paid out as per term 10 in this agreement. Design Cuts uses our split of sales towards hosting costs and the delivery of video content and advertising for your course product(s). This term applies to all course products published in our marketplace from January 1st 2023.</li>
+            </ol>
+            <li>Both You and Design Cuts accept all handling costs associated with customer refunds for your product(s), and refunds will be subtracted from the amounts made payable. As product provider you cannot make purchases of your own product(s), nor request a refund on this purchase.</li>
+            <li>We are within our rights to give away free copies of your marketplace product(s) to our top tier of affiliate partners for promotional purposes. Such as (but not limited to) tutorials, product reviews, give-away prizes, third party blogs, and other promotional campaigns to encourage sales of your product(s). For these promotional freebies, no earnings will be paid. This is specifically done to encourage sales and increase overall attention for the product(s).</li>
+        </ol>
+    </div>
+    {% include 'agreement/agreement_footer.html' %}
+{% endblock %}
+

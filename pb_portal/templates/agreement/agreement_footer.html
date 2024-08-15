@@ -1,0 +1,16 @@
+{% if user.signed_agreement_date %}
+    <div class="content__common">
+        <p><i>You've signed the agreement on {{ user.signed_agreement_date.strftime('%d %B %Y') }}</i></p>
+    </div>
+{% else %}
+    <form hx-post="{{url_for('sign_agreement')}}" hx-target="this" hx-swap="outerHTML">
+        <div class="form form--after_content">
+            <label class="form__checkbox">
+                <input class="form__checkbox-checkbox" type="checkbox" name="is_agree" required>
+                <span class="form__checkbox-custom"></span>
+                I've read and fully understood the terms of this agreement
+            </label>
+            <button class="btn form__button">Accept Terms & Conditions</button>
+        </div>
+    </form>
+{% endif %}

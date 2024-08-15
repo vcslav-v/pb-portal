@@ -1,0 +1,19 @@
+<tr>
+    <form hx-post="{{url_for('create')}}" hx-target="this" hx-swap="outerHTML">
+        <td><input type="email" value="" name="email"></td>
+        <td><input type="password" value="" name="password"></td>
+        <td><select name="role">
+                {% for role in roles_schema %}
+                    <option value="{{ role.value }}">{{ role.name }}</option>
+                {% endfor %}
+            </select> </td>
+        <td>
+            <button type="btn">Create</button>
+        </td>
+    </form>
+</tr>
+<tr id="replaceMe">
+    <td colspan="4">
+        <button class='btn' hx-get="{{url_for('new_user_row')}}" hx-target="#replaceMe" hx-swap="outerHTML">Add User</button>
+    </td>
+</tr>

@@ -7,7 +7,7 @@ cookie_transport = CookieTransport(cookie_max_age=3600)
 
 
 def get_jwt_strategy() -> JWTStrategy:
-    return JWTStrategy(secret=AUTH_SECRET, lifetime_seconds=3600)
+    return JWTStrategy(secret=AUTH_SECRET, lifetime_seconds=3600*24*30)
 
 
 auth_backend = AuthenticationBackend(

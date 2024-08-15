@@ -1,0 +1,24 @@
+<div class="header">
+    <div class="header__wrapper">
+        <div class="header__logo">
+            <a href="/">
+                <img src="{{ url_for('static', path='/el_header/logo.svg') }}" alt="Pixelbuddha logo">
+            </a>
+        </div>
+        <nav>
+            <ul class="menu">
+                {% if roles_schema.admin.value == user_role_id %}
+                    <li class="menu__item{%if page_name == 'manage_users'%} menu__item_active{%endif%}"><a href="{{url_for('manage')}}">Users</a></li>
+                {% endif %}
+                <li class="menu__item menu__item_alert{%if page_name == 'products'%} menu__item_active{%endif%}"><a href="{{url_for('products')}}">Products</a></li>
+                <li class="menu__item{%if page_name == 'payouts'%} menu__item_active{%endif%}"><a href="#">Payouts</a></li>
+                <li class="menu__item{%if page_name == 'account'%} menu__item_active{%endif%}"><a href="#">Account</a></li>
+                <li class="menu__item {%if page_name == 'agreement'%} menu__item_active{%endif%}"><a href="{{url_for('agreement')}}">Agreement</a></li>
+                <li class="menu__item {%if page_name == 'help'%} menu__item_active{%endif%}"><a href="{{url_for('help')}}">Help</a></li>
+            </ul>
+        </nav>
+        <div class="header_loggin">
+            <a id="logout" href="#" data-logout-url="{{ url_for('auth:jwt.logout') }}" data-login-url="{{ url_for('login') }}" onclick="logout(event)">Logout</a>
+        </div>
+    </div>
+</div>

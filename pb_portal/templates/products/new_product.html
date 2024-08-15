@@ -1,0 +1,24 @@
+{% extends "base_content.html" %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', path='/products/styles.css') }}">
+{% endblock %}
+{% block head %}
+{{ super() }}
+<title>TEST</title>
+{% endblock %}
+{% block content_in_wrapper %}
+{{ super() }}
+<h1 class="content__h1">Create Submission</h1>
+    <form action="">
+<div class="form form--50gap">
+        {% include 'products/_create_product_block_1.html' %}
+        {% include 'products/_create_product_block_2.html' %}
+</div>
+
+    </form>
+
+
+
+
+{% endblock %}
