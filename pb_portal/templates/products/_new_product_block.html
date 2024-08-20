@@ -1,6 +1,7 @@
-<div class="products__add_new">
-    <p>Add new products to your shop and submit for review by Pixelbuddha team</p>
-    <a href="{{url_for('new_product')}}">
+<div class="border rounded-md py-8 px-10 flex flex-col gap-5">
+    <p class="font-light leading-[1.5]">Add new products to your shop and submit for review by Pixelbuddha team</p>
+    <a href="{{url_for('new_product')}}" class="flex justify-center gap-3.5 items-center rounded-md bg-black py-2 px-5 text-white font-light min-h-12 max-w-60">
+        <img src="{{ url_for('static', path='/imgs/btn-icon.svg') }}">
         Add New Product
     </a>
 </div>

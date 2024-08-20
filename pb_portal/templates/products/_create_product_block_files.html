@@ -1,0 +1,42 @@
+<div class="from_block">
+    <div class="flex flex-row justify-between border items-center p-5 font-light border-black rounded-sm">
+        <div class="flex flex-row justify-start items-center gap-5">
+            <img class="w-7 h-7" src="{{ url_for('static', path='/imgs/icon-zip.svg') }}">
+            Product-name.zip
+        </div>
+        <button class="cursor-pointer">
+            <img class="max-w-4 max-h-4" src="{{ url_for('static', path='/imgs/icon-trash.svg') }}">
+        </button>
+    </div>
+    <h3 class="title_small-2">Product package requirements</h3>
+    <a class="flex flex-row justify-start w-fit items-center px-2 py-1 gap-1 bg-gray-100 border rounded-md font-medium text-sm"
+        href="#">
+        <img class="max-w-3 max-h-3" src="{{ url_for('static', path='/imgs/icon-zip.svg') }}">
+        Sample package
+    </a>
+    <div class="text_block-2">
+        <p>Please, keep the files organised in tow folders: <span class="font-medium">Product files</span>, and <span
+                class="font-medium">Help files</span>.</p>
+        <p>Max file size: 4GB</p>
+    </div>
+    <input type="file" name="productFiles" class="hidden" multiple>
+    <button
+        class="flex flex-row justify-start gap-3.5 max-w-36 items-center rounded-md bg-black px-3 py-2 text-white font-light leading-6">
+        <img src="{{ url_for('static', path='/imgs/btn-icon.svg') }}">
+        Upload files
+    </button>
+    <h3 class="title_small-2 mt-4">Supported file types</h3>
+    <div class="flex flex-wrap gap-8">
+        {% for i in range(29)%}
+        {% if i % 6 == 0 %}<div class="flex flex-col gap-1">{% endif %}
+            <label class="custom_checkbox-label inline-flex items-center cursor-pointer text-base font-light select-none">
+                <input type="checkbox" name="is_agree" class="w-0 h-0 opacity-0" required>
+                <span class="custom_checkbox checked:opacity-100"></span>
+                PSD
+            </label>
+        {% if i % 6 == 5 %}</div>{% endif %}
+        {% if i % 6 != 5 and i == 28 %}</div>{% endif %}
+        {% endfor %}
+
+    </div>
+</div>

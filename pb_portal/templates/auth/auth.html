@@ -3,36 +3,33 @@
     {{ super() }}
     <title>Login</title>
 {% endblock %}
-{% block styles %}
-    {{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static', path='/auth/styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', path='/el_login_form/styles.css') }}">
-{% endblock %}
-
 {% block header %}
 {% endblock %}
-
 {% block content %}
-<div class="login">
-    <div class="login__left-side">
-        <div class="login__content">
-            <div class="login__logo">
-                <img src="{{ url_for('static', path='/auth/logo.svg') }}" alt="Pixelbuddha logo">
+<div class="flex h-screen">
+    <!-- Left Side -->
+    <div class="flex justify-center items-center w-1/2 py-[5.2rem]">
+        <div class="flex flex-col justify-between w-9/12 h-full max-w-md">
+            <div class="flex items-start mb-8">
+                <img src="{{ url_for('static', path='/imgs/auth_logo.svg') }}" alt="Pixelbuddha logo">
             </div>
-            <div class="login__form">
+            <div class="flex flex-col justify-start items-start w-full">
                 {% include "auth/login_form.html" %}
             </div>
-            <div class="login__copyright">
+            <div class="text-left text-gray-300 mt-8">
                 <p>&copy; {{ _current_year }} Pixelbuddha Studio FZCO, All rights reserved</p>
             </div>
         </div>
     </div>
-    <div class="login__right-side">
-        <img class="login__big-img" src="{{ url_for('static', path='/auth/big-img.jpg') }}" alt="Promo image">
+
+    <!-- Right Side -->
+    <div class="w-1/2 overflow-hidden">
+        <img class="w-full h-full object-cover" src="{{ url_for('static', path='/imgs/big-img.jpg') }}" alt="Promo image">
     </div>
 </div>
+
 {% endblock %}
 {% block scripts %}
     {{ super() }}
-    <script src="{{ url_for('static', path='/el_login_form/script.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/el_login_form.js') }}"></script>
 {% endblock %}

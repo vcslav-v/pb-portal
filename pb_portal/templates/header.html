@@ -1,24 +1,41 @@
-<div class="header">
-    <div class="header__wrapper">
-        <div class="header__logo">
+<div class="bg-black font-bold">
+    <div class="min-h-24 px-10 mx-auto flex items-center">
+        <div class="flex-shrink-0">
             <a href="/">
-                <img src="{{ url_for('static', path='/el_header/logo.svg') }}" alt="Pixelbuddha logo">
+                <img src="{{ url_for('static', path='/imgs/logo.svg') }}" alt="Pixelbuddha logo">
             </a>
         </div>
-        <nav>
-            <ul class="menu">
+
+        <!-- Навигация -->
+        <nav class="ml-8">
+            <ul class="flex space-x-8">
                 {% if roles_schema.admin.value == user_role_id %}
-                    <li class="menu__item{%if page_name == 'manage_users'%} menu__item_active{%endif%}"><a href="{{url_for('manage')}}">Users</a></li>
+                    <li class="text-white {%if page_name == 'manage_users'%}opacity-50{%else%}{%endif%} hover:opacity-50">
+                        <a href="{{url_for('manage')}}">Users</a>
+                    </li>
                 {% endif %}
-                <li class="menu__item menu__item_alert{%if page_name == 'products'%} menu__item_active{%endif%}"><a href="{{url_for('products')}}">Products</a></li>
-                <li class="menu__item{%if page_name == 'payouts'%} menu__item_active{%endif%}"><a href="#">Payouts</a></li>
-                <li class="menu__item{%if page_name == 'account'%} menu__item_active{%endif%}"><a href="#">Account</a></li>
-                <li class="menu__item {%if page_name == 'agreement'%} menu__item_active{%endif%}"><a href="{{url_for('agreement')}}">Agreement</a></li>
-                <li class="menu__item {%if page_name == 'help'%} menu__item_active{%endif%}"><a href="{{url_for('help')}}">Help</a></li>
+                <li class="text-white {%if page_name == 'products'%}opacity-50{%else%}{%endif%} hover:opacity-50">
+                    <a href="{{url_for('products')}}">Products</a>
+                    <span class="absolute inline-block w-1 h-1 ml-1 bg-sky-300 rounded-full"></span>
+                </li>
+                <li class="text-white {%if page_name == 'payouts'%}opacity-50{%else%}{%endif%} hover:opacity-50">
+                    <a href="#">Payouts</a>
+                </li>
+                <li class="text-white {%if page_name == 'account'%}opacity-50{%else%}{%endif%} hover:opacity-50">
+                    <a href="#">Account</a>
+                </li>
+                <li class="text-white {%if page_name == 'agreement'%}opacity-50{%else%}{%endif%} hover:opacity-50">
+                    <a href="{{url_for('agreement')}}">Agreement</a>
+                </li>
+                <li class="text-white {%if page_name == 'help'%}opacity-50{%else%}{%endif%} hover:opacity-50">
+                    <a href="{{url_for('help')}}">Help</a>
+                </li>
             </ul>
         </nav>
-        <div class="header_loggin">
-            <a id="logout" href="#" data-logout-url="{{ url_for('auth:jwt.logout') }}" data-login-url="{{ url_for('login') }}" onclick="logout(event)">Logout</a>
+
+        <!-- Logout -->
+        <div class="ml-auto">
+            <a id="logout" href="#" data-logout-url="{{ url_for('auth:jwt.logout') }}" data-login-url="{{ url_for('login') }}" class="text-white hover:opacity-50" onclick="logout(event)">Logout</a>
         </div>
     </div>
 </div>

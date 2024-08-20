@@ -1,22 +1,17 @@
 {% extends "base_content.html" %}
-{% block styles %}
-    {{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static', path='/products/styles.css') }}">
-{% endblock %}
 {% block head %}
     {{ super() }}
-    <title>TEST</title>
+    <title>Producs</title>
 {% endblock %}
 {% block content_in_wrapper %}
     {{ super() }}
-    <h1 class="content__h1">Products Dashboard</h1>
-    <div class="content__info">
+    <h1 class="title">Products Dashboard</h1>
+    <div class="text_block mt-8">
         <p>Please provide the essential information necessary for communication with our moderators and for displaying your account to customers.</p>
     </div>
-    <h2 class="content__h2">Product Package</h2>
-    <div class="content__common">
-        <p>Please, neatly organise all included files, and pack them in a ZIP archive. We </p>
+    <h2 class="title_small">Product Package</h2>
+    <div class="text_block">
+        <p>Please, neatly organise all included files, and pack them in a ZIP archive.</p>
     </div>
     {% include 'products/_new_product_block.html' %}
 {% endblock %}
-

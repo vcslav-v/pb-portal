@@ -1,17 +1,12 @@
 {% extends "base.html" %}
-{% block styles %}
-    {{ super() }}
-    <link rel="stylesheet" href="{{ url_for('static', path='/el_header/styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', path='/content/styles.css') }}">
-{% endblock %}
 {% block header %}
     {{ super() }}
     {% include "header.html" %}
 {% endblock %}
 {% block content %}
     {{ super() }}
-    <div class="content">
-        <div class="content__wrapper">
+    <div class="flex justify-center">
+        <div class="flex flex-col justify-between w-full max-w-2xl h-full my-16">
             {% block content_in_wrapper %}
             {% endblock %}
         </div>
@@ -23,5 +18,5 @@
 {% endblock %}
 {% block scripts %}
 {{ super() }}
-    <script src="{{ url_for('static', path='/el_header/script.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/el_header.js') }}"></script>
 {% endblock %}

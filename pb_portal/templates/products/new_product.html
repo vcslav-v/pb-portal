@@ -1,24 +1,28 @@
 {% extends "base_content.html" %}
-{% block styles %}
-{{ super() }}
-<link rel="stylesheet" href="{{ url_for('static', path='/products/styles.css') }}">
-{% endblock %}
 {% block head %}
 {{ super() }}
-<title>TEST</title>
+<title>New product</title>
+{% endblock %}
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 {% endblock %}
 {% block content_in_wrapper %}
 {{ super() }}
-<h1 class="content__h1">Create Submission</h1>
-    <form action="">
-<div class="form form--50gap">
-        {% include 'products/_create_product_block_1.html' %}
-        {% include 'products/_create_product_block_2.html' %}
-</div>
-
+<h1 class="title mb-12">Create Submission</h1>
+    <form action="" class="flex flex-col gap-12">
+        {% include 'products/_create_product_block_title.html' %}
+        {% include 'products/_create_product_block_files.html' %}
+        {% include 'products/_create_product_block_desc_tags.html' %}
+        {% include 'products/_create_product_block_imgs.html' %}
+        <button class="flex justify-center w-fit items-center rounded-md bg-black py-3 px-8 text-white font-light max-w-60 mt-2.5">
+            Submit for review
+        </button>
     </form>
-
-
-
-
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script src="{{ url_for('static', path='/js/new_product.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 {% endblock %}

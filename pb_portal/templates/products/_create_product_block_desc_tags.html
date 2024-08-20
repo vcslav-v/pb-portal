@@ -1,0 +1,29 @@
+<div class="flex flex-col gap-5">
+    <div class="flex flex-col justify-start font-light">
+        <label for="description">Product description (Markdown) <span class="text-red-600">*</span></label>
+        <textarea class="border rounded-md py-2 px-4 focus:outline-none focus:border-black mt-2" name="description" id="description" rows="9" placeholder="Please add a detailed description"></textarea>
+        <div class="flex flex-row justify-end font-light text-gray-500">
+            <span id="descriptionLen">0</span>&nbsp/&nbsp1000
+        </div>
+    </div>
+    <div class="flex flex-col justify-start font-light gap-0">
+        <label for="description">Product tags <span class="text-red-600">*</span></label>
+        <textarea class="border rounded-md py-2 px-4 focus:outline-none focus:border-black mt-2" name="tags"  rows="3" placeholder="Mockup, Book, ..."></textarea>
+        <div class="flex flex-row justify-end font-light text-gray-500">
+            <span id="tagsLen">0</span>&nbsp/&nbsp20
+        </div>
+        <div class="flex flex-row gap-3.5 justify-between">
+            <div>
+                <span class="flex flex-row justify-start w-fit items-center px-2 py-0.5 min-h-5 gap-1 bg-gray-100 border rounded-md font-medium text-sm leading-5">
+                    <img class="w-3 h-3" src="{{ url_for('static', path='/imgs/icon-tag.svg') }}">
+                    Mockup
+                    <button>
+                        <img class="w-3 h-3" src="{{ url_for('static', path='/imgs/icon-cross.svg') }}">
+                    </button>
+                </span>
+            </div>
+        </a>
+        </div>
+    </div>
+</div>
+

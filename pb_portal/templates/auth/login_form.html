@@ -1,31 +1,43 @@
-<form id="loginForm" action="#" class="login-form" method="post" data-auth-url="{{ url_for('auth:jwt.login') }}" data-success-url = "{{ url_for('index') }}" onsubmit="submitForm(event)">
-    <div class="login-form__header">
-        <h3>Pixelbuddha Creators</h3>
-        <p>Welcome back! Please enter your details.</p>
+<form id="loginForm" action="#" method="post" data-auth-url="{{ url_for('auth:jwt.login') }}"
+    data-success-url="{{ url_for('index') }}" onsubmit="submitForm(event)" class="flex flex-col w-full">
+    <!-- Header -->
+    <div class="flex flex-col space-y-3.5 mb-9">
+        <h3 class="text-2xl font-normal pilot-badge">Pixelbuddha Creators</h3>
+        <p class="text-gray-400 font-light">Welcome back! Please enter your details.</p>
     </div>
 
-    <div class="login-form__username">
-        <input type="text" placeholder="Your Email" id="email" name="username" onfocus="toDefault(event)">
+    <div class="flex flex-col space-y-7 mb-5">
+        <!-- Email Input -->
+        <div class="flex flex-col space-y-2">
+            <input type="text" placeholder="Your Email" id="email" name="username" onfocus="toDefault(event)"
+                class="w-full px-4 py-2 border-2 min-h-16 rounded-md focus:outline-none border-black" />
+        </div>
+
+        <!-- Password Input -->
+        <div class="flex flex-col relative">
+            <input type="password" placeholder="Password" id="password" name="password" onfocus="toDefault(event)"
+                class="w-full px-4 py-2 border-2 min-h-16 rounded-md focus:outline-none border-black" />
+            <img id="password-eye" src="{{ url_for('static', path='/imgs/open_eye.svg') }}" alt="Show password"
+                data-closed-eye-src="{{ url_for('static', path='/imgs/closed_eye.svg') }}"
+                data-open-eye-src="{{ url_for('static', path='/imgs/open_eye.svg') }}"
+                onclick="switchVisiblePassword()" class="absolute max-w-8 max-h-8 top-1/2 transform -translate-y-1/2 right-[30px] cursor-pointer">
+        </div>
     </div>
-    <div class="login-form__password">
-        <input type="password" placeholder="Password" id="password" name="password" onfocus="toDefault(event)">
-        <img
-            id="password-eye"
-            src="{{ url_for('static', path='/el_login_form/open_eye.svg') }}"
-            alt="Show password"
-            data-closed-eye-src="{{ url_for('static', path='/el_login_form/closed_eye.svg') }}"
-            data-open-eye-src="{{ url_for('static', path='/el_login_form/open_eye.svg') }}"
-            onclick="switchVisiblePassword()"
-        >
-    </div>
-    <div class="login-form__info">
-        <a href="#">Forgot password?</a>
-        <div class="login-form__error">
-            <img src="{{ url_for('static', path='/el_login_form/attention_icon.svg') }}" alt="attention">
+
+    <!-- Info and Error Message -->
+    <div class="flex justify-between items-center mb-10">
+        <a href="#" class="text-black underline">Forgot password?</a>
+        <div class="hidden items-center text-red-500" id="errorMsg">
+            <img src="{{ url_for('static', path='/imgs/attention_icon.svg') }}" alt="attention"
+                class="w-4 h-4 mr-2">
             <span>Wrong email or password</span>
         </div>
     </div>
-    <div class="login-form__control">
-        <button type="submit">Sign in</button>
+
+    <!-- Submit Button -->
+    <div>
+        <button type="submit"
+            class="w-full py-2 bg-black min-h-16 text-white text-xl font-semibold rounded-md hover:bg-gray-900 transition">Sign
+            in</button>
     </div>
 </form>

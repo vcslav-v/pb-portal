@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .pilot-badge::after {
+    content: 'PILOT';
+    position: relative;
+    top: -5px;
+    right: 0;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 13px;
+    letter-spacing: 0em;
+    vertical-align: top;
+    color: #0D6EFD;
+  }
+
+  .custom_checkbox {
+    display: inline-block;
+    position: relative;
+    height: 16px;
+    width: 16px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    margin: 0 10px 0 -4px;
+  }
+
+  .custom_checkbox::before {
+    display: inline-block;
+    position: absolute;
+    content: "";
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 16px;
+    width: 16px;
+    border-radius: 4px;
+    background-image: url('data:image/svg+xml;utf8,<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.10545 11.7932L7.08783 11.8108L2.68799 7.41093L4.12067 5.97826L7.10551 8.9631L11.8795 4.18909L13.3122 5.62176L7.12313 11.8108L7.10545 11.7932Z" fill="white"/></svg>');
+    background-color: #0D6EFD;
+    opacity: 0;
+    transition: .2s;
+  }
+
+  .custom_checkbox-label input:checked+.custom_checkbox::before {
+    opacity: 1;
+  }
+
+  .custom_radio label {
+    display: flex;
+    align-items: center;
+    @apply mr-4 font-light cursor-pointer;
+}
+
+  .custom_radio input[type="radio"] {
+    display: none;
+  }
+
+  .custom_radio label::before {
+    content: "";
+    @apply inline-block mr-2 w-4 h-4 border-2 border-gray-300 rounded-full ;
+  }
+
+  .custom_radio input[type="radio"]:checked+label::before {
+    content: "";
+    @apply inline-block w-4 h-4 border-4 border-[#0D6EFD] rounded-full;
+  }
+
+  .appearance-none {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+
+  .title {
+    @apply text-4xl font-medium leading-tight;
+  }
+
+  .title_small {
+    @apply text-2xl font-medium leading-tight mb-7;
+  }
+  .title_small-2 {
+    @apply text-2xl font-normal leading-tight;
+  }
+
+  .subtitle {
+    @apply text-gray-400 font-light leading-[1.5] mt-1 mb-8;
+  }
+
+  .text_block {
+    @apply flex flex-col justify-center items-start gap-6 mb-10;
+  }
+
+  .text_block p {
+    @apply text-lg font-light leading-[1.5] m-0;
+  }
+
+  .text_block ol {
+    @apply flex flex-col list-decimal pl-5 gap-6;
+  }
+
+  .text_block ol li {
+    @apply text-lg font-light leading-[1.5];
+  }
+
+  .text_block-2 {
+    @apply flex flex-col justify-center items-start;
+  }
+
+  .text_block-2 p {
+    @apply text-base font-light leading-[160%];
+  }
+
+  .from_block {
+    @apply border rounded-md py-8 px-10 flex flex-col gap-5;
+  }
+
+  .btn_icon {
+    @apply flex justify-center gap-3.5 items-center rounded-md bg-black py-2 px-5 text-white font-light;
+  }
+}

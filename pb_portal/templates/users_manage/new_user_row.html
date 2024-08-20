@@ -1,19 +1,29 @@
 <tr>
     <form hx-post="{{url_for('create')}}" hx-target="this" hx-swap="outerHTML">
-        <td><input type="email" value="" name="email"></td>
-        <td><input type="password" value="" name="password"></td>
-        <td><select name="role">
+        <td class="px-4 py-2 border-b">
+            <input type="email" value="" name="email" class="w-full px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </td>
+        <td class="px-4 py-2 border-b">
+            <input type="password" value="" name="password" class="w-full px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </td>
+        <td class="px-4 py-2 border-b">
+            <select name="role" class="w-full px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
                 {% for role in roles_schema %}
                     <option value="{{ role.value }}">{{ role.name }}</option>
                 {% endfor %}
-            </select> </td>
-        <td>
-            <button type="btn">Create</button>
+            </select>
+        </td>
+        <td class="px-4 py-2 border-b">
+            <button type="submit" class="bg-green-500 text-white font-semibold py-1 px-3 rounded hover:bg-green-600">
+                Create
+            </button>
         </td>
     </form>
 </tr>
 <tr id="replaceMe">
-    <td colspan="4">
-        <button class='btn' hx-get="{{url_for('new_user_row')}}" hx-target="#replaceMe" hx-swap="outerHTML">Add User</button>
+    <td colspan="4" class="px-4 py-2 text-center">
+        <button class="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600" hx-get="{{url_for('new_user_row')}}" hx-target="#replaceMe" hx-swap="outerHTML">
+            Add User
+        </button>
     </td>
 </tr>

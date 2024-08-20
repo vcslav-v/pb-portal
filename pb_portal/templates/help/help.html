@@ -5,33 +5,32 @@
 {% endblock %}
 {% block content_in_wrapper %}
     {{ super() }}
-    <h1 class="content__h1">Help Center</h1>
-    <p class="content__subtitle">Terms & Conditions. Updated 2 September, 2023.</p>
-    <div class="content__info">
+    <h1 class="title">Help Center</h1>
+    <p class="subtitle">Terms & Conditions. Updated 2 September, 2023.</p>
+    <div class="text_block">
         <p>Within these terms ‘we’, ‘us’, ‘our’ and ‘Design Cuts’ pertain to Design Cuts (designcuts.com) and Design Cuts Ltd, as the holding website/marketplace/company for your creative products.</p>
     </div>
-    <h2 class="content__h2">Product Package</h2>
-    <div class="content__common">
-        <p>Please, neatly organise all included files, and pack them in a ZIP archive. We </p>
+    <h2 class="title_small">Product Package</h2>
+    <div class="text_block">
+        <p>Please, neatly organise all included files, and pack them in a ZIP archive.</p>
     </div>
-    <h2 class="content__h2">Preview Graphics</h2>
-    <div class="content__common">
+    <h2 class="title_small">Preview Graphics</h2>
+    <div class="text_block">
         <p>We accept preview graphics in standard 3:2 aspect ratio (jpg, png, or webp formats). Submit the same images you create for Creative Market or Envato Elements. We require to meet the minimum dimensions for the images:</p>
-        <p><b>2250 х 1500 px</b></p>
+        <p><span class="font-semibold">2250 х 1500 px</span></p>
     </div>
-    <h2 class="content__h2">Payments</h2>
-    <div class="content__common">
+    <h2 class="title_small">Payments</h2>
+    <div class="text_block">
         <p>Payments are sent on the 16th of each month if you have earned more than the minimum payment threshold of $50. This will apply to both your regular earnings as well as any incentives earnings you may be entitled to. You should receive payment within 1-3 business days of our payout date.</p>
         <p>In order to ensure delivery, make sure your Payouts information is complete and correct. If you do not receive payment within a month, please contact us so we can resolve the issue.</p>
     </div>
-    <h2 class="content__h2">Become an Affiliate</h2>
-    <div class="content__common">
+    <h2 class="title_small">Become an Affiliate</h2>
+    <div class="text_block">
         <p>Earn additionally 30% from every sale you bring! It's as easy as add your personal affiliate code to any link from our website, and share it with your audience. Our affiliate program is plain and generous, and you're already approved and set up.</p>
-        <p>Use affiliate code: <b>?ref={{user.id}}</b></p>
+        <p>Use affiliate code: <span class="font-semibold">?ref={{user.id}}</span></p>
     </div>
-    <h2 class="content__h2">Get in Touch</h2>
-    <div class="content__common">
+    <h2 class="title_small">Get in Touch</h2>
+    <div class="text_block">
         <p>If you have any further questions, please, drop a message to info@pixelbuddha.net. Use the specific subject Pixelbuddha Creators Support Request so we can address your email to the right person and reply as soon as possible.</p>
     </div>
 {% endblock %}
-

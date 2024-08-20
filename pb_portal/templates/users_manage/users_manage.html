@@ -5,25 +5,25 @@
 {% endblock %}
 {% block content_in_wrapper %}
     {{ super() }}
-            <h1 class="content__h1">TEST</h1>
-            <div class="content__table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Email</th>
-                            <th>Psw</th>
-                            <th>Role</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% include 'users_manage/users_list.html' %}
-                        <tr id="replaceMe">
-                            <td colspan="4">
-                                <button class='btn' hx-get="{{url_for('new_user_row')}}" hx-target="#replaceMe" hx-swap="outerHTML">Add User</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+    <h1 class="text-4xl font-medium leading-tight m-0 mb-8">TEST</h1>
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-300">
+            <thead class="bg-gray-100 border-b border-gray-300">
+                <tr>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Email</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Psw</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Role</th>
+                    <th class="text-left px-4 py-2 font-semibold text-gray-700">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% include 'users_manage/users_list.html' %}
+                <tr id="replaceMe" class="border-t border-gray-300">
+                    <td colspan="4" class="text-center px-4 py-2">
+                        <button class='bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600' hx-get="{{url_for('new_user_row')}}" hx-target="#replaceMe" hx-swap="outerHTML">Add User</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
