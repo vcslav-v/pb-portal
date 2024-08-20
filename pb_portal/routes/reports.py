@@ -26,6 +26,9 @@ user_roles = {
     os.environ.get('PB_ADMIN_LOGIN') or 'pb_root': ['pb_admin'],
 }
 
+PBI_PRODUCT_URL = os.environ.get('PBI_PRODUCT_URL', '')
+PBI_FIN_URL = os.environ.get('PBI_FIN_URL', '')
+
 
 @auth.get_user_roles
 def get_user_roles(user):
@@ -46,8 +49,7 @@ def fin_stat():
     name = 'PB'
     return render_template(
         'money_stat.html',
-        name=name,
-        api_url=url_for('reports.get_site_stat_data'),
+        pbi_fin_url=PBI_FIN_URL,
     )
 
 
@@ -55,23 +57,9 @@ def fin_stat():
 @app_route.route('/PB-stat', methods=['GET', 'POST'])
 @auth.login_required(role='admin')
 def pb_stat():
-    if request.method == 'POST':
-        limit = request.form.get('limit')
-        if limit and limit.isdigit():
-            limit = int(limit)
-        else:
-            limit = 10
-        page_data = connectors.pb.get_top_products(
-            start_date=request.form.get('fromDate'),
-            end_date=request.form.get('toDate'),
-            limit=limit,
-        )
-        return render_template(
-            '_pb_report.html',
-            page_data=page_data,
-        )
     return render_template(
         'pb_report.html',
+        pbi_product_url=PBI_PRODUCT_URL,
     )
 
 
