@@ -28,3 +28,11 @@ USER_MANAGER_SECRET = os.environ.get('USER_MANAGER_SECRET', 'user_manager_secret
 
 # Database
 DATABASE_URI = os.environ.get('DATABASE_URI', 'postgresql+asyncpg://postgres:mysecretpassword@0.0.0.0/postgres')
+
+# PB
+PB_URL = os.environ.get('PB_URL', '')
+PB_LOGIN = os.environ.get('PB_LOGIN', 'login')
+PB_PASSWORD = os.environ.get('PB_PASSWORD', 'password')
+
+SAMPLE_PRODUCT_URL = os.environ.get('SAMPLE_PRODUCT_URL', 'https://www.google.com')
+SUPPORTED_FORMATS = os.environ.get('SUPPORTED_FORMATS', 'pdf,doc,docx,txt').split(',')

@@ -3,25 +3,32 @@
         <label for="title" class="font-light">
             Title <span class="text-red-600">*</span>
         </label>
-        <input class="w-full max-w-2xl border rounded-md py-3 px-5 font-light leading-6 focus:ring-black focus:ring-2 focus:outline-none" type="text" id="title" name="title" placeholder="Enter your product title" required>
+        <input
+            class="w-full max-w-2xl border rounded-md py-3 px-5 font-light leading-6 focus:ring-black focus:ring-2 focus:outline-none"
+            type="text" id="title" name="title" placeholder="Enter your product title" required>
     </div>
     <div class="flex flex-col gap-2.5 w-full">
         <label for="category" class="font-light">Select category <span class="text-red-600">*</span></label>
         <div class="relative inline-block w-full">
-            <select name="category" id="category" class="flex justify-between items-center rounded-md bg-zinc-500 py-3 px-7 min-h-12 w-full max-w-2xl text-white leading-6 font-light appearance-none focus:outline-none">
-                <option value="">Category</option>
-                <option value="">Category 1</option>
-                <option value="">Category 2</option>
-                <option value="">Category 3</option>
+            <select name="category" id="category"
+                class="flex justify-between items-center rounded-md bg-zinc-500 py-3 px-7 min-h-12 w-full max-w-2xl text-white leading-6 font-light appearance-none focus:outline-none">
+                {% for id in categories%}
+                <option value="{{ id }}">{{ categories[id] }}</option>
+                {% endfor %}
             </select>
-            <img class="absolute max-w-8 max-h-8 top-1/2 transform -translate-y-1/2 right-7" src="{{ url_for('static', path='/imgs/select_row.svg') }}">
+            <img class="absolute max-w-8 max-h-8 top-1/2 transform -translate-y-1/2 right-7"
+                src="{{ url_for('static', path='/imgs/select_row.svg') }}">
         </div>
     </div>
-    <div class="flex flex-row justify-start custom_radio">
-        <input type="radio" id="free" name="plan" value="free" checked>
+    <div class="flex flex-row justify-start custom_radio" {% if user.role_id <=2 %}
+        hx-post="{{url_for('get_pricing_block')}}" hx-trigger="change" hx-target="#pricing" hx-swap="outerHTML" {% endif %}>
+        <input type="radio" id="free" name="productType" value="free" checked>
         <label for="free">Free</label>
-        
-        <input type="radio" id="plus" name="plan" value="plus">
-        <label for="plus"><span>Plus</span></label>
+
+        <input type="radio" id="plus" name="productType" value="plus">
+        <label for="plus">Plus</label>
+        {% if user.role_id <= 2 %} <input type="radio" id="special" name="productType" value="special">
+            <label for="special"><span class="special-color">✦</span>&nbsp;Special</label>
+            {% endif %}
     </div>
-</div>
+    {% if user.role_id <= 2 %} {% include 'products/_pricing.html' %} {% endif %} </div>

@@ -50,7 +50,7 @@
     display: flex;
     align-items: center;
     @apply mr-4 font-light cursor-pointer;
-}
+  }
 
   .custom_radio input[type="radio"] {
     display: none;
@@ -58,7 +58,7 @@
 
   .custom_radio label::before {
     content: "";
-    @apply inline-block mr-2 w-4 h-4 border-2 border-gray-300 rounded-full ;
+    @apply inline-block mr-2 w-4 h-4 border-2 border-gray-300 rounded-full;
   }
 
   .custom_radio input[type="radio"]:checked+label::before {
@@ -79,6 +79,7 @@
   .title_small {
     @apply text-2xl font-medium leading-tight mb-7;
   }
+
   .title_small-2 {
     @apply text-2xl font-normal leading-tight;
   }
@@ -117,5 +118,19 @@
 
   .btn_icon {
     @apply flex justify-center gap-3.5 items-center rounded-md bg-black py-2 px-5 text-white font-light;
+  }
+
+  .special-color {
+    @apply text-[#4D588E];
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
   }
 }

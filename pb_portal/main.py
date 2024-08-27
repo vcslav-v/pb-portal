@@ -5,6 +5,7 @@ from pb_portal import config
 from pb_portal.routes.routes import routes
 from contextlib import asynccontextmanager
 from pb_portal.db.tools import prepare_user_roles
+from pb_portal.pb import get_categories
 from pb_portal import exception_handlers
 
 
@@ -12,6 +13,7 @@ from pb_portal import exception_handlers
 async def lifespan(app: FastAPI):
     config.logger.info('Starting app')
     await prepare_user_roles()
+    await get_categories()
     yield
     config.logger.info('Stopping app')
 

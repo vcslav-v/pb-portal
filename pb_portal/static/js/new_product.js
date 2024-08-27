@@ -36,3 +36,7 @@ htmx.onLoad(function(content) {
     });
     document.querySelector(".CodeMirror").classList.add("border", "rounded-md", "py-2", "px-4", "focus:outline-none", "mt-2");
 })
+
+function startUpload() {
+  
+
