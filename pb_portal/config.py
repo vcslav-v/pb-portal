@@ -36,3 +36,11 @@ PB_PASSWORD = os.environ.get('PB_PASSWORD', 'password')
 
 SAMPLE_PRODUCT_URL = os.environ.get('SAMPLE_PRODUCT_URL', 'https://www.google.com')
 SUPPORTED_FORMATS = os.environ.get('SUPPORTED_FORMATS', 'pdf,doc,docx,txt').split(',')
+
+# DigitalOcean Spaces
+DO_SPACE_KEY = os.environ.get('DO_SPACE_KEY', '')
+DO_SPACE_SECRET = os.environ.get('DO_SPACE_SECRET', '')
+DO_SPACE_REGION = os.environ.get('DO_SPACE_REGION', '')
+DO_SPACE_BUCKET = os.environ.get('DO_SPACE_BUCKET', '')
+DO_SPACE_ENDPOINT = os.environ.get('DO_SPACE_ENDPOINT', '')
+

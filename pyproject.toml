@@ -24,6 +24,7 @@ alembic = "^1.13.1"
 greenlet = "^3.0.3"
 fastapi-users = {extras = ["sqlalchemy"], version = "^13.0.0"}
 pb-admin = {git = "https://github.com/vcslav-v/pb_admin.git"}
+boto3 = "^1.35.6"
 
 
 [tool.poetry.group.dev.dependencies]

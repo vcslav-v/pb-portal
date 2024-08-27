@@ -1,13 +1,15 @@
-from fastapi import APIRouter, Depends, Request, Form
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pb_portal.auth.tools import current_active_user
+from pb_portal.s3 import make_s3_url
 from pb_portal.db.models import User
-from pb_portal.db.tools import sign_agreement as db_sign_agreement
 from pb_portal.auth.schemas import UserRoles
 from fastapi.responses import RedirectResponse
 import json
 import os
+from datetime import datetime, UTC
+
 
 from pb_portal import config, dependencies
 
@@ -41,6 +43,7 @@ async def new_product(
 ) -> HTMLResponse:
     if not user.signed_agreement_date:
         return RedirectResponse(request.url_for('agreement'))
+    upload_session_id = f'{user.id}-{int(datetime.now(UTC).timestamp())}'
     return templates.TemplateResponse('products/new_product.html', {
         'request': request,
         'user_role_id': user.role_id,
@@ -51,6 +54,7 @@ async def new_product(
         'product_type': 'free',
         'sample_product_url': config.SAMPLE_PRODUCT_URL,
         'supported_formats': config.SUPPORTED_FORMATS,
+        'upload_session_id': upload_session_id
     })
 
 
@@ -66,3 +70,15 @@ async def get_pricing_block(
         'request': request,
         'product_type': product_type
     })
+
+
+@router.post('/get_upload_product_url')
+async def get_upload_product_url(
+    request: Request,
+    user: User = Depends(current_active_user)
+):
+    form = await request.form()
+    return make_s3_url(
+        filename=form.get('upload_session_id', 'error')+'.zip',
+        content_type='application/zip',
+    )

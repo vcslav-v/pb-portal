@@ -11,6 +11,7 @@
 {{ super() }}
 <h1 class="title mb-12">Create Submission</h1>
     <form action="" class="flex flex-col gap-12">
+        <input type="text" name="upload_session_id" value="{{upload_session_id}}" hidden>
         {% include 'products/_create_product_block_title.html' %}
         {% include 'products/_create_product_block_files.html' %}
         {% include 'products/_create_product_block_desc_tags.html' %}
