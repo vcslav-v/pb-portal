@@ -1,5 +1,8 @@
-htmx.onLoad(function (content) {
-  var sortables = content.querySelectorAll(".sortable");
+let currentUploadRequest = null;
+let simplemde = null;
+
+document.addEventListener("DOMContentLoaded", function () {
+  var sortables = document.querySelectorAll(".sortable");
   for (var i = 0; i < sortables.length; i++) {
     var sortable = sortables[i];
     var sortableInstance = new Sortable(sortable, {
@@ -23,7 +26,7 @@ htmx.onLoad(function (content) {
       sortableInstance.option("disabled", false);
     });
   }
-  var simplemde = new SimpleMDE({
+  simplemde = new SimpleMDE({
     element: document.getElementById("description"),
     spellChecker: false,
     status: false,
@@ -34,36 +37,124 @@ htmx.onLoad(function (content) {
     autofocus: false,
     initialValue: '',
   });
-  document.querySelector(".CodeMirror").classList.add("border", "rounded-md", "py-2", "px-4", "focus:outline-none", "mt-2");
+  simplemde.codemirror.on("change", function(){
+    syncText();
+});
 })
 
-async function startUpload() {
+function startUpload() {
   let formData = new FormData();
   let uploadSessionId = document.getElementsByName('upload_session_id')[0].value;
   formData.append('upload_session_id', uploadSessionId);
-  const requestOptions = {
-    method: 'POST',
-    body: formData
-  };
-  const response = fetch('/products/get_upload_product_url', requestOptions);
-  const data = await response
-  const uploadUrl = data.json().url;
-
-  let s3FormData = new FormData();
-  let file = document.getElementsByName('productFile').files[0];
-  s3FormData.append('file', file);
-  htmx.ajax('POST', uploadUrl, {
-    body: formData,
-    headers: { 'HX-Request': 'true' },
-    responseType: 'json',
-    onprogress: function(event) {
-        if (event.lengthComputable) {
-            var percentComplete = (event.loaded / event.total) * 100;
-            console.log(percentComplete);
+  const xhr = new XMLHttpRequest();
+  let file = document.getElementById('productFile').files[0];
+  if (file && file.size > 4 * 1024 * 1024 * 1024) {
+    alert('File is too big. Maximum size is 4GB.');
+    return;
+  }
+  if (file) {
+    xhr.open('POST', "/products/get_upload_product_url");
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText);
+          uploadFile(file, response.data);
         }
-    }
-});
-
-
+        else {
+          alert('Could not get signed URL.');
+        }
+      }
+    };
+    xhr.send(formData);
+  }
 }
 
+function uploadFile(file, s3Data) {
+  const xhr = new XMLHttpRequest();
+  currentUploadRequest = xhr;
+  const productBar = document.getElementById('productBar');
+  let productProgress = document.getElementById('productProgress');
+  let productName = document.getElementById('productName');
+  let uploadBtn = document.getElementById('uploadBtn');
+  productName.textContent = file.name;
+  productBar.classList.remove('hidden');
+  uploadBtn.classList.add('hidden');
+  xhr.open('POST', s3Data.url);
+  xhr.setRequestHeader('x-amz-acl', 'public-read');
+  const postData = new FormData();
+  for (key in s3Data.fields) {
+    postData.append(key, s3Data.fields[key]);
+  }
+  postData.append('file', file);
+  xhr.upload.onprogress = (event) => {
+    if (event.lengthComputable) {
+      const percentComplete = (event.loaded / event.total) * 100;
+      productProgress.style.width = (100 - percentComplete) + '%';
+    }
+  };
+  xhr.onreadystatechange = () => {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200 || xhr.status === 204) {
+        currentUploadRequest = null;
+        console.log('File uploaded successfully.');
+      }
+      else if (xhr.status === 0) {
+        console.log('File upload cancelled.');
+      }
+      else {
+        alert('Could not upload file.');
+      }
+    }
+  };
+  xhr.send(postData);
+}
+
+function cancelUpload() {
+  let uploadBtn = document.getElementById('uploadBtn');
+  let productBar = document.getElementById('productBar');
+  let productProgress = document.getElementById('productProgress');
+  let fileInput = document.getElementById('productFile');
+  if (currentUploadRequest) {
+    currentUploadRequest.abort();
+    productBar.classList.add('hidden');
+    uploadBtn.classList.remove('hidden');
+    productProgress.style.width = '100%';
+  } else {
+    let formData = new FormData();
+    let uploadSessionId = document.getElementsByName('upload_session_id')[0].value;
+    formData.append('upload_session_id', uploadSessionId);
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', "/products/rm_upload_product_url");
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          productBar.classList.add('hidden');
+          uploadBtn.classList.remove('hidden');
+          productProgress.style.width = '100%';
+          fileInput.value = '';
+          console.log('Upload session removed.');
+        }
+        else {
+          alert('Could not remove product.');
+        }
+      }
+    };
+    xhr.send(formData);
+  }
+}
+
+function syncText() {
+  let textarea = document.getElementById('description');
+  let html_description = simplemde.value();
+  textarea.value = simplemde.markdown(html_description);
+  htmx.trigger(textarea, 'change');
+}
+
+function deleteTag(tag) {
+  let tagsArea = document.getElementById('tags');
+  let tagName = tag.getAttribute('x-value')
+  let tags = tagsArea.value.split(',').map(tag => tag.trim());
+  tags = tags.filter(t => t.toLowerCase() !== tagName);
+  tagsArea.value = tags.join(', ');
+  htmx.trigger(tagsArea, 'input');
+}

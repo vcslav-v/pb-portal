@@ -1,0 +1,4 @@
+<div class="flex flex-row justify-end font-light gap-2 {%if len_items <= max_len and not text_line%}text-gray-500{%else%}text-red-500{%endif%}" id="{{target_id}}">
+    {%if text_line %}<span>{{text_line}}</span>{%endif%}
+    <span>{{len_items}} / {{max_len}}</span>
+</div>

@@ -37,6 +37,15 @@ PB_PASSWORD = os.environ.get('PB_PASSWORD', 'password')
 SAMPLE_PRODUCT_URL = os.environ.get('SAMPLE_PRODUCT_URL', 'https://www.google.com')
 SUPPORTED_FORMATS = os.environ.get('SUPPORTED_FORMATS', 'pdf,doc,docx,txt').split(',')
 
+ALLOWED_TAGS = {
+    'p', 'i', 'b', 'strong', 'em', 'u', 'strike', 'ol', 'ul', 'li', 'br'
+}
+MAX_DESCRIPTION_LENGTH = 1000
+MAX_EXERPT_LENGTH = 250
+RE_EXERPT = r'^[\w+\' \-()]+$'
+MAX_TAGS_LENGTH = 20
+RE_TAG = r'^[a-z0-9\' -]+$'
+
 # DigitalOcean Spaces
 DO_SPACE_KEY = os.environ.get('DO_SPACE_KEY', '')
 DO_SPACE_SECRET = os.environ.get('DO_SPACE_SECRET', '')

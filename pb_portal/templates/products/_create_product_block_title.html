@@ -24,11 +24,10 @@
         hx-post="{{url_for('get_pricing_block')}}" hx-trigger="change" hx-target="#pricing" hx-swap="outerHTML" {% endif %}>
         <input type="radio" id="free" name="productType" value="free" checked>
         <label for="free">Free</label>
-
         <input type="radio" id="plus" name="productType" value="plus">
         <label for="plus">Plus</label>
-        {% if user.role_id <= 2 %} <input type="radio" id="special" name="productType" value="special">
+        {% if user.role_id  <= roles_schema.manager.value %} <input type="radio" id="special" name="productType" value="special">
             <label for="special"><span class="special-color">✦</span>&nbsp;Special</label>
             {% endif %}
     </div>
-    {% if user.role_id <= 2 %} {% include 'products/_pricing.html' %} {% endif %} </div>
+    {% if user.role_id  <= roles_schema.manager.value %} {% include 'products/_pricing.html' %} {% endif %} </div>
