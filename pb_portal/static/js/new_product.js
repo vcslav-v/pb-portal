@@ -1,31 +1,24 @@
 let currentUploadRequest = null;
 let simplemde = null;
+let sortableInstance = null;
 
 document.addEventListener("DOMContentLoaded", function () {
-  var sortables = document.querySelectorAll(".sortable");
+  let sortables = document.querySelectorAll(".sortable");
   for (var i = 0; i < sortables.length; i++) {
     var sortable = sortables[i];
-    var sortableInstance = new Sortable(sortable, {
+    sortableInstance = new Sortable(sortable, {
       animation: 150,
       ghostClass: 'blue-background-class',
-
-      // Make the `.htmx-indicator` unsortable
       filter: ".htmx-indicator",
       onMove: function (evt) {
         return evt.related.className.indexOf('htmx-indicator') === -1;
       },
-
-      //   // Disable sorting on the `end` event
-      //   onEnd: function (evt) {
-      //     this.option("disabled", true);
-      //   }
     });
-
-    // Re-enable sorting on the `htmx:afterSwap` event
     sortable.addEventListener("htmx:afterSwap", function () {
       sortableInstance.option("disabled", false);
     });
   }
+
   simplemde = new SimpleMDE({
     element: document.getElementById("description"),
     spellChecker: false,
@@ -37,10 +30,30 @@ document.addEventListener("DOMContentLoaded", function () {
     autofocus: false,
     initialValue: '',
   });
-  simplemde.codemirror.on("change", function(){
+  simplemde.codemirror.on("change", function () {
     syncText();
-});
+  });
 })
+
+document.body.addEventListener('htmx:afterRequest', function (event) {
+  if (event.detail.target.classList.contains('preview-img-block')) {
+    let sortedPreview = document.getElementById('sortedPreview');
+    let hasnotPreviewBlocks = sortedPreview.querySelectorAll('.preview-img-block').length == 0;
+    if (hasnotPreviewBlocks) {
+      sortedPreview.classList.add('hidden');
+    };
+  } else if (event.target.id == 'addYoutubeBtn') {
+    let youtubeInput = document.getElementById('youtubeLink');
+    youtubeInput.value = '';
+  }
+});
+
+function showSortedPreview() {
+  var sortedPreview = document.getElementById("sortedPreview");
+  if (sortedPreview) {
+    sortedPreview.classList.remove("hidden");
+  }
+};
 
 function startUpload() {
   let formData = new FormData();

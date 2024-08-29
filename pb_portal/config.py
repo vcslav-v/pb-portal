@@ -46,6 +46,22 @@ RE_EXERPT = r'^[\w+\' \-()]+$'
 MAX_TAGS_LENGTH = 20
 RE_TAG = r'^[a-z0-9\' -]+$'
 
+# Images
+MAX_IMAGE_SIZE = 5 * 1024 * 1024
+MIN_PB_IMAGE_WIDTH = 2250
+MIN_PB_IMAGE_HEIGHT = 1500
+PB_IMAGE_ASPECT_RATIO = 3 / 2
+MAX_IMAGE_WIDTH = 3000
+MAX_IMAGE_HEIGHT = 2000
+PORTAL_PREVIEW_IMAGE_WIDTH = 500
+PORTAL_PREVIEW_IMAGE_HEIGHT = 500
+
+YOUTUBE_RES = [
+    r'v=([a-zA-Z0-9_-]{11})',
+    r'youtu\.be/([a-zA-Z0-9_-]{11})',
+]
+
+
 # DigitalOcean Spaces
 DO_SPACE_KEY = os.environ.get('DO_SPACE_KEY', '')
 DO_SPACE_SECRET = os.environ.get('DO_SPACE_SECRET', '')
@@ -53,3 +69,7 @@ DO_SPACE_REGION = os.environ.get('DO_SPACE_REGION', '')
 DO_SPACE_BUCKET = os.environ.get('DO_SPACE_BUCKET', '')
 DO_SPACE_ENDPOINT = os.environ.get('DO_SPACE_ENDPOINT', '')
 
+IMG_S3_NAME_TEMPLATE = 'uploaded_products/{upload_session_id}/preview_{filename}_{img_id}_{target}.jpg'
+YOUTUBE_S3_NAME_TEMPLATE = 'uploaded_products/{upload_session_id}/preview_{img_id}_youtube.txt'
+PRODUCT_S3_NAME_TEMPLATE = 'uploaded_products/{upload_session_id}/product.zip'
+UPLOADED_PRODUCTS_DIR = 'uploaded_products/{upload_session_id}/'

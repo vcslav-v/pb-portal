@@ -1,15 +1,16 @@
-from fastapi import APIRouter, Depends, Request, Response
+from fastapi import APIRouter, Depends, Request, Response, UploadFile, File
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pb_portal.auth.tools import current_active_user
-from pb_portal.s3 import make_s3_url, rm_product
-from pb_portal import validate
+from pb_portal.s3 import make_s3_url, rm_product, upload_pb_preview_image, rm_pb_preview, make_youtube_placeholder
+from pb_portal import validate, imgs
 from pb_portal.db.models import User
 from pb_portal.auth.schemas import UserRoles
 from fastapi.responses import RedirectResponse
 import json
 import os
 from datetime import datetime, UTC
+from typing import List
 
 
 from pb_portal import config, dependencies
@@ -80,7 +81,7 @@ async def get_upload_product_url(
 ):
     form = await request.form()
     json_result = make_s3_url(
-        filename=form.get('upload_session_id', 'error')+'.zip',
+        upload_session_id=form.get('upload_session_id', 'error'),
         content_type='application/zip',
     )
     return Response(content=json_result, media_type='application/json')
@@ -93,7 +94,7 @@ async def rm_upload_product_url(
 ):
     form = await request.form()
     rm_product(
-        filename=form.get('upload_session_id', 'error')+'.zip'
+        upload_session_id=form.get('upload_session_id', 'error')
     )
     return Response(content='{"status": "ok"}', media_type='application/json')
 
@@ -124,7 +125,7 @@ async def validate_description(
 async def validate_excerpt(
     request: Request,
     templates: Jinja2Templates = Depends(dependencies.get_templates),
-    user: User = Depends(current_active_user)
+    user: User = Depends(current_active_user),
 ):
     form = await request.form()
     excerpt = form.get('excerpt', '')
@@ -171,4 +172,57 @@ async def count_tags(
         'max_len': config.MAX_TAGS_LENGTH,
         'target_id': 'tagsCounter',
         'text_line': text_line,
+    })
+
+
+@router.post('/imgs_upload', response_class=HTMLResponse)
+async def imgs_upload(
+    request: Request,
+    user: User = Depends(current_active_user),
+    templates: Jinja2Templates = Depends(dependencies.get_templates),
+    imgFiles: List[UploadFile] = File(...)
+):
+    form = await request.form()
+    upload_session_id = form.get('upload_session_id', 'error')
+    validated_imgs = []
+    for imgFile in imgFiles:
+        if imgFile.content_type != 'image/jpeg':
+            validated_imgs.append((None, None, 'Only JPEG images are allowed', imgFile.filename))
+            continue
+        if imgFile.size > config.MAX_IMAGE_SIZE:
+            validated_imgs.append((None, None, 'Image size is too big', imgFile.filename))
+            continue
+        validated_imgs.append(imgs.prepare_pb_preview_image(imgFile.file.read(), imgFile.filename))
+    return templates.TemplateResponse('products/_sort_imgs.html', {
+        'request': request,
+        'imgs': upload_pb_preview_image(validated_imgs, upload_session_id),
+    })
+
+
+@router.delete('/delete_img')
+async def delete_img(
+    request: Request,
+    user: User = Depends(current_active_user),
+):
+    form = await request.form()
+    img_id = form.get('img_id')
+    upload_session_id = form.get('upload_session_id', 'error')
+    if img_id:
+        rm_pb_preview(img_id, upload_session_id)
+    return Response(content='<!-- Removed -->', media_type='application/json')
+
+
+@router.post('/add_youtube_preview')
+async def add_youtube_preview(
+    request: Request,
+    templates: Jinja2Templates = Depends(dependencies.get_templates),
+    user: User = Depends(current_active_user),
+):
+    form = await request.form()
+    youtube_url = form.get('youtubeLink', '')
+    upload_session_id = form.get('upload_session_id', 'error')
+    youtube_thumbnail = validate.youtube_thumbnail(youtube_url)
+    return templates.TemplateResponse('products/_sort_imgs.html', {
+        'request': request,
+        'imgs': make_youtube_placeholder(youtube_url, upload_session_id, youtube_thumbnail),
     })

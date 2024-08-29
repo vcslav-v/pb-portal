@@ -971,6 +971,10 @@ video {
   gap: 3rem;
 }
 
+.gap-2 {
+  gap: 0.5rem;
+}
+
 .gap-2\.5 {
   gap: 0.625rem;
 }
@@ -993,10 +997,6 @@ video {
 
 .gap-9 {
   gap: 2.25rem;
-}
-
-.gap-2 {
-  gap: 0.5rem;
 }
 
 .gap-x-10 {
@@ -1584,6 +1584,15 @@ input[type="number"]::-webkit-outer-spin-button,
 
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+.htmx-request.htmx-indicator {
+  display: block;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
 }
 
 .checked\:opacity-100:checked {

@@ -26,6 +26,7 @@ fastapi-users = {extras = ["sqlalchemy"], version = "^13.0.0"}
 pb-admin = {git = "https://github.com/vcslav-v/pb_admin.git"}
 boto3 = "^1.35.6"
 beautifulsoup4 = "^4.12.3"
+pillow = "^10.4.0"
 
 
 [tool.poetry.group.dev.dependencies]

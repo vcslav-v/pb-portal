@@ -1,0 +1,22 @@
+{% for img in imgs %}
+<div class="flex flex-row justify-between border items-center p-2 font-light {%if img.error%}border-red-500{%else%}border-black{%endif%} rounded-sm cursor-move preview-img-block"
+    {%if img.error%}title="{{img.error}}" {%endif%}>
+    {%if not img.error%}<input type="hidden" name="preview_ids[]" value="{{img.id}}">{%endif%}
+    <div class="flex flex-row justify-start items-center gap-5 {%if img.error%}text-red-500{%else%}text-black{%endif%}">
+        <div class="{%if img.thumb_url%}w-12 h-12 overflow-hidden rounded-sm{%else%}w-7 h-7 overflow-hidden rounded-sm m-2{%endif%}">
+            <img class="{%if img.thumb_url%}w-full h-full object-cover{%else%}w-full h-full{%endif%}"
+                src="{%if img.thumb_url and not img.error %}{{img.thumb_url}}{%else%}{{ url_for('static', path='/imgs/icon-img.svg') }}{%endif%}">
+        </div>
+        {%if img.filename|length < 45 %}
+            {{img.filename}}
+        {%else%}
+            {% set ext = img.filename.split('.')[-1] %}
+            {{img.filename[:35]}}...{{ext[:5]}}
+        {%endif%}
+    </div>
+    <button type="button" class="cursor-pointer mr-4"  hx-delete="{{url_for('delete_img')}}"{% if img.id != None %} hx-vals='{"img_id": "{{img.id}}"}'{%endif%} hx-target="closest .preview-img-block" hx-swap="outerHTML">
+        <img class="max-w-4 max-h-4"
+            src="{%if img.error %}{{ url_for('static', path='/imgs/icon-trash-d.svg') }}{%else%}{{ url_for('static', path='/imgs/icon-trash.svg') }}{%endif%}">
+    </button>
+</div>
+{% endfor %}

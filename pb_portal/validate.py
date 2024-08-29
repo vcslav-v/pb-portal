@@ -24,3 +24,11 @@ def tags(tags_str: str) -> tuple[list[str], str]:
     validated_tags = [tag for tag in tags if re.match(config.RE_TAG, tag)]
     text_line = 'Only letters, numbers, spaces, and hyphens are allowed' if len(validated_tags) != len(tags) else ''
     return validated_tags, text_line
+
+
+def youtube_thumbnail(url: str) -> str:
+    for res in config.YOUTUBE_RES:
+        match = re.search(res, url)
+        if match:
+            return f'https://img.youtube.com/vi/{match.group(1)}/hqdefault.jpg'
+    return ''

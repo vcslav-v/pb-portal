@@ -1,26 +1,7 @@
 <div class="from_block">
-    <div class="flex flex-col gap-2.5 sortable py-2.5">
-        <div class="flex flex-row justify-between border items-center p-2 font-light border-red-500 rounded-sm cursor-move" title="Are you a complete jerk?">
-            <div class="flex flex-row justify-start items-center gap-5 text-red-500">
-                <div class="w-7 h-7 overflow-hidden rounded-sm m-2">
-                    <img class="w-full h-full" src="{{ url_for('static', path='/imgs/icon-img.svg') }}">
-                </div>
-                Product-name-01.png
-            </div>
-            <button class="cursor-pointer mr-4">
-                <img class="max-w-4 max-h-4"  src="{{ url_for('static', path='/imgs/icon-trash-d.svg') }}">
-            </button>
-        </div>
-        <div class="flex flex-row justify-between border items-center p-2 font-light border-black rounded-sm cursor-move">
-            <div class="flex flex-row justify-start items-center gap-5 text-black">
-                <div class="w-12 h-12 overflow-hidden rounded-sm">
-                    <img class="w-full h-full object-cover" src="{{ url_for('static', path='/tmp/image.png') }}">
-                </div>
-                Product-name-01.png
-            </div>
-            <button class="cursor-pointer mr-4">
-                <img class="max-w-4 max-h-4"  src="{{ url_for('static', path='/imgs/icon-trash.svg') }}">
-            </button>
+    <div id="sortedPreview" class="hidden flex flex-col gap-2.5 sortable py-2.5">
+        <div id="imgIndicator" class="htmx-indicator hidden">
+            <img src="{{ url_for('static', path='/imgs/loading.svg') }}" alt="">
         </div>
     </div>
     <div class="flex flex-col gap-4 py-2.5">
@@ -32,8 +13,10 @@
             <p>Recommended Size: 3000px (W) x 2000px (H)</p>
             <p>Max File Size: 5MB</p>
         </div>
-        <input type="file" name="productFiles" class="hidden" multiple>
-        <button
+        <input type="file" name="imgFiles" class="hidden" multiple accept=".jpg,.jpeg" hx-trigger="change"
+            hx-post="{{url_for('imgs_upload')}}" hx-target="#imgIndicator" hx-swap="beforebegin"
+            hx-encoding="multipart/form-data" hx-on:change="showSortedPreview()" hx-indicator="#imgIndicator">
+        <button type="button" onclick="document.querySelector('input[name=imgFiles]').click();"
             class="flex flex-row justify-start gap-3.5 max-w-44 items-center rounded-md bg-black px-3 py-2 text-white font-light leading-6">
             <img src="{{ url_for('static', path='/imgs/btn-icon.svg') }}">
             Upload images
@@ -43,8 +26,12 @@
         <label for="youtubeLink" class="font-light">Youtube video link (optional)</label>
         <div class="flex flex-row w-full items-center">
             <img class="w-4 h-4 absolute ml-3.5 mt-1" src="{{ url_for('static', path='/imgs/icon-link.svg') }}" alt="">
-            <input type="text" name="youtubeLink" id="youtubeLink" class="w-full border rounded-l-md h-10 py-1.5 pl-8 pr-3 focus:outline-none focus:border-black" placeholder="https://www.youtube.com/watch?v=...">
-            <button class="border border-l-0 rounded-r-md bg-gray-200 h-10 px-3 right-1">
+            <input type="text" name="youtubeLink" id="youtubeLink"
+                class="w-full border rounded-l-md h-10 py-1.5 pl-8 pr-3 focus:outline-none focus:border-black"
+                placeholder="https://www.youtube.com/watch?v=...">
+            <button type="button" id="addYoutubeBtn" class="border border-l-0 rounded-r-md bg-gray-200 h-10 px-3 right-1"
+                hx-post="{{url_for('add_youtube_preview')}}" hx-target="#imgIndicator" hx-swap="beforebegin"
+                hx-on:click="showSortedPreview()" hx-indicator="#imgIndicator">
                 <img class="w-4 h-4" src="{{ url_for('static', path='/imgs/icon-btn-black.svg') }}" alt="">
             </button>
         </div>

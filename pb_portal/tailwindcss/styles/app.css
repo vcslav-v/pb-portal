@@ -133,4 +133,8 @@
   input[type="number"] {
     -moz-appearance: textfield;
   }
+
+  .htmx-request.htmx-indicator {
+    @apply block flex flex-row justify-center items-center p-2;
+  }
 }
