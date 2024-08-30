@@ -12,6 +12,7 @@ import json
 import os
 from datetime import datetime, UTC
 from typing import List
+import base64
 
 
 from pb_portal import config, dependencies
@@ -40,7 +41,11 @@ async def products(
 def get_upload_session(request: Request, user: User) -> UploadForm:
     upload_session = request.cookies.get('upload_session')
     if upload_session:
-        upload_session = json.loads(upload_session)
+        try:
+            upload_session_decoded = base64.b64decode(upload_session).decode('utf-8')
+            upload_session = json.loads(upload_session_decoded)
+        except Exception as e:
+            upload_session = {'session_id': f'{user.id}-{int(datetime.now(UTC).timestamp())}'}
     else:
         upload_session = {'session_id': f'{user.id}-{int(datetime.now(UTC).timestamp())}'}
     upload_session = UploadForm(**upload_session)
@@ -48,9 +53,11 @@ def get_upload_session(request: Request, user: User) -> UploadForm:
 
 
 def set_upload_session(response: Response, upload_session: UploadForm) -> None:
+    upload_session_data = upload_session.model_dump_json().encode('utf-8')
+    upload_session_encoded = base64.b64encode(upload_session_data).decode('utf-8')
     response.set_cookie(
         'upload_session',
-        upload_session.model_dump_json(),
+        upload_session_encoded,
         max_age=3600,
     )
 
