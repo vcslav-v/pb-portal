@@ -42,7 +42,7 @@ ALLOWED_TAGS = {
 }
 MAX_DESCRIPTION_LENGTH = 1000
 MAX_EXERPT_LENGTH = 250
-RE_EXERPT = r'^[\w+\' \-()]+$'
+RE_EXERPT = r'^[a-zA-Z0-9\' \-()]+$'
 MAX_TAGS_LENGTH = 20
 RE_TAG = r'^[a-z0-9\' -]+$'
 
