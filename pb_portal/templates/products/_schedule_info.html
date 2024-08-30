@@ -1,0 +1,6 @@
+<div class="flex flex-col justify-center" id="scheduleInfo" >
+    {%if formated_date %}
+        <p class="text-base font-light">Scheduled for {{formated_date}}</p>
+        <p class="font-semibold"><span id="scheduleCancelBtn" class="cursor-pointer" onclick="flushSchedule()">Cancel</span></p>
+    {%endif%}
+</div>

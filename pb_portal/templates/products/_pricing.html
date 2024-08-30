@@ -1,13 +1,14 @@
 <div class="flex flex-col gap-4 w-full py-2.5" id="pricing">
     <h3 class="title_small-2">Pricing</h3>
-    {% if product_type == 'plus' or product_type == 'special' %}
+    {% if upload_session.product_type == 'plus' or upload_session.product_type == 'special' %}
     <div class="flex flex-row justify-between items-center">
         <p class="text-base font-light leading-[160%]">Commercial License <span class="text-red-600">*</span></p>
         <div class="relative">
             <span
                 class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">$</span>
-            <input type="number" name="commercialPrice"
-                class="w-20 pl-8 border rounded-md py-2 focus:outline-none focus:border-black" placeholder="17">
+            <input type="number" name="commercialPrice" value="{%if upload_session.commercial_price %}{{upload_session.commercial_price}}{%else%}17{%endif%}"
+                class="w-20 pl-8 border rounded-md py-2 focus:outline-none focus:border-black invalid:ring-red-600 invalid:ring-2" placeholder="17"
+                hx-post="{{url_for('save_changes')}}" hx-trigger="change"  hx-target="#status" hx-swap="innerHTML">
         </div>
     </div>
     {% endif %}
@@ -17,8 +18,9 @@
         <div class="relative">
             <span
                 class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">$</span>
-            <input type="number" name="extendedPrice"
-                class="w-20 pl-8 border rounded-md py-2 focus:outline-none focus:border-black" placeholder="{% if product_type == 'plus' or product_type == 'special' %}99{%else%}49{%endif%}">
+            <input type="number" name="extendedPrice" value={%if upload_session.extended_price %}"{{upload_session.extended_price}}"{%else%}"{% if upload_session.product_type == 'plus' or upload_session.product_type == 'special' %}99{%else%}49{%endif%}"{%endif%}
+                class="w-20 pl-8 border rounded-md py-2 focus:outline-none focus:border-black invalid:ring-red-600 invalid:ring-2" placeholder="{% if upload_session.product_type == 'plus' or upload_session.product_type == 'special' %}99{%else%}49{%endif%}"
+                hx-post="{{url_for('save_changes')}}" hx-trigger="change"  hx-target="#status" hx-swap="innerHTML">
         </div>
     </div>
 </div>

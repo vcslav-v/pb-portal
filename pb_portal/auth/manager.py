@@ -6,14 +6,14 @@ from fastapi_users import BaseUserManager, IntegerIDMixin, models, schemas
 from pb_portal.db.models import User
 from pb_portal.db.tools import get_user_db
 from pb_portal.auth.schemas import UserRoles
-from pb_portal.config import logger
+from pb_portal.config import logger, USER_MANAGER_SECRET
 
-SECRET = "SECRET"
+
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
-    reset_password_token_secret = SECRET
-    verification_token_secret = SECRET
+    reset_password_token_secret = USER_MANAGER_SECRET
+    verification_token_secret = USER_MANAGER_SECRET
 
     async def on_after_login(
         self,

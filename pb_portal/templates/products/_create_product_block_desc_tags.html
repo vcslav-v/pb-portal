@@ -3,16 +3,17 @@
         <label for="description">Product exerpt<span class="text-red-600">*</span></label>
         <textarea class="border rounded-md py-2 px-4 focus:outline-none focus:border-black mt-2" name="excerpt" rows="3" placeholder="Please add a excerpt"
             hx-trigger="load, input" hx-post="{{url_for('validate_excerpt')}}" hx-target="#excerptCounter"
-            hx-swap="outerHTML"></textarea>
+            hx-swap="outerHTML">{{upload_session.exerpt}}</textarea>
         <div class="flex flex-row justify-end font-light text-gray-500" id="excerptCounter">
             <span>0 / 250</span>
         </div>
     </div>
     <div class="flex flex-col justify-start font-light">
         <label for="description">Product description (Markdown) <span class="text-red-600">*</span></label>
+        <textarea id="hiddenDescription" name="hiddenDescription" class="hidden"  hx-post="{{url_for('save_changes')}}" hx-trigger="change"  hx-target="#status" hx-swap="innerHTML">{{upload_session.desc}}</textarea>
         <textarea name="description" id="description" rows="9" placeholder="Please add a detailed description"
-            hx-trigger="load, input" hx-post="{{url_for('validate_description')}}" hx-target="#descriptionCounter"
-            hx-swap="outerHTML"></textarea>
+            hx-trigger="input" hx-post="{{url_for('validate_description')}}" hx-target="#descriptionCounter"
+            hx-swap="outerHTML">{{upload_session.desc}}</textarea>
         <div class="flex flex-row justify-end font-light text-gray-500" id="descriptionCounter">
             <span>0 / 1000</span>
         </div>
@@ -21,7 +22,7 @@
         <label for="description">Product tags <span class="text-red-600">*</span></label>
         <textarea class="border rounded-md py-2 px-4 focus:outline-none focus:border-black mt-2" name="tags" id="tags" rows="3"
             placeholder="Mockup, Book, ..." hx-trigger="load, input" hx-post="{{url_for('validate_tags')}}" hx-target="#tagsList"
-            hx-swap="outerHTML"></textarea>
+            hx-swap="outerHTML">{{upload_session.tags}}</textarea>
             <div class="flex flex-row justify-end font-light text-gray-500" id="tagsCounter">
                 <span>0 / 20</span>
             </div>

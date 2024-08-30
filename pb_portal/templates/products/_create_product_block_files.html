@@ -1,11 +1,11 @@
 <div class="from_block">
-    <div class="relative hidden" id="productBar">
-        <div id="productProgress" class="absolute inset-0 bg-gray-500 h-full rounded-sm" style="width: 100%; right: 0; left: auto; z-index: 1;"></div>
+    <div class="relative {%if not upload_session.product_name%}hidden{%endif%}" id="productBar">
+        <div id="productProgress" class="absolute inset-0 bg-gray-500 h-full rounded-sm" style="width: 0%; right: 0; left: auto; z-index: 1;"></div>
     
         <div class="flex flex-row justify-between border items-center p-5 font-light border-black rounded-sm relative z-10 bg-white bg-opacity-90">
             <div class="flex flex-row justify-start items-center gap-5">
                 <img class="w-7 h-7" src="{{ url_for('static', path='/imgs/icon-zip.svg') }}">
-                <span id="productName">Product-name.zip</span>
+                <span id="productName">{{upload_session.product_name}}</span>
             </div>
             <div class="cursor-pointer" onclick="cancelUpload()">
                 <img class="max-w-4 max-h-4" src="{{ url_for('static', path='/imgs/icon-trash.svg') }}">
@@ -25,18 +25,19 @@
         <p>Max file size: 4GB</p>
     </div>
     <input type="file" id="productFile" class="hidden" onchange="startUpload()" accept=".zip">
+    <input type="text" id="hiddenProductName" name="productName" class="hidden" value="{{upload_session.product_name}}" hx-post="{{url_for('save_changes')}}" hx-trigger="change"  hx-target="#status" hx-swap="innerHTML">
     <button type="button" id="uploadBtn"
-        onclick="document.querySelector('input[name=productFile]').click();"
+        onclick="document.getElementById('productFile').click();"
         class="flex flex-row justify-start gap-3.5 max-w-36 items-center rounded-md bg-black px-3 py-2 text-white font-light leading-6">
         <img src="{{ url_for('static', path='/imgs/btn-icon.svg') }}">
         Upload files
     </button>
 
     <h3 class="title_small-2 mt-4">Supported file types</h3>
-    <div class="grid grid-cols-4 gap-x-10">
+    <div class="grid grid-cols-4 gap-x-10" hx-post="{{url_for('save_changes')}}" hx-trigger="change"  hx-target="#status" hx-swap="innerHTML">
         {% for f in supported_formats%}
         <label class="custom_checkbox-label inline-flex items-center cursor-pointer text-base font-light select-none">
-            <input type="checkbox" name="is_agree" class="w-0 h-0 opacity-0" value="{{f}}">
+            <input type="checkbox" name="formats[]" class="w-0 h-0 opacity-0" value="{{f}}" {%if f in upload_session.formats%}checked{%endif%}>
             <span class="custom_checkbox checked:opacity-100"></span>
             {{f}}
         </label>

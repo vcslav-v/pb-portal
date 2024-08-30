@@ -1,5 +1,7 @@
 <div class="from_block">
-    <div id="sortedPreview" class="hidden flex flex-col gap-2.5 sortable py-2.5">
+    <div id="sortedPreview" hx-post="{{url_for('save_sort_img_changes')}}" hx-trigger="change"  hx-target="#status" hx-swap="innerHTML"
+    class="{%if not previews %}hidden{%endif%} flex flex-col gap-2.5 sortable py-2.5">
+        {% include 'products/_sort_imgs.html' %}
         <div id="imgIndicator" class="htmx-indicator hidden">
             <img src="{{ url_for('static', path='/imgs/loading.svg') }}" alt="">
         </div>

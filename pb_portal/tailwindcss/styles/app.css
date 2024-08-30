@@ -137,4 +137,8 @@
   .htmx-request.htmx-indicator {
     @apply block flex flex-row justify-center items-center p-2;
   }
+
+  .bad-credentials {
+    @apply text-red-500 border-red-500 animate-shake;
+  }
 }

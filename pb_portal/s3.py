@@ -156,7 +156,7 @@ def get_s3_link(client, key: str):
     return client.generate_presigned_url(
         'get_object',
         Params={'Bucket': config.DO_SPACE_BUCKET, 'Key': key},
-        ExpiresIn=3600
+        ExpiresIn=24 * 60 * 60
     )
 
 

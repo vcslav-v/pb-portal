@@ -22,11 +22,11 @@ function submitForm(event) {
         .catch(function (error){
             if (error.response.status === 400 && error.response.data.message === 'LOGIN_BAD_CREDENTIALS') {
                 const inputs = document.getElementsByTagName('input');
-                const error_msg = document.getElementsByClassName('login-form__error')[0];
+                const error_msg = document.getElementById('errorMsg');
                 for (let i = 0; i < inputs.length; i++) {
                     inputs[i].classList.add('bad-credentials');
                 }
-                error_msg.style.display = 'block';
+                error_msg.classList.remove('hidden');
             }
         })
 }

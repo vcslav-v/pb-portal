@@ -10,13 +10,13 @@
         <!-- Email Input -->
         <div class="flex flex-col space-y-2">
             <input type="text" placeholder="Your Email" id="email" name="username" onfocus="toDefault(event)"
-                class="w-full px-4 py-2 border-2 min-h-16 rounded-md focus:outline-none border-black" />
+                class="w-full px-4 py-2 border-2 min-h-16 rounded-md focus:outline-none border-black" required/>
         </div>
 
         <!-- Password Input -->
         <div class="flex flex-col relative">
             <input type="password" placeholder="Password" id="password" name="password" onfocus="toDefault(event)"
-                class="w-full px-4 py-2 border-2 min-h-16 rounded-md focus:outline-none border-black" />
+                class="w-full px-4 py-2 border-2 min-h-16 rounded-md focus:outline-none border-black" required />
             <img id="password-eye" src="{{ url_for('static', path='/imgs/open_eye.svg') }}" alt="Show password"
                 data-closed-eye-src="{{ url_for('static', path='/imgs/closed_eye.svg') }}"
                 data-open-eye-src="{{ url_for('static', path='/imgs/open_eye.svg') }}"
@@ -26,10 +26,11 @@
 
     <!-- Info and Error Message -->
     <div class="flex justify-between items-center mb-10">
-        <a href="#" class="text-black underline">Forgot password?</a>
-        <div class="hidden items-center text-red-500" id="errorMsg">
+        <!-- <a href="#" class="text-black underline">Forgot password?</a> -->
+        <div></div>
+        <div class="hidden flex flex-row gap-2 items-center text-red-500" id="errorMsg">
             <img src="{{ url_for('static', path='/imgs/attention_icon.svg') }}" alt="attention"
-                class="w-4 h-4 mr-2">
+                class="w-4 h-4 ">
             <span>Wrong email or password</span>
         </div>
     </div>

@@ -33,6 +33,25 @@ document.addEventListener("DOMContentLoaded", function () {
   simplemde.codemirror.on("change", function () {
     syncText();
   });
+  syncText();
+
+  let optional_config = {
+    enableTime: true,
+    time_24hr: true,
+    minDate: new Date(),
+    
+    positionElement: document.getElementById('openPicker'),
+    dateFormat: "Y-m-d H:i",
+};
+let userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+document.getElementById('timezone').value = userTimezone;
+
+let scheduleDateInput = document.getElementById('scheduleDate');
+let flatpickrInstance = flatpickr(scheduleDateInput, optional_config);
+
+document.getElementById('openPicker').addEventListener('click', function() {
+  flatpickrInstance.open();
+});
 })
 
 document.body.addEventListener('htmx:afterRequest', function (event) {
@@ -109,6 +128,9 @@ function uploadFile(file, s3Data) {
     if (xhr.readyState === 4) {
       if (xhr.status === 200 || xhr.status === 204) {
         currentUploadRequest = null;
+        let hiddenInput = document.getElementById('hiddenProductName');
+        hiddenInput.value = file.name;
+        htmx.trigger(hiddenInput, 'change');
         console.log('File uploaded successfully.');
       }
       else if (xhr.status === 0) {
@@ -141,6 +163,9 @@ function cancelUpload() {
     xhr.onreadystatechange = () => {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
+          let hiddenInput = document.getElementById('hiddenProductName');
+          hiddenInput.value = '';
+          htmx.trigger(hiddenInput, 'change');
           productBar.classList.add('hidden');
           uploadBtn.classList.remove('hidden');
           productProgress.style.width = '100%';
@@ -158,9 +183,12 @@ function cancelUpload() {
 
 function syncText() {
   let textarea = document.getElementById('description');
+  let hiddenDescription = document.getElementById('hiddenDescription');
   let html_description = simplemde.value();
+  hiddenDescription.value = html_description;
   textarea.value = simplemde.markdown(html_description);
-  htmx.trigger(textarea, 'change');
+  htmx.trigger(textarea, 'input');
+  htmx.trigger(hiddenDescription, 'change');
 }
 
 function deleteTag(tag) {
@@ -170,4 +198,12 @@ function deleteTag(tag) {
   tags = tags.filter(t => t.toLowerCase() !== tagName);
   tagsArea.value = tags.join(', ');
   htmx.trigger(tagsArea, 'input');
+}
+
+function flushSchedule() {
+  let scheduleDateInput = document.getElementById('scheduleDate');
+  let scheduleDateInfo = document.getElementById('scheduleInfo');
+  scheduleDateInput.value = '';
+  scheduleDateInfo.innerHTML = '';
+  htmx.trigger(scheduleDateInput, 'change');
 }
