@@ -17,6 +17,6 @@ jobs:
       - name: Log in to DO Container Registry
         run: doctl registry login --expiry-seconds 600
       - name: Tag image
-        run: docker tag vm dplace/pb_portal:latest
+        run: docker tag vm ${{ secrets.CONTAINER_REGISTRY }}/pb_portal:latest
       - name: Push image to DO Container Registry
-        run: docker push dplace/pb_portal:latest
+        run: docker push ${{ secrets.CONTAINER_REGISTRY }}/pb_portal:latest
