@@ -441,7 +441,7 @@ async def submit_new_product(
             args=(form, user)
         )
         upload_product_thread.start()
-        # response.delete_cookie('upload_session') 
+        response.delete_cookie('upload_session')
         return RedirectResponse(
             request.url_for('products'),
             status_code=303,
