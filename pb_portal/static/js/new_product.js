@@ -64,6 +64,12 @@ document.body.addEventListener('htmx:afterRequest', function (event) {
   } else if (event.target.id == 'addYoutubeBtn') {
     let youtubeInput = document.getElementById('youtubeLink');
     youtubeInput.value = '';
+  } else if (event.target.id == 'formatsBlock') {
+    let formatError = document.getElementById('formatError');
+    formatError.classList.add('hidden');
+  } else if (event.target.id == 'imgFiles') {
+    let previewsError = document.getElementById('previewsError');
+    previewsError.classList.add('hidden');
   }
 });
 
@@ -77,6 +83,8 @@ function showSortedPreview() {
 function startUpload() {
   let formData = new FormData();
   let uploadSessionId = document.getElementsByName('upload_session_id')[0].value;
+  let productFileError = document.getElementById('productFileError');
+  productFileError.classList.add('hidden');
   formData.append('upload_session_id', uploadSessionId);
   const xhr = new XMLHttpRequest();
   let file = document.getElementById('productFile').files[0];

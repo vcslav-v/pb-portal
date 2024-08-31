@@ -6,7 +6,7 @@
         <input
     class="w-full max-w-2xl border rounded-md py-3 px-5 font-light leading-6 focus:border-black focus:outline-none  {%if upload_session.title %}invalid:ring-red-600 invalid:ring-2{%endif%}"
     hx-post="{{url_for('save_product_title')}}" hx-trigger="change" hx-target="#title" hx-swap="outerHTML" type="text"
-    id="title" name="title" placeholder="Enter your product title" pattern="[a-zA-Z \-]*" value="{{upload_session.title}}" title="Only letters, spaces and hyphens are allowed" required>
+    id="title" name="title" placeholder="Enter your product title" pattern="{%if upload_session.title%}[a-zA-Z]{%endif%}[a-zA-Z0-9\& \-]*" maxlength="50" value="{{upload_session.title}}" title="Please start with a letter, and use only letters, numbers, ampersands, hyphens" required>
     </div>
     <div class="flex flex-col gap-2.5 w-full">
         <label for="category" class="font-light">Select category <span class="text-red-600">*</span></label>
@@ -22,6 +22,23 @@
                 src="{{ url_for('static', path='/imgs/select_row.svg') }}">
         </div>
     </div>
+    {% if user.role_id  <= roles_schema.manager.value %}
+        <div class="flex flex-col gap-2.5 w-full">
+            <label for="creator" class="font-light">Select creator<span class="text-red-600">*</span></label>
+            <div class="relative inline-block w-full">
+                <select name="creator_id" id="creator"
+                    hx-post="{{url_for('save_changes')}}" hx-trigger="change"  hx-target="#status" hx-swap="innerHTML"
+                    class="flex justify-between items-center rounded-md bg-zinc-500 py-3 px-7 min-h-12 w-full max-w-2xl text-white leading-6 font-light appearance-none focus:outline-none">
+                    {% for id in creators%}
+                    <option value="{{ id }}"{% if id == upload_session.creator_id %} selected{%endif%}>{{ creators[id] }}</option>
+                    {% endfor %}
+                </select>
+                <img class="absolute max-w-8 max-h-8 top-1/2 transform -translate-y-1/2 right-7"
+                    src="{{ url_for('static', path='/imgs/select_row.svg') }}">
+            </div>
+        </div>
+    {% endif %}
+    
     <div class="flex flex-row justify-start custom_radio" {% if user.role_id <=2 %}
         hx-post="{{url_for('get_pricing_block')}}" hx-trigger="load, change" hx-target="#pricing" hx-swap="outerHTML" {% endif %}>
         <input type="radio" id="free" name="productType" value="free" {% if not upload_session.product_type or upload_session.product_type == 'free' %}checked{%endif%} >

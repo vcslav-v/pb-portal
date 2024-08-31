@@ -1,4 +1,4 @@
-<div class="flex flex-row gap-3.5 justify-start" id="tagsList" hx-trigger="load" hx-target="#tagsCounter" hx-swap="outerHTML" hx-post="{{url_for('count_tags')}}" hx-vals='{"tag_len": "{{tag_len}}", "text_line":"{{text_line}}"}'>
+<div class="flex flex-wrap gap-x-3.5 gap-y-2 justify-start" id="tagsList" hx-trigger="load" hx-target="#tagsCounter" hx-swap="outerHTML" hx-post="{{url_for('count_tags')}}" hx-vals='{"tag_len": "{{tag_len}}", "text_line":"{{text_line}}"}'>
     {% for tag in tags %}
     <span
         class="flex flex-row justify-start w-fit items-center px-2 py-0.5 min-h-5 gap-1 bg-gray-100 border rounded-md font-medium text-sm leading-5">

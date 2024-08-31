@@ -6,13 +6,15 @@ from pb_portal.s3 import make_s3_url, rm_product, upload_pb_preview_image, rm_pb
 from pb_portal import validate, imgs
 from pb_portal.db.models import User
 from pb_portal.auth.schemas import UserRoles
-from pb_portal.schemas.new_product import UploadForm, Preview
+from pb_portal.schemas.new_product import UploadForm, Preview, UploaderResponse
+from pb_portal.pb import upload_product, add_product_file
 from fastapi.responses import RedirectResponse
 import json
 import os
 from datetime import datetime, UTC
 from typing import List
 import base64
+from threading import Thread
 
 
 from pb_portal import config, dependencies
@@ -97,6 +99,7 @@ async def new_product(
             'user': user,
             'page_name': 'products',
             'categories': json.loads(os.environ.get('PB_CATEGORIES', '{}')),
+            'creators': json.loads(os.environ.get('PB_CREATORS', '{}')),
             'product_type': 'free',
             'sample_product_url': config.SAMPLE_PRODUCT_URL,
             'supported_formats': config.SUPPORTED_FORMATS,
@@ -137,6 +140,7 @@ async def save_changes(
     form = await request.form()
     upload_session = get_upload_session(request, user)
     upload_session.category_id = form.get('category', '')
+    upload_session.creator_id = form.get('creator_id', '')
     upload_session.commercial_price = form.get('commercialPrice', '')
     upload_session.extended_price = form.get('extendedPrice', '')
     upload_session.product_name = form.get('productName', '')
@@ -173,7 +177,6 @@ async def get_upload_product_url(
     request: Request,
     user: User = Depends(current_active_user)
 ):
-    form = await request.form()
     upload_sesion = get_upload_session(request, user)
     json_result = make_s3_url(
         upload_session_id=upload_sesion.session_id,
@@ -201,12 +204,15 @@ async def validate_description(
     user: User = Depends(current_active_user)
 ):
     form = await request.form()
+    upload_session = get_upload_session(request, user)
     description = form.get('description', '')
-    length, forbidden_tags = validate.description(description)
-    if forbidden_tags:
-        text_line = 'Only bold, italic, and lists are allowed'
+    if not description:
+        length = 0
+        text_line = 'Type any description' if upload_session.errors.desc else ''
     else:
-        text_line = ''
+        length, forbidden_tags = validate.description(description)
+        text_line = 'Only bold, italic, and lists are allowed' if forbidden_tags else ''
+
     return templates.TemplateResponse(
         'products/_text_counter.html',
         {
@@ -374,6 +380,23 @@ async def add_youtube_preview(
     )
 
 
+@router.post('/submit_btn_text')
+async def submit_btn_text(
+    request: Request,
+    templates: Jinja2Templates = Depends(dependencies.get_templates),
+    user: User = Depends(current_active_user),
+):
+    form = await request.form()
+    schedule_date = form.get('schedule_date', '')
+    return templates.TemplateResponse(
+        'products/_submit_btn_text.html',
+        {
+            'request': request,
+            'schedule_date': schedule_date,
+        },
+    )
+
+
 @router.post('/schedule_info')
 async def schedule_info(
     request: Request,
@@ -400,3 +423,39 @@ async def schedule_info(
         },
         headers=response.headers
     )
+
+
+@router.post('/submit_new_product')
+async def submit_new_product(
+    request: Request,
+    response: Response,
+    user: User = Depends(current_active_user),
+):
+    upload_session = get_upload_session(request, user)
+    form = await request.form()
+    is_valid = validate.upload_form(upload_session, form)
+
+    if is_valid:
+        upload_product_thread = Thread(
+            target=upload_product,
+            args=(form, user)
+        )
+        upload_product_thread.start()
+        # response.delete_cookie('upload_session') 
+        return RedirectResponse(
+            request.url_for('products'),
+            status_code=303,
+            headers=response.headers
+        )
+    else:
+        set_upload_session(response, upload_session)
+        return RedirectResponse(
+            request.url_for('new_product'),
+            status_code=303,
+            headers=response.headers
+        )
+
+
+@router.post('/push_uploader_links/{product_id}')
+def push_uploader_links(product_id: str, uploader_resp: UploaderResponse):
+    add_product_file(uploader_resp, product_id)

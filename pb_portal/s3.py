@@ -3,6 +3,7 @@ from pb_portal import config
 import json
 import io
 import os
+import requests
 
 
 def make_s3_url(upload_session_id, content_type):
@@ -190,3 +191,82 @@ def make_youtube_placeholder(youtube_url, upload_session_id: str, thumbnail_url:
         'thumb_url': thumbnail_url,
         'filename': youtube_url
     }]
+
+
+def presentation_files(upload_session_id: str, order_ids: list[str]) -> list[dict[str, str]]:
+    local_session = s3_session.Session()
+    client = local_session.client(
+            's3',
+            region_name=config.DO_SPACE_REGION,
+            endpoint_url=config.DO_SPACE_ENDPOINT,
+            aws_access_key_id=config.DO_SPACE_KEY,
+            aws_secret_access_key=config.DO_SPACE_SECRET
+        )
+    response = client.list_objects_v2(
+        Bucket=config.DO_SPACE_BUCKET,
+        Prefix=config.UPLOADED_PRODUCTS_DIR.format(upload_session_id=upload_session_id)
+    )
+    result = []
+    for ident in order_ids:
+        for content in response.get('Contents', []):
+            if content['Key'].startswith(
+                os.path.join(
+                    config.UPLOADED_PRODUCTS_DIR.format(upload_session_id=upload_session_id),
+                    'preview_'
+                )
+            ):
+                do_target = content['Key'].split('_')[-1].split('.')[0]
+                do_img_id = content['Key'].split('_')[-2]
+                if do_img_id != ident:
+                    continue
+                if do_target == 'youtube':
+                    result.append({
+                        'type': 'youtube',
+                        'url': get_s3_link(client, content['Key'])
+                    })
+                elif do_target == 'for-pb-preview':
+                    result.append({
+                        'type': 'img',
+                        'url': get_s3_link(client, content['Key'])
+                    })
+    return result
+
+
+def get_product_link(upload_session_id: str, new_name: str):
+    filename = config.PRODUCT_S3_NAME_TEMPLATE.format(
+        upload_session_id=upload_session_id
+    )
+    local_session = s3_session.Session()
+    client = local_session.client(
+            's3',
+            region_name=config.DO_SPACE_REGION,
+            endpoint_url=config.DO_SPACE_ENDPOINT,
+            aws_access_key_id=config.DO_SPACE_KEY,
+            aws_secret_access_key=config.DO_SPACE_SECRET
+        )
+    new_filename = filename.replace('product.zip', f'{new_name}.zip')
+    client.copy_object(
+        Bucket=config.DO_SPACE_BUCKET,
+        CopySource={'Bucket': config.DO_SPACE_BUCKET, 'Key': filename},
+        Key=new_filename
+    )
+    return get_s3_link(client, new_filename)
+
+
+def get_product_size(upload_session_id: str):
+    filename = config.PRODUCT_S3_NAME_TEMPLATE.format(
+        upload_session_id=upload_session_id
+    )
+    local_session = s3_session.Session()
+    client = local_session.client(
+            's3',
+            region_name=config.DO_SPACE_REGION,
+            endpoint_url=config.DO_SPACE_ENDPOINT,
+            aws_access_key_id=config.DO_SPACE_KEY,
+            aws_secret_access_key=config.DO_SPACE_SECRET
+        )
+    response = client.head_object(
+        Bucket=config.DO_SPACE_BUCKET,
+        Key=filename
+    )
+    return response['ContentLength']

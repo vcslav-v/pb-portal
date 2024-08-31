@@ -1,6 +1,6 @@
 <div class="from_block">
-    <div id="sortedPreview" hx-post="{{url_for('save_sort_img_changes')}}" hx-trigger="change"  hx-target="#status" hx-swap="innerHTML"
-    class="{%if not previews %}hidden{%endif%} flex flex-col gap-2.5 sortable py-2.5">
+    <div id="sortedPreview" hx-post="{{url_for('save_sort_img_changes')}}" hx-trigger="change" hx-target="#status"
+        hx-swap="innerHTML" class="{%if not previews %}hidden{%endif%} flex flex-col gap-2.5 sortable py-2.5">
         {% include 'products/_sort_imgs.html' %}
         <div id="imgIndicator" class="htmx-indicator hidden">
             <img src="{{ url_for('static', path='/imgs/loading.svg') }}" alt="">
@@ -15,27 +15,34 @@
             <p>Recommended Size: 3000px (W) x 2000px (H)</p>
             <p>Max File Size: 5MB</p>
         </div>
-        <input type="file" name="imgFiles" class="hidden" multiple accept=".jpg,.jpeg" hx-trigger="change"
+        <input id="imgFiles" type="file" name="imgFiles" class="hidden" multiple accept=".jpg,.jpeg" hx-trigger="change"
             hx-post="{{url_for('imgs_upload')}}" hx-target="#imgIndicator" hx-swap="beforebegin"
             hx-encoding="multipart/form-data" hx-on:change="showSortedPreview()" hx-indicator="#imgIndicator">
-        <button type="button" onclick="document.querySelector('input[name=imgFiles]').click();"
-            class="flex flex-row justify-start gap-3.5 max-w-44 items-center rounded-md bg-black px-3 py-2 text-white font-light leading-6">
+        <div class="flex flex-row items-center justify-start gap-4">
+            <button type="button" onclick="document.querySelector('input[name=imgFiles]').click();"
+            class="flex flex-row justify-start gap-3.5 max-w-44 items-center rounded-md bg-black px-3 py-2 text-white
+            font-light leading-6">
             <img src="{{ url_for('static', path='/imgs/btn-icon.svg') }}">
             Upload images
-        </button>
-    </div>
-    <div class="flex flex-col justify-start gap-3">
-        <label for="youtubeLink" class="font-light">Youtube video link (optional)</label>
-        <div class="flex flex-row w-full items-center">
-            <img class="w-4 h-4 absolute ml-3.5 mt-1" src="{{ url_for('static', path='/imgs/icon-link.svg') }}" alt="">
-            <input type="text" name="youtubeLink" id="youtubeLink"
-                class="w-full border rounded-l-md h-10 py-1.5 pl-8 pr-3 focus:outline-none focus:border-black"
-                placeholder="https://www.youtube.com/watch?v=...">
-            <button type="button" id="addYoutubeBtn" class="border border-l-0 rounded-r-md bg-gray-200 h-10 px-3 right-1"
-                hx-post="{{url_for('add_youtube_preview')}}" hx-target="#imgIndicator" hx-swap="beforebegin"
-                hx-on:click="showSortedPreview()" hx-indicator="#imgIndicator">
-                <img class="w-4 h-4" src="{{ url_for('static', path='/imgs/icon-btn-black.svg') }}" alt="">
             </button>
+            <span id="previewsError"
+                class="text-red-500 {%if not upload_session.errors.previews %}hidden{%endif%}">At least one image</span>
         </div>
+        </div>
+            <div class="flex flex-col justify-start gap-3">
+                <label for="youtubeLink" class="font-light">Youtube video link (optional)</label>
+                <div class="flex flex-row w-full items-center">
+                    <img class="w-4 h-4 absolute ml-3.5 mt-1" src="{{ url_for('static', path='/imgs/icon-link.svg') }}"
+                        alt="">
+                    <input type="text" name="youtubeLink" id="youtubeLink"
+                        class="w-full border rounded-l-md h-10 py-1.5 pl-8 pr-3 focus:outline-none focus:border-black"
+                        placeholder="https://www.youtube.com/watch?v=...">
+                    <button type="button" id="addYoutubeBtn"
+                        class="border border-l-0 rounded-r-md bg-gray-200 h-10 px-3 right-1"
+                        hx-post="{{url_for('add_youtube_preview')}}" hx-target="#imgIndicator" hx-swap="beforebegin"
+                        hx-on:click="showSortedPreview()" hx-indicator="#imgIndicator">
+                        <img class="w-4 h-4" src="{{ url_for('static', path='/imgs/icon-btn-black.svg') }}" alt="">
+                    </button>
+                </div>
+            </div>
     </div>
-</div>
