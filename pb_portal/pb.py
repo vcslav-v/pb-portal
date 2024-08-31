@@ -152,8 +152,6 @@ async def upload_product(form: FormData, user: db_models.User, html_desc: str):
         }
         session.auth = (config.PB_UPL_API_LOGIN, config.PB_UPL_API_PASS)
         session.post(config.PB_UPL_API_URL, json=data)
-    if form.get('schedule_date'):
-        await db_tools.add_schedule(pb_product.ident, utc_time)
 
 
 def add_product_file(uploader_resp: UploaderResponse, product_id: int, in_schedule: bool = False):
