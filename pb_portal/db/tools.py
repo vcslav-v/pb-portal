@@ -1,7 +1,7 @@
 from fastapi import Depends
 from fastapi_users.db import SQLAlchemyUserDatabase
 from pb_portal.db.db import get_async_session
-from pb_portal.db.models import User, UserRole
+from pb_portal.db.models import User, UserRole, ProductScheldule
 from sqlalchemy.ext.asyncio import AsyncSession
 from pb_portal.auth.schemas import UserRoles
 from sqlalchemy import select, insert
@@ -92,3 +92,41 @@ async def sign_agreement(user_id: int) -> User | None:
         user.signed_agreement_date = datetime.now(timezone.utc).date()
         await session.commit()
         return user
+
+
+async def add_schedule(product_id: int, date_time: datetime):
+    async for session in get_async_session():
+        schedule = ProductScheldule(
+            product_id=product_id,
+            date_time=date_time.replace(tzinfo=None)
+        )
+        session.add(schedule)
+        await session.commit()
+
+
+async def set_filed_schedule(product_id: int) -> bool:
+    async for session in get_async_session():
+        schedule = await session.execute(select(ProductScheldule).filter(ProductScheldule.product_id == product_id))
+        schedule = schedule.scalar_one_or_none()
+        if not schedule:
+            return False
+        schedule.is_filed = True
+        await session.commit()
+        return True
+
+
+async def pop_publish_queue():
+    async for session in get_async_session():
+        schedules = await session.execute(
+            select(
+                ProductScheldule
+            ).filter(
+                ProductScheldule.is_filed == True,
+                ProductScheldule.date_time <= datetime.now(timezone.utc).replace(tzinfo=None)
+            ))
+        schedules = schedules.scalars().all()
+        queue = [schedule.product_id for schedule in schedules]
+        for schedule in schedules:
+            await session.delete(schedule)
+        await session.commit()
+        return queue

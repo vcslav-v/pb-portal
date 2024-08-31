@@ -42,6 +42,7 @@ PB_BASIC_PASSWORD = os.environ.get('PB_BASIC_PASSWORD', '')
 
 SAMPLE_PRODUCT_URL = os.environ.get('SAMPLE_PRODUCT_URL', 'https://www.google.com')
 SUPPORTED_FORMATS = os.environ.get('SUPPORTED_FORMATS', 'pdf,doc,docx,txt').split(',')
+PUBLISH_INTERVAL = int(os.environ.get('PUBLISH_INTERVAL', 30))
 
 ALLOWED_TAGS = {
     'p', 'i', 'b', 'strong', 'em', 'u', 'strike', 'ol', 'ul', 'li', 'br'

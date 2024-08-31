@@ -19,7 +19,7 @@
         </div>
     </div>
     <div class="flex flex-col justify-start font-light gap-0">
-        <label for="description">Product tags <span class="text-red-600">*</span></label>
+        <label for="tags">Product tags <span class="text-red-600">*</span></label>
         <textarea class="border rounded-md py-2 px-4 focus:outline-none focus:border-black mt-2" name="tags" id="tags" rows="3"
             placeholder="Mockup, Book, ..." hx-trigger="load, input" hx-post="{{url_for('validate_tags')}}" hx-target="#tagsList"
             hx-swap="outerHTML" required>{{upload_session.tags}}</textarea>

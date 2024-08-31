@@ -5,6 +5,7 @@ from pb_portal.auth.tools import current_active_user
 from pb_portal.s3 import make_s3_url, rm_product, upload_pb_preview_image, rm_pb_preview, make_youtube_placeholder
 from pb_portal import validate, imgs
 from pb_portal.db.models import User
+from pb_portal.db import tools as db_tools
 from pb_portal.auth.schemas import UserRoles
 from pb_portal.schemas.new_product import UploadForm, Preview, UploaderResponse
 from pb_portal.pb import upload_product, add_product_file
@@ -14,7 +15,7 @@ import os
 from datetime import datetime, UTC
 from typing import List
 import base64
-from threading import Thread
+import asyncio
 
 
 from pb_portal import config, dependencies
@@ -200,18 +201,21 @@ async def rm_upload_product_url(
 @router.post('/validate_description')
 async def validate_description(
     request: Request,
+    response: Response,
     templates: Jinja2Templates = Depends(dependencies.get_templates),
     user: User = Depends(current_active_user)
 ):
     form = await request.form()
     upload_session = get_upload_session(request, user)
     description = form.get('description', '')
+    upload_session.html_desc = description
     if not description:
         length = 0
         text_line = 'Type any description' if upload_session.errors.desc else ''
     else:
         length, forbidden_tags = validate.description(description)
         text_line = 'Only bold, italic, and lists are allowed' if forbidden_tags else ''
+    set_upload_session(response, upload_session)
 
     return templates.TemplateResponse(
         'products/_text_counter.html',
@@ -222,6 +226,7 @@ async def validate_description(
             'target_id': 'descriptionCounter',
             'text_line': text_line,
         },
+        headers=response.headers
     )
 
 
@@ -436,12 +441,8 @@ async def submit_new_product(
     is_valid = validate.upload_form(upload_session, form)
 
     if is_valid:
-        upload_product_thread = Thread(
-            target=upload_product,
-            args=(form, user)
-        )
-        upload_product_thread.start()
-        response.delete_cookie('upload_session')
+        asyncio.create_task(upload_product(form, user, upload_session.html_desc))
+        # response.delete_cookie('upload_session')
         return RedirectResponse(
             request.url_for('products'),
             status_code=303,
@@ -457,5 +458,7 @@ async def submit_new_product(
 
 
 @router.post('/push_uploader_links/{product_id}')
-def push_uploader_links(product_id: str, uploader_resp: UploaderResponse):
-    add_product_file(uploader_resp, product_id)
+async def push_uploader_links(product_id: str, uploader_resp: UploaderResponse):
+    product_id = int(product_id)
+    in_schlude = await db_tools.set_filed_schedule(product_id)
+    add_product_file(uploader_resp, product_id, in_schlude)

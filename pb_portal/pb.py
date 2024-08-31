@@ -1,8 +1,8 @@
 from pb_admin import PbSession, schemas as pb_schemas
 from pb_admin.schemas import NewProduct
-from pb_portal.db import models as db_models
+from pb_portal.db import models as db_models, tools as db_tools
 from pb_portal import config, s3, imgs
-from pb_portal.schemas.new_product import UploaderResponse
+from pb_portal.schemas.new_product import UploaderResponse, UploadForm
 from pb_portal.auth import schemas as auth_schemas
 import os
 import json
@@ -28,6 +28,8 @@ async def get_categories():
         site_url=config.PB_URL,
         login=config.PB_LOGIN,
         password=config.PB_PASSWORD,
+        basic_auth_login=config.PB_BASIC_LOGIN,
+        basic_auth_password=config.PB_BASIC_PASSWORD,
         edit_mode=True
     )
     categories = pb_session.categories.get_list()
@@ -44,6 +46,8 @@ async def get_creators():
         site_url=config.PB_URL,
         login=config.PB_LOGIN,
         password=config.PB_PASSWORD,
+        basic_auth_login=config.PB_BASIC_LOGIN,
+        basic_auth_password=config.PB_BASIC_PASSWORD,
         edit_mode=True
     )
     creators = pb_session.creators.get_list()
@@ -74,12 +78,7 @@ def get_valid_tags_ids(pb_session: PbSession, tag_names: str) -> list[int]:
     return result
 
 
-def upload_product(form: FormData, user: db_models.User):
-    """
-    size: str
-    vps_path: str | None
-    s3_path: str | None
-    """
+async def upload_product(form: FormData, user: db_models.User, html_desc: str):
     config.logger.info('Uploading product')
     product_type = pb_schemas.NewProductType.freebie if form.get('productType') == 'free' else pb_schemas.NewProductType.plus
     title = form.get('title', '')
@@ -108,6 +107,8 @@ def upload_product(form: FormData, user: db_models.User):
         site_url=config.PB_URL,
         login=config.PB_LOGIN,
         password=config.PB_PASSWORD,
+        basic_auth_login=config.PB_BASIC_LOGIN,
+        basic_auth_password=config.PB_BASIC_PASSWORD,
         edit_mode=True
     )
     new_product = NewProduct(
@@ -120,7 +121,7 @@ def upload_product(form: FormData, user: db_models.User):
         slug=slug,
         is_special=form.get('productType') == 'special',
         excerpt=form.get('excerpt', ''),
-        description=form.get('description', ''),
+        description=html_desc,
         thumbnail=thumbnail,
         push_image=push_image,
         is_live=False,
@@ -139,6 +140,8 @@ def upload_product(form: FormData, user: db_models.User):
     )
     pb_product = pb_session.new_products.create(new_product)
     product_file_url = s3.get_product_link(form.get('upload_session_id', 'error'), f'{pb_product.ident}_{slug}')
+    if form.get('schedule_date'):
+        await db_tools.add_schedule(pb_product.ident, utc_time)
     with requests.sessions.Session() as session:
         product = product_file_url.split('?')[0]
         data = {
@@ -149,18 +152,39 @@ def upload_product(form: FormData, user: db_models.User):
         }
         session.auth = (config.PB_UPL_API_LOGIN, config.PB_UPL_API_PASS)
         session.post(config.PB_UPL_API_URL, json=data)
+    if form.get('schedule_date'):
+        await db_tools.add_schedule(pb_product.ident, utc_time)
 
 
-def add_product_file(uploader_resp: UploaderResponse, product_id: str):
+def add_product_file(uploader_resp: UploaderResponse, product_id: int, in_schedule: bool = False):
     config.logger.info('Adding product file')
     pb_session = PbSession(
         site_url=config.PB_URL,
         login=config.PB_LOGIN,
         password=config.PB_PASSWORD,
+        basic_auth_login=config.PB_BASIC_LOGIN,
+        basic_auth_password=config.PB_BASIC_PASSWORD,
         edit_mode=True
     )
-    pb_product = pb_session.new_products.get(int(product_id))
+    pb_product = pb_session.new_products.get(product_id)
     pb_product.vps_path = '/'.join(uploader_resp.local_link.split('/')[-2:])
     pb_product.s3_path = uploader_resp.s3_link.split('/')[-1]
-    pb_product.is_live = True
+    if not in_schedule:
+        pb_product.is_live = True
     pb_session.new_products.update(pb_product)
+
+
+def publish(product_ids: list[int]):
+    config.logger.info('Publishing product')
+    pb_session = PbSession(
+        site_url=config.PB_URL,
+        login=config.PB_LOGIN,
+        password=config.PB_PASSWORD,
+        basic_auth_login=config.PB_BASIC_LOGIN,
+        basic_auth_password=config.PB_BASIC_PASSWORD,
+        edit_mode=True
+    )
+    for product_id in product_ids:
+        pb_product = pb_session.new_products.get(product_id)
+        pb_product.is_live = True
+        pb_session.new_products.update(pb_product)

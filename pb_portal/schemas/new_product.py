@@ -27,6 +27,7 @@ class UploadForm(BaseModel):
     formats: list[str] = []
     exerpt: str = ''
     desc: str = ''
+    html_desc: str = ''
     tags: str = ''
     previews: list[Preview] = []
     errors: Errors = Errors()

@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 from pb_portal.db.tools import prepare_user_roles
 from pb_portal.pb import get_categories, get_creators
 from pb_portal import exception_handlers
+from pb_portal import scheluder
 
 
 @asynccontextmanager
@@ -15,6 +16,7 @@ async def lifespan(app: FastAPI):
     await prepare_user_roles()
     await get_categories()
     await get_creators()
+    scheluder.scheluder().start()
     yield
     config.logger.info('Stopping app')
 
