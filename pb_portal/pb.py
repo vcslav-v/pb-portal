@@ -168,7 +168,7 @@ def add_product_file(uploader_resp: UploaderResponse, product_id: str):
         edit_mode=True
     )
     pb_product = pb_session.new_products.get(int(product_id))
-    pb_product.vps_path = uploader_resp.local_link
-    pb_product.s3_path = uploader_resp.s3_link
+    pb_product.vps_path = '/'.join(uploader_resp.local_link.split('/')[-2:])
+    pb_product.s3_path = uploader_resp.s3_link.split('/')[-1]
     pb_product.is_live = True
     pb_session.new_products.update(pb_product)

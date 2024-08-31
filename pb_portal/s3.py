@@ -248,7 +248,8 @@ def get_product_link(upload_session_id: str, new_name: str):
     client.copy_object(
         Bucket=config.DO_SPACE_BUCKET,
         CopySource={'Bucket': config.DO_SPACE_BUCKET, 'Key': filename},
-        Key=new_filename
+        Key=new_filename,
+        ACL='public-read'
     )
     return get_s3_link(client, new_filename)
 
