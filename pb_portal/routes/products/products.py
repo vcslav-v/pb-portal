@@ -442,7 +442,7 @@ async def submit_new_product(
 
     if is_valid:
         asyncio.create_task(upload_product(form, user, upload_session.html_desc))
-        # response.delete_cookie('upload_session')
+        response.delete_cookie('upload_session')
         return RedirectResponse(
             request.url_for('products'),
             status_code=303,
