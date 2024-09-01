@@ -40,6 +40,7 @@ PB_UPL_API_URL = os.environ.get('PB_UPL_API_URL', '')
 PB_BASIC_LOGIN = os.environ.get('PB_BASIC_LOGIN', '')
 PB_BASIC_PASSWORD = os.environ.get('PB_BASIC_PASSWORD', '')
 
+ARTICLE_CATEGORIES = [int(c) for c in os.environ.get('ARTICLE_CATEGORIES', '0').split(',')]
 SAMPLE_PRODUCT_URL = os.environ.get('SAMPLE_PRODUCT_URL', 'https://www.google.com')
 SUPPORTED_FORMATS = os.environ.get('SUPPORTED_FORMATS', 'pdf,doc,docx,txt').split(',')
 PUBLISH_INTERVAL = int(os.environ.get('PUBLISH_INTERVAL', 5))
