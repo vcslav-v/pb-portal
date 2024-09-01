@@ -8,7 +8,13 @@ async def publish_pb() -> None:
     pb.publish(publish_ids)
 
 
+async def pb_creators_update() -> None:
+    await pb.get_creators()
+
+
 def scheluder() -> AsyncIOScheduler:
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(publish_pb, 'interval', seconds=1)#minutes=config.PUBLISH_INTERVAL)
+    scheduler.add_job(publish_pb, 'interval', minutes=config.PUBLISH_INTERVAL)
+    scheduler.add_job(pb_creators_update, 'interval', minutes=config.CREATORS_UPDATE_INTERVAL)
+
     return scheduler
