@@ -5,7 +5,7 @@
     <div class="flex flex-row justify-start items-center gap-5 {%if preview.error%}text-red-500{%else%}text-black{%endif%}">
         <div class="{%if preview.thumb_url%}w-12 h-12 overflow-hidden rounded-sm{%else%}w-7 h-7 overflow-hidden rounded-sm m-2{%endif%}">
             <img class="{%if preview.thumb_url%}w-full h-full object-cover{%else%}w-full h-full{%endif%}"
-                src="{%if preview.thumb_url and not preview.error %}{{preview.thumb_url}}{%else%}{{ url_for('static', path='/imgs/icon-preview.svg') }}{%endif%}">
+                src="{%if preview.thumb_url and not preview.error %}{{preview.thumb_url}}{%else%}{{ url_for('static', path='/imgs/icon-img.svg') }}{%endif%}">
         </div>
         {%if preview.filename|length < 45 %}
             {{preview.filename}}
