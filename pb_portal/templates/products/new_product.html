@@ -11,7 +11,7 @@
 {% block content_in_wrapper %}
 {{ super() }}
 <h1 class="title mb-12">Create Submission</h1>
-<form class="flex flex-col gap-12" action="{{url_for('submit_new_product')}}" method="post">
+<form id="newProductForm" class="flex flex-col gap-12" hx-post="{{url_for('submit_new_product')}}" hx-trigger="submit delay:1s">
     <input type="text" name="upload_session_id" class="hidden" value="{{upload_session.session_id}}">
     {% include 'products/_create_product_block_title.html' %}
     {% include 'products/_create_product_block_files.html' %}
@@ -19,9 +19,12 @@
     {% include 'products/_create_product_block_imgs.html' %}
     <div class="flex flex-row gap-5 items-center mt-2.5">
         <button
+            id="submitBtn"
             type="submit"
+            onclick="loadingBtn()"
             class="flex justify-center w-fit items-center rounded-md bg-black py-3 px-8 text-white font-light max-w-60">
             <span id="submitBtnText">Publish</span>
+            <img class="hidden" id="submitBtnIndicator"src="{{ url_for('static', path='/imgs/loading_in_btn.svg') }}" alt="">
         </button>
         <input type="text" id="scheduleDate" name="schedule_date"  class="hidden" hx-trigger="load, change" hx-post="{{url_for('schedule_info')}}" hx-target="#scheduleInfo" hx-swap="outerHTML" value="{{upload_session.schedule_date}}">
         <input type="text" id="timezone" name="timezone" class="hidden">

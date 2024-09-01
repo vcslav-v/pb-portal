@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request, Response, UploadFile, File
+from fastapi import APIRouter, Depends, Request, Response, UploadFile, File, BackgroundTasks
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pb_portal.auth.tools import current_active_user
@@ -434,6 +434,7 @@ async def schedule_info(
 async def submit_new_product(
     request: Request,
     response: Response,
+    background_tasks: BackgroundTasks,
     user: User = Depends(current_active_user),
 ):
     upload_session = get_upload_session(request, user)
@@ -441,7 +442,7 @@ async def submit_new_product(
     is_valid = validate.upload_form(upload_session, form)
 
     if is_valid:
-        asyncio.create_task(upload_product(form, user, upload_session.html_desc))
+        background_tasks.add_task(upload_product, form, user)
         response.delete_cookie('upload_session')
         return RedirectResponse(
             request.url_for('products'),

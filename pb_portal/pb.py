@@ -12,6 +12,7 @@ from datetime import datetime as dt, timezone as tz
 import pytz
 import requests
 import math
+import asyncio
 
 
 def generate_slug(input_string):
@@ -28,8 +29,6 @@ async def get_categories():
         site_url=config.PB_URL,
         login=config.PB_LOGIN,
         password=config.PB_PASSWORD,
-        basic_auth_login=config.PB_BASIC_LOGIN,
-        basic_auth_password=config.PB_BASIC_PASSWORD,
         edit_mode=True
     )
     categories = pb_session.categories.get_list()
@@ -46,8 +45,6 @@ async def get_creators():
         site_url=config.PB_URL,
         login=config.PB_LOGIN,
         password=config.PB_PASSWORD,
-        basic_auth_login=config.PB_BASIC_LOGIN,
-        basic_auth_password=config.PB_BASIC_PASSWORD,
         edit_mode=True
     )
     creators = pb_session.creators.get_list()
@@ -78,8 +75,9 @@ def get_valid_tags_ids(pb_session: PbSession, tag_names: str) -> list[int]:
     return result
 
 
-async def upload_product(form: FormData, user: db_models.User, html_desc: str):
+async def upload_product(form: FormData, user: db_models.User):
     config.logger.info('Uploading product')
+    await asyncio.sleep(5)  # TODO: remove this line after pb_admin will be async
     product_type = pb_schemas.NewProductType.freebie if form.get('productType') == 'free' else pb_schemas.NewProductType.plus
     title = form.get('title', '')
     slug = generate_slug(title)
@@ -107,8 +105,6 @@ async def upload_product(form: FormData, user: db_models.User, html_desc: str):
         site_url=config.PB_URL,
         login=config.PB_LOGIN,
         password=config.PB_PASSWORD,
-        basic_auth_login=config.PB_BASIC_LOGIN,
-        basic_auth_password=config.PB_BASIC_PASSWORD,
         edit_mode=True
     )
     new_product = NewProduct(
@@ -121,7 +117,7 @@ async def upload_product(form: FormData, user: db_models.User, html_desc: str):
         slug=slug,
         is_special=form.get('productType') == 'special',
         excerpt=form.get('excerpt', ''),
-        description=html_desc,
+        description=form.get('description', ''),
         thumbnail=thumbnail,
         push_image=push_image,
         is_live=False,
@@ -160,8 +156,6 @@ def add_product_file(uploader_resp: UploaderResponse, product_id: int, in_schedu
         site_url=config.PB_URL,
         login=config.PB_LOGIN,
         password=config.PB_PASSWORD,
-        basic_auth_login=config.PB_BASIC_LOGIN,
-        basic_auth_password=config.PB_BASIC_PASSWORD,
         edit_mode=True
     )
     pb_product = pb_session.new_products.get(product_id)
@@ -178,8 +172,6 @@ def publish(product_ids: list[int]):
         site_url=config.PB_URL,
         login=config.PB_LOGIN,
         password=config.PB_PASSWORD,
-        basic_auth_login=config.PB_BASIC_LOGIN,
-        basic_auth_password=config.PB_BASIC_PASSWORD,
         edit_mode=True
     )
     for product_id in product_ids:

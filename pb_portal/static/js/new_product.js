@@ -39,19 +39,19 @@ document.addEventListener("DOMContentLoaded", function () {
     enableTime: true,
     time_24hr: true,
     minDate: new Date(),
-    
+
     positionElement: document.getElementById('openPicker'),
     dateFormat: "Y-m-d H:i",
-};
-let userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-document.getElementById('timezone').value = userTimezone;
+  };
+  let userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  document.getElementById('timezone').value = userTimezone;
 
-let scheduleDateInput = document.getElementById('scheduleDate');
-let flatpickrInstance = flatpickr(scheduleDateInput, optional_config);
+  let scheduleDateInput = document.getElementById('scheduleDate');
+  let flatpickrInstance = flatpickr(scheduleDateInput, optional_config);
 
-document.getElementById('openPicker').addEventListener('click', function() {
-  flatpickrInstance.open();
-});
+  document.getElementById('openPicker').addEventListener('click', function () {
+    flatpickrInstance.open();
+  });
 })
 
 document.body.addEventListener('htmx:afterRequest', function (event) {
@@ -214,4 +214,16 @@ function flushSchedule() {
   scheduleDateInput.value = '';
   scheduleDateInfo.innerHTML = '';
   htmx.trigger(scheduleDateInput, 'change');
+}
+
+
+function loadingBtn() {
+  let btn = document.getElementById('submitBtn');
+  let indicator = document.getElementById('submitBtnIndicator');
+  let btnText = document.getElementById('submitBtnText');
+  let mainForm = document.getElementById('newProductForm');
+  btn.disabled = true;
+  btnText.classList.add('hidden');
+  indicator.classList.remove('hidden');
+  htmx.trigger(mainForm, 'submit');
 }
