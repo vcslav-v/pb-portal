@@ -3,7 +3,7 @@ from fastapi_users.authentication import JWTStrategy
 from pb_portal.config import AUTH_SECRET
 
 
-cookie_transport = CookieTransport(cookie_max_age=3600)
+cookie_transport = CookieTransport(cookie_max_age=3600*24*30)
 
 
 def get_jwt_strategy() -> JWTStrategy:
