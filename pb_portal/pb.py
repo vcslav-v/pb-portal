@@ -33,7 +33,7 @@ async def get_categories():
     )
     categories = pb_session.categories.get_list()
     categories.sort(key=lambda x: x.weight)
-    categories = [category for category in categories if category.is_display]
+    categories = [category for category in categories if category.is_display and category.is_shown_in_filter]
     os.environ['PB_CATEGORIES'] = json.dumps(
         {category.ident: category.title for category in categories}
     )
