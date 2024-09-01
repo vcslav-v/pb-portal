@@ -8,7 +8,7 @@ import requests
 def prepare_pb_preview_image(image: bytes, filename: str) -> tuple[io.BytesIO | None, io.BytesIO | None, str, str]:
     img = Image.open(io.BytesIO(image))
     if img.width < config.MIN_PB_IMAGE_WIDTH or img.height < config.MIN_PB_IMAGE_HEIGHT:
-        return None, None, 'Image has to be at least 2250x1500 pixels', filename
+        return None, None, 'Image has to be at least 2080x1386 pixels', filename
 
     aspect_ratio = img.width / img.height
     if round(aspect_ratio, 2) != round(config.PB_IMAGE_ASPECT_RATIO, 2):

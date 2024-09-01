@@ -74,7 +74,7 @@ def add_preview_to_upload_session(prepared_imgs: list[dict[str, str]], upload_se
 
 def rm_preview_from_upload_session(img_id: str, upload_session: UploadForm) -> None:
     for preview in upload_session.previews:
-        if preview.id == img_id:
+        if preview.id == int(img_id):
             upload_session.previews.remove(preview)
             break
 
