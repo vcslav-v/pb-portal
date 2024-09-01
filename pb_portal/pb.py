@@ -28,6 +28,8 @@ async def get_categories():
         site_url=config.PB_URL,
         login=config.PB_LOGIN,
         password=config.PB_PASSWORD,
+        basic_auth_login=config.PB_BASIC_LOGIN,
+        basic_auth_password=config.PB_BASIC_PASSWORD,
         edit_mode=True
     )
     categories = pb_session.categories.get_list()
@@ -44,6 +46,8 @@ async def get_creators():
         site_url=config.PB_URL,
         login=config.PB_LOGIN,
         password=config.PB_PASSWORD,
+        basic_auth_login=config.PB_BASIC_LOGIN,
+        basic_auth_password=config.PB_BASIC_PASSWORD,
         edit_mode=True
     )
     creators = pb_session.creators.get_list()
@@ -103,6 +107,8 @@ async def upload_product(form: FormData, user: db_models.User, html_desc: str):
         site_url=config.PB_URL,
         login=config.PB_LOGIN,
         password=config.PB_PASSWORD,
+        basic_auth_login=config.PB_BASIC_LOGIN,
+        basic_auth_password=config.PB_BASIC_PASSWORD,
         edit_mode=True
     )
     new_product = NewProduct(
@@ -154,6 +160,8 @@ def add_product_file(uploader_resp: UploaderResponse, product_id: int, in_schedu
         site_url=config.PB_URL,
         login=config.PB_LOGIN,
         password=config.PB_PASSWORD,
+        basic_auth_login=config.PB_BASIC_LOGIN,
+        basic_auth_password=config.PB_BASIC_PASSWORD,
         edit_mode=True
     )
     pb_product = pb_session.new_products.get(product_id)
@@ -170,6 +178,8 @@ def publish(product_ids: list[int]):
         site_url=config.PB_URL,
         login=config.PB_LOGIN,
         password=config.PB_PASSWORD,
+        basic_auth_login=config.PB_BASIC_LOGIN,
+        basic_auth_password=config.PB_BASIC_PASSWORD,
         edit_mode=True
     )
     for product_id in product_ids:
