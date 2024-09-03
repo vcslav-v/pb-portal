@@ -28,7 +28,7 @@
     </div>
     <input type="file" id="productFile" class="hidden" onchange="startUpload()" accept=".zip">
     <input type="text" id="hiddenProductName" name="productName" class="hidden" value="{{upload_session.product_name}}"
-        hx-post="{{url_for('save_changes')}}" hx-trigger="change" hx-target="#status" hx-swap="innerHTML">
+        hx-post="{{url_for('save_changes')}}" hx-trigger="change" hx-target="#status" hx-swap="innerHTML" required>
     <div class="flex flex-row items-center justify-start gap-4">
         <button type="button" id="uploadBtn" onclick="document.getElementById('productFile').click();"
         class="flex flex-row justify-start gap-3.5 max-w-36 items-center rounded-md bg-black px-3 py-2 text-white font-light leading-6">

@@ -125,7 +125,7 @@ async def upload_product(form: FormData, user: db_models.User):
         presentation=presentation,
         formats=', '.join(form.getlist('formats[]')),
         category_id=int(form.get('category')),
-        creator_id=int(form.get('creator_id')) if user.role_id < auth_schemas.UserRoles.manager.value  else user.creator_id,
+        creator_id=int(form.get('creator_id')) if user.role_id <= auth_schemas.UserRoles.manager.value  else user.creator_id,
         price_commercial_cent=int(form.get('commercialPrice', 0))*100,
         price_extended_cent=int(form.get('extendedPrice', 0))*100 if form.get('extendedPrice') else None,
         price_commercial_sale_cent=None,
