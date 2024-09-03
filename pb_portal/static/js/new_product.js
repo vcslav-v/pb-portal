@@ -1,6 +1,6 @@
-let currentUploadRequest = null;
-let simplemde = null;
-let sortableInstance = null;
+var currentUploadRequest = null;
+var simplemde = null;
+var sortableInstance = null;
 
 document.addEventListener("DOMContentLoaded", function () {
   let sortables = document.querySelectorAll(".sortable");
