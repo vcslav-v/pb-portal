@@ -11,7 +11,7 @@
 {% block content_in_wrapper %}
 {{ super() }}
 <h1 class="title mb-12">Create Submission</h1>
-<form id="newProductForm" class="flex flex-col gap-12" hx-post="{{url_for('submit_new_product')}}" hx-trigger="submit delay:1s">
+<form id="newProductForm" class="flex flex-col gap-12" hx-post="{{url_for('submit_new_product')}}" hx-trigger="submit delay:1s" hx-target="#status" hx-swap="innerHTML">
     <input type="text" name="upload_session_id" class="hidden" value="{{upload_session.session_id}}">
     {% include 'products/_create_product_block_title.html' %}
     {% include 'products/_create_product_block_files.html' %}

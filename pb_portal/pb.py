@@ -2,7 +2,7 @@ from pb_admin import PbSession, schemas as pb_schemas
 from pb_admin.schemas import NewProduct
 from pb_portal.db import models as db_models, tools as db_tools
 from pb_portal import config, s3, imgs
-from pb_portal.schemas.new_product import UploaderResponse, UploadForm
+from pb_portal.schemas.new_product import UploaderResponse
 from pb_portal.auth import schemas as auth_schemas
 import os
 import json

@@ -15,7 +15,6 @@ import os
 from datetime import datetime, UTC
 from typing import List
 import base64
-import asyncio
 
 
 from pb_portal import config, dependencies
