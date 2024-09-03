@@ -37,7 +37,7 @@ def youtube_thumbnail(url: str) -> str:
     return ''
 
 
-def upload_form(upload_session: UploadForm, form: FormData) -> bool:
+def upload_form(upload_session: UploadForm, form: FormData, html_text: str) -> bool:
     # title
     is_valid = re.match(config.RE_TITLE, form.get('title', '')) and len(form.get('title', '')) <= config.MAX_LENGHT_TITLE
     # product file
@@ -55,7 +55,7 @@ def upload_form(upload_session: UploadForm, form: FormData) -> bool:
         config.RE_EXERPT, form.get('excerpt', '')
     ) and len(form.get('excerpt', '')) <= config.MAX_EXERPT_LENGTH
     # description
-    length, forb_tags = description(form.get('description', ''))
+    length, forb_tags = description(html_text)
     upload_session.errors.desc = length == 0
     is_valid = is_valid and not upload_session.errors.desc and not forb_tags
     # tags

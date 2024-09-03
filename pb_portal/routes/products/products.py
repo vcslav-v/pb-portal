@@ -438,10 +438,10 @@ async def submit_new_product(
 ):
     upload_session = get_upload_session(request, user)
     form = await request.form()
-    is_valid = validate.upload_form(upload_session, form)
+    is_valid = validate.upload_form(upload_session, form, upload_session.html_desc)
 
     if is_valid:
-        background_tasks.add_task(upload_product, form, user)
+        background_tasks.add_task(upload_product, form, user, upload_session.html_desc)
         response.delete_cookie('upload_session')
         return RedirectResponse(
             request.url_for('products'),

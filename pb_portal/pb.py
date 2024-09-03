@@ -13,6 +13,7 @@ import pytz
 import requests
 import math
 import asyncio
+from bs4 import BeautifulSoup
 
 
 def generate_slug(input_string):
@@ -75,12 +76,13 @@ def get_valid_tags_ids(pb_session: PbSession, tag_names: str) -> list[int]:
     return result
 
 
-async def upload_product(form: FormData, user: db_models.User):
+async def upload_product(form: FormData, user: db_models.User, html_desc: str):
     config.logger.info('Uploading product')
     await asyncio.sleep(5)  # TODO: remove this line after pb_admin will be async
     product_type = pb_schemas.NewProductType.freebie if form.get('productType') == 'free' else pb_schemas.NewProductType.plus
     title = form.get('title', '')
     slug = generate_slug(title)
+    soup = BeautifulSoup(html_desc, 'html.parser')
     if form.get('schedule_date'):
         local_time = dt.strptime(form.get('schedule_date'), '%Y-%m-%d %H:%M')
         local_timezone = pytz.timezone(form.get('timezone', 'UTC'))
@@ -117,7 +119,7 @@ async def upload_product(form: FormData, user: db_models.User):
         slug=slug,
         is_special=form.get('productType') == 'special',
         excerpt=form.get('excerpt', ''),
-        description=form.get('description', ''),
+        description=soup.prettify(formatter='minimal'),
         thumbnail=thumbnail,
         push_image=push_image,
         is_live=False,
