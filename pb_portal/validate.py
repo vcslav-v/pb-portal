@@ -62,6 +62,9 @@ def upload_form(upload_session: UploadForm, form: FormData, html_text: str) -> b
     is_valid = is_valid and 0 < len(form.get('tags', '').split(',')) <= config.MAX_TAGS_LENGTH
     # previews
     for preview in upload_session.previews:
+        config.logger.info('youtube' not in preview.thumb_url and str(preview.id) in form.getlist('preview_ids[]'))
+        config.logger.info(preview.id)
+        config.logger.info(form.getlist('preview_ids[]'))
         if 'youtube' not in preview.thumb_url and str(preview.id) in form.getlist('preview_ids[]'):
             upload_session.errors.previews = False
             break
