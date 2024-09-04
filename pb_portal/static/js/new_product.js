@@ -138,6 +138,10 @@ function uploadFile(file, s3Data) {
         currentUploadRequest = null;
         let hiddenInput = document.getElementById('hiddenProductName');
         hiddenInput.value = file.name;
+        let submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('bg-gray-500');
+        submitBtn.classList.add('bg-black');
         htmx.trigger(hiddenInput, 'change');
         console.log('File uploaded successfully.');
       }
