@@ -15,11 +15,14 @@ import os
 from datetime import datetime, UTC
 from typing import List
 import base64
+import asyncio
 
 
 from pb_portal import config, dependencies
 
 router = APIRouter()
+
+img_tasks = {}
 
 
 @config.logger.catch()
@@ -297,16 +300,29 @@ async def count_tags(
     })
 
 
+async def upload_preview(
+    imgs_bytes: list[tuple[bytes, str]],
+    session_id: str, 
+    validated_imgs: list
+):
+    await asyncio.sleep(1)
+    for img_bytes, filename in imgs_bytes:
+        validated_imgs.append(imgs.prepare_pb_preview_image(img_bytes, filename))
+    prepared_imgs = upload_pb_preview_image(validated_imgs, session_id)
+    img_tasks.setdefault(session_id, []).extend(prepared_imgs)
+
+
 @router.post('/imgs_upload', response_class=HTMLResponse)
 async def imgs_upload(
     request: Request,
-    response: Response,
+    background_tasks: BackgroundTasks,
     user: User = Depends(current_active_user),
     templates: Jinja2Templates = Depends(dependencies.get_templates),
     imgFiles: List[UploadFile] = File(...)
 ):
     upload_session = get_upload_session(request, user)
     validated_imgs = []
+    imgs_bytes = []
     for imgFile in imgFiles:
         if imgFile.content_type != 'image/jpeg':
             validated_imgs.append((None, None, 'Only JPEG images are allowed', imgFile.filename))
@@ -314,10 +330,35 @@ async def imgs_upload(
         if imgFile.size > config.MAX_IMAGE_SIZE:
             validated_imgs.append((None, None, 'Image size is too big', imgFile.filename))
             continue
-        validated_imgs.append(imgs.prepare_pb_preview_image(imgFile.file.read(), imgFile.filename))
-    prepared_imgs = upload_pb_preview_image(validated_imgs, upload_session.session_id)
+        imgs_bytes.append((imgFile.file.read(), imgFile.filename))
+    background_tasks.add_task(upload_preview, imgs_bytes, upload_session.session_id, validated_imgs)
+    return templates.TemplateResponse(
+        'products/_imgs_worker.html',
+        {
+            'request': request,
+        }
+    )
+
+
+@router.post('/imgs_result')
+async def imgs_result(
+    request: Request,
+    response: Response,
+    templates: Jinja2Templates = Depends(dependencies.get_templates),
+    user: User = Depends(current_active_user),
+):
+    upload_session = get_upload_session(request, user)
+    prepared_imgs = img_tasks.pop(upload_session.session_id, [])
+    if not prepared_imgs:
+        return templates.TemplateResponse(
+            'products/_imgs_worker.html',
+            {
+                'request': request,
+            }
+        )
     add_preview_to_upload_session(prepared_imgs, upload_session)
     set_upload_session(response, upload_session)
+
     return templates.TemplateResponse(
         'products/_sort_imgs.html',
         {
@@ -442,6 +483,7 @@ async def submit_new_product(
 
     if is_valid:
         background_tasks.add_task(upload_product, form, user, upload_session.html_desc)
+        img_tasks.pop(upload_session.session_id, None)
         response.delete_cookie('upload_session')
         return RedirectResponse(
             request.url_for('products'),
