@@ -176,6 +176,10 @@ function cancelUpload() {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
           let hiddenInput = document.getElementById('hiddenProductName');
+          let submitBtn = document.getElementById('submitBtn');
+          submitBtn.disabled = true;
+          submitBtn.classList.add('bg-gray-500');
+          submitBtn.classList.remove('bg-black');
           hiddenInput.value = '';
           htmx.trigger(hiddenInput, 'change');
           productBar.classList.add('hidden');
