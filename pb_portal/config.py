@@ -51,7 +51,7 @@ ALLOWED_TAGS = {
 }
 MAX_DESCRIPTION_LENGTH = 1000
 MAX_EXERPT_LENGTH = 250
-RE_EXERPT = r'^[a-zA-Z0-9\' \&\-()\.,—\?]+$'
+RE_EXERPT = r'^[a-zA-Z0-9\' \&\-()\.,—\?\!]+$'
 MAX_TAGS_LENGTH = 20
 RE_TAG = r'^[a-zA-Z0-9\'\& -]+$'
 RE_TITLE = r'^[a-zA-Z][a-zA-Z0-9& \-\.]*$'
