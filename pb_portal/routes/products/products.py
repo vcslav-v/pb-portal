@@ -44,27 +44,54 @@ async def products(
 
 
 def get_upload_session(request: Request, user: User) -> UploadForm:
-    upload_session = request.cookies.get('upload_session')
-    if upload_session:
-        try:
-            upload_session_decoded = base64.b64decode(upload_session).decode('utf-8')
-            upload_session = json.loads(upload_session_decoded)
-        except Exception as e:
-            upload_session = {'session_id': f'{user.id}-{int(datetime.now(UTC).timestamp())}'}
+    session_id = request.cookies.get('upload_session_session_id')
+    if not session_id:
+        return UploadForm(session_id=f'{user.id}-{int(datetime.now(UTC).timestamp())}')
+    upload_session = {
+        'session_id': request.cookies.get('upload_session_session_id', ''),
+        'title': request.cookies.get('upload_session_title', ''),
+        'schedule_date': request.cookies.get('upload_session_schedule_date', ''),
+        'creator_id': request.cookies.get('upload_session_creator_id', ''),
+        'category_id': request.cookies.get('upload_session_category_id', ''),
+        'product_type': request.cookies.get('upload_session_product_type', ''),
+        'commercial_price': request.cookies.get('upload_session_commercial_price', ''),
+        'extended_price': request.cookies.get('upload_session_extended_price', ''),
+        'product_name': request.cookies.get('upload_session_product_name', ''),
+        'formats': request.cookies.get('upload_session_formats', 'W10='),
+        'exerpt': request.cookies.get('upload_session_exerpt', ''),
+        'desc': request.cookies.get('upload_session_desc', ''),
+        'html_desc': request.cookies.get('upload_session_html_desc', ''),
+        'tags': request.cookies.get('upload_session_tags', ''),
+        'previews': request.cookies.get('upload_session_previews', 'W10='),
+        'errors': request.cookies.get('upload_session_errors', 'e30='),
+    }
+    for key, value in upload_session.items():
+        if value:
+            try:
+                upload_session[key] = base64.b64decode(value).decode('utf-8')
+            except Exception as e:
+                break
+        if key in ['formats', 'previews', 'errors']:
+            upload_session[key] = json.loads(upload_session[key])
     else:
-        upload_session = {'session_id': f'{user.id}-{int(datetime.now(UTC).timestamp())}'}
-    upload_session = UploadForm(**upload_session)
-    return upload_session
+        return UploadForm(**upload_session)
+    return UploadForm(session_id=f'{user.id}-{int(datetime.now(UTC).timestamp())}')
 
 
 def set_upload_session(response: Response, upload_session: UploadForm) -> None:
-    upload_session_data = upload_session.model_dump_json().encode('utf-8')
-    upload_session_encoded = base64.b64encode(upload_session_data).decode('utf-8')
-    response.set_cookie(
-        'upload_session',
-        upload_session_encoded,
-        max_age=3600,
-    )
+    for key, value in upload_session.model_dump().items():
+        if key in ['formats', 'previews', 'errors']:
+            value = json.dumps(value)
+        response.set_cookie(
+            f'upload_session_{key}',
+            base64.b64encode(value.encode('utf-8')).decode('utf-8'),
+            max_age=3600,
+        )
+
+
+def rm_cookies_session(response: Response, upload_session: UploadForm) -> None:
+    for key in upload_session.model_dump().keys():
+        response.delete_cookie(f'upload_session_{key}')
 
 
 def add_preview_to_upload_session(prepared_imgs: list[dict[str, str]], upload_session: UploadForm) -> None:
@@ -484,7 +511,7 @@ async def submit_new_product(
     if is_valid:
         background_tasks.add_task(upload_product, form, user, upload_session.html_desc)
         img_tasks.pop(upload_session.session_id, None)
-        response.delete_cookie('upload_session')
+        rm_cookies_session(response, upload_session)
         return RedirectResponse(
             request.url_for('products'),
             status_code=303,
