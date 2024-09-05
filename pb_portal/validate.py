@@ -4,8 +4,6 @@ import re
 from pb_portal.schemas.new_product import UploadForm
 from starlette.datastructures import FormData
 
-
-
 def description(html_text: str) -> tuple[int, list[str]]:
     soup = BeautifulSoup(html_text, "html.parser")
     tags = {tag.name for tag in soup.find_all()}

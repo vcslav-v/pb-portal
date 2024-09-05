@@ -50,6 +50,10 @@ async def get_creators():
     )
     creators = pb_session.creators.get_list()
     creators.sort(key=lambda x: x.ident)
+    main_creator = creators[0]
+    creators = creators[1:]
+    creators.sort(key=lambda x: x.name)
+    creators.insert(0, main_creator)
     os.environ['PB_CREATORS'] = json.dumps(
         {creator.ident: creator.name for creator in creators}
     )
