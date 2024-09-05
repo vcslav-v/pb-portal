@@ -14,7 +14,6 @@ function switchVisiblePassword() {
 function submitForm(event) {
     event.preventDefault();
     const form = document.getElementById('loginForm');
-    const formData = new FormData(form);
     axios.post(form.getAttribute('data-auth-url'), form)
         .then(function (response){
             window.location.href = form.getAttribute('data-success-url');

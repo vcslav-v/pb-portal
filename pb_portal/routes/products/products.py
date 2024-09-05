@@ -23,6 +23,7 @@ from pb_portal import config, dependencies
 router = APIRouter()
 
 img_tasks = {}
+session_info = {}
 
 
 @config.logger.catch()
@@ -44,54 +45,26 @@ async def products(
 
 
 def get_upload_session(request: Request, user: User) -> UploadForm:
-    session_id = request.cookies.get('upload_session_session_id')
+    session_id = request.cookies.get('upload_session_id')
     if not session_id:
         return UploadForm(session_id=f'{user.id}-{int(datetime.now(UTC).timestamp())}')
-    upload_session = {
-        'session_id': request.cookies.get('upload_session_session_id', ''),
-        'title': request.cookies.get('upload_session_title', ''),
-        'schedule_date': request.cookies.get('upload_session_schedule_date', ''),
-        'creator_id': request.cookies.get('upload_session_creator_id', ''),
-        'category_id': request.cookies.get('upload_session_category_id', ''),
-        'product_type': request.cookies.get('upload_session_product_type', ''),
-        'commercial_price': request.cookies.get('upload_session_commercial_price', ''),
-        'extended_price': request.cookies.get('upload_session_extended_price', ''),
-        'product_name': request.cookies.get('upload_session_product_name', ''),
-        'formats': request.cookies.get('upload_session_formats', 'W10='),
-        'exerpt': request.cookies.get('upload_session_exerpt', ''),
-        'desc': request.cookies.get('upload_session_desc', ''),
-        'html_desc': request.cookies.get('upload_session_html_desc', ''),
-        'tags': request.cookies.get('upload_session_tags', ''),
-        'previews': request.cookies.get('upload_session_previews', 'W10='),
-        'errors': request.cookies.get('upload_session_errors', 'e30='),
-    }
-    for key, value in upload_session.items():
-        if value:
-            try:
-                upload_session[key] = base64.b64decode(value).decode('utf-8')
-            except Exception as e:
-                break
-        if key in ['formats', 'previews', 'errors']:
-            upload_session[key] = json.loads(upload_session[key])
-    else:
-        return UploadForm(**upload_session)
-    return UploadForm(session_id=f'{user.id}-{int(datetime.now(UTC).timestamp())}')
+    session_id = base64.b64decode(session_id).decode('utf-8')
+    session_info.setdefault(session_id, {'session_id': f'{user.id}-{int(datetime.now(UTC).timestamp())}'})
+    return UploadForm(**session_info[session_id])
 
 
 def set_upload_session(response: Response, upload_session: UploadForm) -> None:
-    for key, value in upload_session.model_dump().items():
-        if key in ['formats', 'previews', 'errors']:
-            value = json.dumps(value)
-        response.set_cookie(
-            f'upload_session_{key}',
-            base64.b64encode(value.encode('utf-8')).decode('utf-8'),
-            max_age=3600,
-        )
+    session_info[upload_session.session_id] = upload_session.model_dump()
+    response.set_cookie(
+        'upload_session_id',
+        base64.b64encode(upload_session.session_id.encode('utf-8')).decode('utf-8'),
+        max_age=3600,
+    )
 
 
 def rm_cookies_session(response: Response, upload_session: UploadForm) -> None:
-    for key in upload_session.model_dump().keys():
-        response.delete_cookie(f'upload_session_{key}')
+    session_info.pop(upload_session.session_id, None)
+    response.delete_cookie(f'upload_session_id')
 
 
 def add_preview_to_upload_session(prepared_imgs: list[dict[str, str]], upload_session: UploadForm) -> None:
