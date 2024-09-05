@@ -21,7 +21,6 @@
         <button
             id="submitBtn"
             type="submit"
-            onclick="loadingBtn()"
             class="flex justify-center w-fit items-center rounded-md {% if not upload_session.product_name %}bg-gray-500{%else%}bg-black{%endif%} py-3 px-8 text-white font-light max-w-60"
             {% if not upload_session.product_name %}disabled{%endif%}>
             <span id="submitBtnText">Publish</span>
