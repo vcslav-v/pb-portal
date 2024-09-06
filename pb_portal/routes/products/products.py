@@ -143,7 +143,6 @@ async def save_changes(
     form = await request.form()
     upload_session = get_upload_session(request, user)
     upload_session.category_id = form.get('category', '')
-    upload_session.creator_id = form.get('creator_id', '')
     upload_session.commercial_price = form.get('commercialPrice', '')
     upload_session.extended_price = form.get('extendedPrice', '')
     upload_session.product_name = form.get('productName', '')
@@ -163,13 +162,15 @@ async def get_pricing_block(
     form = await request.form()
     upload_session = get_upload_session(request, user)
     upload_session.product_type = form.get('productType', '')
+    upload_session.creator_id = form.get('creator_id', '')
     set_upload_session(response, upload_session)
 
     return templates.TemplateResponse(
-        'products/_pricing.html', 
+        'products/_pricing.html',
         {
             'request': request,
-            'upload_session': upload_session
+            'upload_session': upload_session,
+            'is_external_creator':  '1' != upload_session.creator_id,
         },
         headers=response.headers
     )

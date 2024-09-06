@@ -27,7 +27,7 @@
             <label for="creator" class="font-light">Select creator<span class="text-red-600">*</span></label>
             <div class="relative inline-block w-full">
                 <select name="creator_id" id="creator"
-                    hx-post="{{url_for('save_changes')}}" hx-trigger="change"  hx-target="#status" hx-swap="innerHTML"
+                    hx-post="{{url_for('get_pricing_block')}}" hx-trigger="change" hx-target="#pricing" hx-swap="outerHTML"
                     class="flex justify-between items-center rounded-md bg-zinc-500 py-3 px-7 min-h-12 w-full max-w-2xl text-white leading-6 font-light appearance-none focus:outline-none">
                     {% for id in creators%}
                     <option value="{{ id }}"{% if id == upload_session.creator_id %} selected{%endif%}>{{ creators[id] }}</option>

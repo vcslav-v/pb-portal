@@ -155,6 +155,8 @@ async def upload_product(form: FormData, user: db_models.User, html_desc: str):
         session.auth = (config.PB_UPL_API_LOGIN, config.PB_UPL_API_PASS)
         session.post(config.PB_UPL_API_URL, json=data)
 
+    return True
+
 
 def add_product_file(uploader_resp: UploaderResponse, product_id: int, in_schedule: bool = False):
     config.logger.info('Adding product file')

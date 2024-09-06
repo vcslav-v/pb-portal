@@ -6,7 +6,7 @@
         <div class="relative">
             <span
                 class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">$</span>
-            <input type="number" name="commercialPrice" value="{%if upload_session.commercial_price %}{{upload_session.commercial_price}}{%else%}17{%endif%}"
+            <input type="number" name="commercialPrice" value="{%if is_external_creator%}0{%else%}17{%endif%}"
                 class="w-20 pl-8 border rounded-md py-2 focus:outline-none focus:border-black invalid:ring-red-600 invalid:ring-2" placeholder="17"
                 hx-post="{{url_for('save_changes')}}" hx-trigger="change"  hx-target="#status" hx-swap="innerHTML">
         </div>
@@ -18,7 +18,7 @@
         <div class="relative">
             <span
                 class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">$</span>
-            <input type="number" name="extendedPrice" value={%if upload_session.extended_price %}"{{upload_session.extended_price}}"{%else%}"{% if upload_session.product_type == 'plus' or upload_session.product_type == 'special' %}99{%else%}49{%endif%}"{%endif%}
+            <input type="number" name="extendedPrice" value="{%if is_external_creator %}{% elif upload_session.product_type == 'free'%}49{%else%}99{%endif%}"
                 class="w-20 pl-8 border rounded-md py-2 focus:outline-none focus:border-black invalid:ring-red-600 invalid:ring-2" placeholder="{% if upload_session.product_type == 'plus' or upload_session.product_type == 'special' %}99{%else%}49{%endif%}"
                 hx-post="{{url_for('save_changes')}}" hx-trigger="change"  hx-target="#status" hx-swap="innerHTML">
         </div>
