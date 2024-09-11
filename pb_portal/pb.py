@@ -145,8 +145,12 @@ async def upload_product(form: FormData, user: db_models.User, html_desc: str):
     if form.get('schedule_date'):
         await db_tools.add_schedule(pb_product.ident, utc_time)
     with requests.sessions.Session() as session:
-        file_product_type = 'freebie' if product_type == pb_schemas.NewProductType.freebie else 'plus'
-        file_product_type = 'premium' if form.get('productType') == 'special' else file_product_type
+        if new_product.is_special:
+            file_product_type = 'premium'
+        elif new_product.product_type == pb_schemas.NewProductType.freebie:
+            file_product_type = 'freebie'
+        else:
+            file_product_type = 'plus'
         product = product_file_url.split('?')[0]
         data = {
             'upload': product,
