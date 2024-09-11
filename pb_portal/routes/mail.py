@@ -120,6 +120,7 @@ def featured_source():
                 bundle=connectors.mailer.schemas.Bundle.parse_raw(request.form.get('bundle')) if request.form.get('bundle') else None,
                 popular=json.loads(request.form.get('popular')) if request.form.get('popular') else [],
                 campaign_name=request.form.get('campaign_name'),
+                beefree=request.form.get('beefree'),
             )
         result = connectors.mailer.make_featured(data)
         page_ident = str(
@@ -161,6 +162,14 @@ def get_featured_detail_row():
 def get_featured_video():
     return render_template(
         '_featured_video.html',
+    )
+
+
+@logger.catch
+@app_route.route('/get_featured_beefree', methods=['POST'])
+def get_featured_beefree():
+    return render_template(
+        '_featured_beefree.html',
     )
 
 

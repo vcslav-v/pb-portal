@@ -55,6 +55,7 @@ class PbFeatured(BaseModel):
     bundle: Optional[Bundle] = None
     popular: list[str] = []
     campaign_name: str | None = None
+    beefree: str | None = None
 
 
 class PbFeaturedPage(BaseModel):

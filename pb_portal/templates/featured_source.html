@@ -150,6 +150,9 @@
                 }
                 formData.append('bundle', JSON.stringify(bundle))
             }
+            if ($('#beefree_switch').is(':checked')) {
+                formData.append('beefree', $('input[name="beefree_html"]').val())
+            }
             if ($('#similar_switch').is(':checked')) {
                 var similar_products = []
                 for (var i = 0; i < $('input[name="similar_product"]').length; i++) {
@@ -285,6 +288,28 @@
                 processData: false,
                 success: function (response) {
                     $('#video').append(response)
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+            })
+        }
+        else {
+            $('#video').empty()
+        }
+    }
+    function beefree() {
+        if ($('#beefree_switch').is(':checked')) {
+            $.ajax({
+                type: 'POST',
+                url: "{{ url_for('mail.get_featured_beefree') }}",
+                dataType: 'html',
+                contentType: false,
+                cache: false,
+                mimeType: "multipart/form-data",
+                processData: false,
+                success: function (response) {
+                    $('#beefree').append(response)
                 },
                 error: function (error) {
                     console.log(error);

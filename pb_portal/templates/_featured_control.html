@@ -207,6 +207,44 @@
 </div>
 {% endif %}
 
+{% if result.beefree %}
+<div class="row mx-4">
+    <div class="col-12">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="beefree_switch" onchange="beefree()" checked>
+            <label class="form-check-label" for="beefree_switch">
+                <h5>Beefree</h5>
+            </label>
+        </div>
+    </div>
+</div>
+
+<div id="beefree">
+    <div class="row mx-4 mb-2">
+        <div class="input-group">
+            <span class="input-group-text">HTML</span>
+            <input type="text" class="form-control" placeholder="Beefree html" name="beefree_html"
+                value="{{result.beefree}}">
+        </div>
+    </div>
+</div>
+{% else%}
+<div class="row mx-4">
+    <div class="col-12">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="beefree_switch" onchange="beefree()" checked>
+            <label class="form-check-label" for="beefree_switch">
+                <h5>Beefree</h5>
+            </label>
+        </div>
+    </div>
+</div>
+
+<div id="beefree">
+</div>
+
+{% endif %}
+
 {% if result.popular %}
 <div class="row mx-4">
     <div class="col-12">
