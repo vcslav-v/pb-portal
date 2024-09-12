@@ -82,7 +82,7 @@ def get_valid_tags_ids(pb_session: PbSession, tag_names: str) -> list[int]:
 
 async def upload_product(form: FormData, user: db_models.User, html_desc: str):
     config.logger.info('Uploading product')
-    await asyncio.sleep(5)  # TODO: remove this line after pb_admin will be async
+    await asyncio.sleep(1)  # TODO: remove this line after pb_admin will be async
     product_type = pb_schemas.NewProductType.freebie if form.get('productType') == 'free' else pb_schemas.NewProductType.plus
     title = form.get('title', '')
     slug = generate_slug(title)
