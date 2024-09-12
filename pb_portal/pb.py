@@ -159,7 +159,8 @@ async def upload_product(form: FormData, user: db_models.User, html_desc: str):
             'callback': config.PB_CALLBACK_URL.format(product_id=pb_product.ident),
         }
         session.auth = (config.PB_UPL_API_LOGIN, config.PB_UPL_API_PASS)
-        session.post(config.PB_UPL_API_URL, json=data)
+        resp = session.post(config.PB_UPL_API_URL, json=data)
+        config.logger.info(f'Product file upload response: {resp.text}')
 
     return True
 
