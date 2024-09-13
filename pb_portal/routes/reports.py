@@ -19,11 +19,15 @@ users = {
     os.environ.get('PB_ADMIN_LOGIN') or 'pb_root': generate_password_hash(
         os.environ.get('PB_ADMIN_PASS') or 'pb_pass'
     ),
+    os.environ.get('PB_LEV_LOGIN') or 'lev': generate_password_hash(
+        os.environ.get('PB_LEV_PASS') or 'lev_pass'
+    ),
 }
 user_roles = {
     os.environ.get('FLASK_LOGIN') or 'root': ['admin', 'td_admin'],
     os.environ.get('TD_ADMIN_LOGIN') or 'td_root': ['td_admin'],
     os.environ.get('PB_ADMIN_LOGIN') or 'pb_root': ['pb_admin'],
+    os.environ.get('PB_LEV_LOGIN') or 'lev': ['lev'],
 }
 
 PBI_PRODUCT_URL = os.environ.get('PBI_PRODUCT_URL', '')
@@ -44,7 +48,7 @@ def verify_password(username, password):
 
 @logger.catch
 @app_route.route('/PB-finance', methods=['GET'])
-@auth.login_required(role='admin')
+@auth.login_required(role=['admin', 'lev'])
 def fin_stat():
     name = 'PB'
     return render_template(
@@ -55,7 +59,7 @@ def fin_stat():
 
 @logger.catch
 @app_route.route('/PB-stat', methods=['GET', 'POST'])
-@auth.login_required(role='admin')
+@auth.login_required(role=['admin', 'lev'])
 def pb_stat():
     return render_template(
         'pb_report.html',
