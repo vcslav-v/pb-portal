@@ -106,7 +106,7 @@ async def upload_product(form: FormData, user: db_models.User, html_desc: str):
     elif size < 1000:
         size = f'{math.ceil(size)} MB'
     else:
-        size = f'{size:.2f} GB'
+        size = f'{size/1000:.2f} GB'
     pb_session = PbSession(
         site_url=config.PB_URL,
         login=config.PB_LOGIN,
