@@ -6,7 +6,7 @@
         <input
     class="w-full max-w-2xl border rounded-md py-3 px-5 font-light leading-6 focus:border-black focus:outline-none  {%if upload_session.title %}invalid:ring-red-600 invalid:ring-2{%endif%}"
     hx-post="{{url_for('save_product_title')}}" hx-trigger="change" hx-target="#title" hx-swap="outerHTML" type="text"
-    id="title" name="title" placeholder="Enter your product title" pattern="{%if upload_session.title%}[a-zA-Z][a-zA-Z0-9\& \-\.\—\:\!\?\,\']+{%endif%}[a-zA-Z0-9\& \-\.\—\:\!\?\,\']*" maxlength="50" value="{{upload_session.title}}" title="Please start with a letter, and use only letters, numbers, ampersands, hyphens" required>
+    id="title" name="title" placeholder="Enter your product title" pattern="{%if upload_session.title%}[a-zA-Z]{%endif%}[a-zA-Z0-9& \-.—:!?,']{%if upload_session.title%}+{%else%}*{%endif%}" maxlength="50" value="{{upload_session.title}}" title="Please start with a letter, and use only letters, numbers, ampersands, hyphens" required>
     </div>
     <div class="flex flex-col gap-2.5 w-full">
         <label for="category" class="font-light">Select category <span class="text-red-600">*</span></label>
