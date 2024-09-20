@@ -37,6 +37,14 @@
             </div>
             <div class="row m-4">
                 <div class="col-12">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="sendy_id">
+                        <label for="sendy_id">Sendy ID</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-4">
+                <div class="col-12">
                     <div class="d-grid gap-2">
                         <button type="button" class="btn btn-outline-primary" onclick="refresh()">Refresh</button>
                     </div>
@@ -114,6 +122,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         $('#resultArea').val('')
         formData = new FormData()
         formData.append('campaign_name', $('#campaign_name').val())
+        formData.append('sendy_id', $('#sendy_id').val())
         var cur_url;
         for (input_elem of $('input[id="pbUrl"]')) {
             if (input_elem.getAttribute('name') == 'premium_big') {

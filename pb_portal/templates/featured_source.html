@@ -26,6 +26,14 @@
                     </div>
                 </div>
             </div>
+            <div class="row m-4"></div>
+                <div class="col-12">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="sendy_id">
+                        <label for="sendy_id">Sendy ID</label>
+                    </div>
+                </div>
+            </div>
             <div class="row m-4">
                 <div class="col-12">
                     <div class="d-grid gap-2">
@@ -102,6 +110,7 @@
         }
         formData = new FormData();
         formData.append('campaign_name', $('#campaign_name').val())
+        formData.append('sendy_id', $('#sendy_id').val())
         formData.append('product_url', $('input[name="product_url"]').val())
         if (first_try) {
             formData.append('first_try', 'true')

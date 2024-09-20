@@ -120,6 +120,7 @@ def featured_source():
                 bundle=connectors.mailer.schemas.Bundle.parse_raw(request.form.get('bundle')) if request.form.get('bundle') else None,
                 popular=json.loads(request.form.get('popular')) if request.form.get('popular') else [],
                 campaign_name=request.form.get('campaign_name'),
+                sendy_id=int(request.form.get('sendy_id')) if request.form.get('sendy_id') and request.form.get('sendy_id').isdigit()  else None,
                 beefree=request.form.get('beefree'),
             )
         result = connectors.mailer.make_featured(data)
@@ -202,8 +203,13 @@ def get_featured_similar():
 @auth.login_required(role=['admin', 'pb_admin'])
 def make_digest():
     data = request.form.to_dict()
-    data.pop('campaign_name')
-    data = connectors.mailer.schemas.PbDigest(data=data, campaign_name=request.form.get('campaign_name'))
+    data.pop('campaign_name', None)
+    data.pop('sendy_id', None)
+    data = connectors.mailer.schemas.PbDigest(
+        data=data,
+        campaign_name=request.form.get('campaign_name'),
+        sendy_id=int(request.form.get('sendy_id')) if request.form.get('sendy_id') and request.form.get('sendy_id').isdigit()  else None,
+    )
     result = connectors.mailer.make_digest(data)
     page_ident = str(
         int(datetime.utcnow().timestamp()) + randint(0, int(datetime.utcnow().timestamp()))

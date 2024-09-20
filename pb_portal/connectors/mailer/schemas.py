@@ -7,6 +7,7 @@ class PbDigest(BaseModel):
     """Pydantic's model for the pb digest."""
     data: dict
     campaign_name: str | None = None
+    sendy_id: int | None = None
 
 
 class HTML(BaseModel):
@@ -56,6 +57,7 @@ class PbFeatured(BaseModel):
     popular: list[str] = []
     campaign_name: str | None = None
     beefree: str | None = None
+    sendy_id: int | None = None
 
 
 class PbFeaturedPage(BaseModel):
