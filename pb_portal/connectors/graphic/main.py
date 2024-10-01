@@ -111,7 +111,9 @@ def get_long_tile_jpg(
         width = 0
     schema = []
     schema_sum = 0
-    if raw_schema:
+    if raw_schema and raw_schema == '0':
+        schema = ['0'] + ['1'] * (num_files) + ['0']
+    elif raw_schema:
         for row in raw_schema.split('-'):
             if row.isdigit():
                 schema.append(row)
