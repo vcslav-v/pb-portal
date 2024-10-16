@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Request
 
-from pb_portal import config
-from pb_portal.schemas.sendy import Unsubscribe
+from pb_portal import config, sendy
 from urllib.parse import parse_qs
 
 router = APIRouter()
@@ -15,4 +14,7 @@ async def help(
     body_bytes = await request.body()
     body_str = body_bytes.decode('utf-8')
     body_dict = parse_qs(body_str)
-    config.logger.info(body_dict)
+    email = body_dict.get('email', None)
+    if email:
+        email = email[0]
+        sendy.add_unsubscribe_list(email)

@@ -88,3 +88,8 @@ IMG_S3_NAME_TEMPLATE = 'uploaded_products/{upload_session_id}/preview_{filename}
 YOUTUBE_S3_NAME_TEMPLATE = 'uploaded_products/{upload_session_id}/preview_{img_id}_youtube.txt'
 PRODUCT_S3_NAME_TEMPLATE = 'uploaded_products/{upload_session_id}/product.zip'
 UPLOADED_PRODUCTS_DIR = 'uploaded_products/{upload_session_id}/'
+
+# Sendy
+SENDY_API_URL = os.environ.get('SENDY_API_URL', 'https://example.com/sendy/api/{action}')
+SENDY_API_KEY = os.environ.get('SENDY_API_KEY', '')
+UNSUBSCRIBERS_LIST_ID = os.environ.get('UNSUBSCRIBERS_LIST_ID', '')
