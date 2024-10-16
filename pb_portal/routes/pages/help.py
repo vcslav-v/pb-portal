@@ -1,9 +1,8 @@
-from fastapi import APIRouter, Depends, Request, Form
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pb_portal.auth.tools import current_active_user
 from pb_portal.db.models import User
-from pb_portal.db.tools import sign_agreement as db_sign_agreement
 from pb_portal.auth.schemas import UserRoles
 from fastapi.responses import RedirectResponse
 
