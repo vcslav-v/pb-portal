@@ -2,7 +2,7 @@ import redis
 from pb_portal import config
 
 
-def is_self_unsubscribed_sendy_pop(email: str) -> bool:
+def is_auto_unsubscribed_sendy_pop(email: str) -> bool:
     r = redis.Redis(
         host=config.REDIS_HOST,
         port=config.REDIS_PORT,

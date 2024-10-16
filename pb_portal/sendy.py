@@ -6,7 +6,7 @@ def add_unsubscribe_list(email: str):
     data = {
         'api_key': config.SENDY_API_KEY,
         'email': email,
-        'list': config.UNSUBSCRIBERS_LIST_ID if mem.is_self_unsubscribed_sendy_pop(email) else config.AUTO_UNSUBSCRIBERS_LIST_ID, # noqa
+        'list': config.AUTO_UNSUBSCRIBERS_LIST_ID if mem.is_auto_unsubscribed_sendy_pop(email) else config.UNSUBSCRIBERS_LIST_ID, # noqa
     }
     requests.post(
         config.SENDY_API_URL.format(action='subscribe'),
