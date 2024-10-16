@@ -93,3 +93,13 @@ UPLOADED_PRODUCTS_DIR = 'uploaded_products/{upload_session_id}/'
 SENDY_API_URL = os.environ.get('SENDY_API_URL', 'https://example.com/sendy/api/{action}')
 SENDY_API_KEY = os.environ.get('SENDY_API_KEY', '')
 UNSUBSCRIBERS_LIST_ID = os.environ.get('UNSUBSCRIBERS_LIST_ID', '')
+AUTO_UNSUBSCRIBERS_LIST_ID = os.environ.get('AUTO_UNSUBSCRIBERS_LIST_ID', '')
+
+
+# Redis
+REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
+REDIS_PORT = os.environ.get('REDIS_PORT', 6379)
+REDIS_USERNAME = os.environ.get('REDIS_USERNAME', '')
+REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD', '')
+
+REDIS_SENDY_UNSUB_TEMPLATE = os.environ.get('REDIS_SENDY_UNSUB_TEMPLATE', 'sendy:{email}:is_auto_unsub')
