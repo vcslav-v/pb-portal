@@ -10,6 +10,5 @@ router = APIRouter()
 @router.post('/unsubscribe')
 async def help(
     request: Request,
-    data: Unsubscribe,
 ):
-    config.logger.info(data)
+    config.logger.info(await request.body())
