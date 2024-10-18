@@ -12,8 +12,8 @@ def is_auto_unsubscribed_sendy_pop(email: str) -> bool:
         ssl_cert_reqs=None,
         decode_responses=True,
     )
-    result = r.get(f'sendy:{email}:is_auto_unsub')
+    result = r.get(config.REDIS_SENDY_UNSUB_TEMPLATE.format(email=email))
     if not result:
         return False
-    r.delete(f'sendy:{email}:is_auto_unsub')
+    r.delete(config.REDIS_SENDY_UNSUB_TEMPLATE.format(email=email))
     return True

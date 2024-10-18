@@ -24,3 +24,12 @@ def rm_unsubscribe_list(email: str):
         config.SENDY_API_URL.format(action='api/subscribers/delete.php'),
         data=data
     )
+    data = {
+        'api_key': config.SENDY_API_KEY,
+        'list_id': config.AUTO_UNSUBSCRIBERS_LIST_ID,
+        'email': email,
+    }
+    requests.post(
+        config.SENDY_API_URL.format(action='api/subscribers/delete.php'),
+        data=data
+    )
